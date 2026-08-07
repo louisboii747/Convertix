@@ -10,3 +10,11 @@ coverage/
 __pycache__/
 *.pyc
 .vscode/settings.json
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars
+*.tfvars.json
