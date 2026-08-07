@@ -37,7 +37,7 @@ Convertix currently uses and is being built around:
 - **Redis** — queues, caching, job state, and rate-limiting support
 - **Docker** — consistent local development and service deployment
 - **FFmpeg** — media processing and transcoding
-- **Azure** — planned cloud infrastructure and production hosting
+- **AWS** — planned cloud computing infrastructure and production hosting
 - **Cloudflare** — edge, networking, delivery, and platform services where appropriate
 
 The repository is structured as a multi-service project so the frontend, APIs, workers, and infrastructure can evolve independently without becoming separate disconnected projects.
