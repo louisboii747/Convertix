@@ -2,13 +2,12 @@ services:
   postgres:
     image: postgres:17-alpine
     container_name: converter-postgres
-
     restart: unless-stopped
 
     environment:
-      POSTGRES_USER: converter
-      POSTGRES_PASSWORD: converter
       POSTGRES_DB: converter
+      POSTGRES_USER: converter
+      POSTGRES_PASSWORD: converter_dev
 
     ports:
       - "5432:5432"
@@ -16,10 +15,15 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U converter -d converter"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   redis:
     image: redis:8-alpine
     container_name: converter-redis
-
     restart: unless-stopped
 
     ports:
@@ -27,6 +31,12 @@ services:
 
     volumes:
       - redis_data:/data
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:
