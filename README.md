@@ -88,4 +88,4 @@ The project is still young, so its architecture and feature set will continue to
 
 ---
 
-**Convertix — files in, possibilities out.**
+**Convertix — Ease and speed.**

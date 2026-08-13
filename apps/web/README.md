@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Convertix web
 
-## Getting Started
+The Next.js frontend for Convertix. It provides the public homepage, an accessible file-conversion workflow, and reusable conversion routes such as `/convert/docx-to-pdf`.
 
-First, run the development server:
+## Development
+
+Install dependencies and start the app:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:3000>.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Useful checks:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run format
+npm run lint
+npm run typecheck
+npm run build
+```
 
-## Learn More
+## Environment variables
 
-To learn more about Next.js, take a look at the following resources:
+Copy `.env.example` to `.env.local` and set only the capabilities available in the backend deployment.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `NEXT_PUBLIC_CONVERTIX_SITE_URL`: public origin used for canonical URLs and the sitemap.
+- `NEXT_PUBLIC_CONVERTIX_API_URL`: FastAPI base URL, without a trailing slash.
+- `NEXT_PUBLIC_CONVERTIX_ENABLED_CONVERSIONS`: comma-separated route slugs or `source:target` pairs, for example `docx-to-pdf,png:jpg`. Leave empty until those routes work end to end.
+- `NEXT_PUBLIC_CONVERTIX_SUBMISSION_MODE`: set to `metadata-only` only when testing the current `POST /conversions` metadata contract. It does not upload the selected browser file.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Format configuration
 
-## Deploy on Vercel
+Formats, extensions, families, and known conversion pairs live in `src/lib/formats.ts`. The UI derives file detection, target options, popular routes, SEO routes, and the format catalogue from that single model.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Known and enabled are deliberately separate. Adding a pair to the model prepares the UI and route; it becomes actionable only when `NEXT_PUBLIC_CONVERTIX_ENABLED_CONVERSIONS` enables it for a deployment.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Backend integration status
+
+The typed API client lives in `src/lib/conversion-api.ts` and keeps `fetch()` out of components. It supports the documented metadata request:
+
+```json
+{
+  "source_format": "docx",
+  "target_format": "pdf"
+}
+```
+
+The checked-in FastAPI service currently exposes `/health` but not `/conversions`. Browser upload, presigned S3 transfer, status polling, and download URLs are also not implemented in this repository. The frontend therefore does not simulate upload or completion, and routes are disabled by default.
+
+When the backend gains presigned transfer support, add the upload implementation behind the service layer before enabling production conversion pairs. Keep API state mapped to the existing `ConversionStatus` model instead of adding unrelated component booleans.

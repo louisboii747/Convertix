@@ -2,6 +2,7 @@ node_modules/
 .venv/
 .env
 .env.*
+!.env.example
 .next/
 dist/
 build/
@@ -10,6 +11,14 @@ coverage/
 __pycache__/
 *.pyc
 .vscode/settings.json
+
+# Impeccable working artifacts (keep design.json and surface briefs tracked)
+.impeccable/mocks/
+.impeccable/screenshots/
+.impeccable/sketches/
+.impeccable/questions/
+.impeccable/*-options.json
+.impeccable/visual-smoke.py
 
 # Terraform
 .terraform/

@@ -1,0 +1,331 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-13T21:55:00+01:00",
+  "title": "Design System: Convertix",
+  "extensions": {
+    "colorMeta": {
+      "cobalt": {
+        "role": "primary",
+        "displayName": "Route Cobalt",
+        "canonical": "#315cf5",
+        "tonalRamp": ["#091535", "#10245f", "#18358c", "#2147d4", "#315cf5", "#718cff", "#b3c1ff", "#edf2ff"]
+      },
+      "cobalt-dark": {
+        "role": "primary",
+        "displayName": "Deep Route Cobalt",
+        "canonical": "#2147d4",
+        "tonalRamp": ["#081332", "#0e2258", "#163281", "#2147d4", "#4969e8", "#7891f2", "#b4c2fa", "#eef2ff"]
+      },
+      "cobalt-soft": {
+        "role": "primary",
+        "displayName": "Powder Cobalt",
+        "canonical": "#e8eeff",
+        "tonalRamp": ["#111a35", "#24335f", "#3c4f86", "#5f74ad", "#8fa1d0", "#bac6e8", "#e8eeff", "#f7f9ff"]
+      },
+      "violet-soft": {
+        "role": "secondary",
+        "displayName": "Format Violet",
+        "canonical": "#f0eaff",
+        "tonalRamp": ["#201433", "#39245a", "#563582", "#7545c7", "#9a77db", "#c3aaed", "#f0eaff", "#faf7ff"]
+      },
+      "mint": {
+        "role": "secondary",
+        "displayName": "Success Mint",
+        "canonical": "#d9f4e5",
+        "tonalRamp": ["#0c2b1c", "#15482e", "#1f6842", "#2f8b5a", "#68b68a", "#a6ddbd", "#d9f4e5", "#f3fcf7"]
+      },
+      "mint-ink": {
+        "role": "secondary",
+        "displayName": "Confirmed Mint Ink",
+        "canonical": "#17603c",
+        "tonalRamp": ["#082319", "#0f3e28", "#17603c", "#278356", "#55aa7c", "#8ccdaa", "#c7ead6", "#f0faf5"]
+      },
+      "danger": {
+        "role": "tertiary",
+        "displayName": "Honest Danger",
+        "canonical": "#b4233d",
+        "tonalRamp": ["#350812", "#5a101e", "#84182c", "#b4233d", "#d4546b", "#ea8fa0", "#f7c7d0", "#fff0f2"]
+      },
+      "danger-soft": {
+        "role": "tertiary",
+        "displayName": "Danger Field",
+        "canonical": "#fff0f2",
+        "tonalRamp": ["#321118", "#57222d", "#7e3947", "#a85868", "#ce8491", "#ecb6c0", "#fff0f2", "#fff8f9"]
+      },
+      "ink-950": {
+        "role": "neutral",
+        "displayName": "Deep Navy",
+        "canonical": "#0d1b34",
+        "tonalRamp": ["#08101f", "#0d1b34", "#20304e", "#465575", "#66728d", "#9aa4b8", "#d5dbe6", "#f3f5f8"]
+      },
+      "ink-800": {
+        "role": "neutral",
+        "displayName": "Slate Ink",
+        "canonical": "#20304e",
+        "tonalRamp": ["#0a1222", "#152039", "#20304e", "#40506e", "#66728d", "#9da7ba", "#d7dce6", "#f4f6f9"]
+      },
+      "ink-650": {
+        "role": "neutral",
+        "displayName": "Quiet Slate",
+        "canonical": "#465575",
+        "tonalRamp": ["#0c1323", "#1d2940", "#31405d", "#465575", "#6f7c97", "#a2acbf", "#d8dde7", "#f4f6f9"]
+      },
+      "ink-500": {
+        "role": "neutral",
+        "displayName": "Muted Slate",
+        "canonical": "#66728d",
+        "tonalRamp": ["#111725", "#263146", "#46536c", "#66728d", "#8994aa", "#b2bac9", "#dce1e8", "#f5f7f9"]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Mineral White",
+        "canonical": "#ffffff",
+        "tonalRamp": ["#17191e", "#30343b", "#51565f", "#777d86", "#a5abb3", "#d0d4da", "#f0f2f5", "#ffffff"]
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Powder Canvas",
+        "canonical": "#f7f9fc",
+        "tonalRamp": ["#151a24", "#2b3443", "#465266", "#69768a", "#96a1b2", "#c5ccd7", "#e7ebf1", "#f7f9fc"]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Cool Hairline",
+        "canonical": "#dbe2ef",
+        "tonalRamp": ["#151b26", "#2a3548", "#45546b", "#66758d", "#929fb1", "#bdc6d4", "#dbe2ef", "#f5f7fa"]
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "Strong Cool Hairline",
+        "canonical": "#c8d3e6",
+        "tonalRamp": ["#141b27", "#29374c", "#445773", "#667b9a", "#8fa1bc", "#b1bfd3", "#c8d3e6", "#f1f4f8"]
+      },
+      "red-soft": {
+        "role": "secondary",
+        "displayName": "Document Red Tint",
+        "canonical": "#ffeaed",
+        "tonalRamp": ["#351116", "#5b232b", "#823943", "#aa5863", "#d1848d", "#edb4bb", "#ffeaed", "#fff8f9"]
+      },
+      "green-soft": {
+        "role": "secondary",
+        "displayName": "Spreadsheet Green Tint",
+        "canonical": "#e5f6ed",
+        "tonalRamp": ["#102b1d", "#214933", "#386a4b", "#588e69", "#83b492", "#b4d8c1", "#e5f6ed", "#f6fcf8"]
+      },
+      "orange-soft": {
+        "role": "secondary",
+        "displayName": "Presentation Orange Tint",
+        "canonical": "#fff0e1",
+        "tonalRamp": ["#351b0c", "#5a3219", "#824b27", "#ab693d", "#d28f64", "#edba91", "#fff0e1", "#fff8f1"]
+      },
+      "slate-soft": {
+        "role": "neutral",
+        "displayName": "Unavailable Slate",
+        "canonical": "#eef1f6",
+        "tonalRamp": ["#161a20", "#303740", "#505963", "#747e89", "#a1a9b3", "#cbd1d8", "#eef1f6", "#fafbfc"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Compact homepage and route-specific hero statements."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Major supporting sections and dark feature bands."
+      },
+      "title": {
+        "displayName": "Functional Title",
+        "purpose": "Detected formats, destination choices, and compact task titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Plain-language guidance, explanations, and control copy."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Route labels, status detail, format families, and trust statements."
+      }
+    },
+    "shadows": [
+      {
+        "name": "panel-structure",
+        "value": "0 22px 54px -34px rgba(29, 51, 94, 0.35)",
+        "purpose": "Separates the primary converter shell from the powder canvas."
+      },
+      {
+        "name": "action-structure",
+        "value": "0 12px 24px -16px rgba(35, 75, 217, 0.72)",
+        "purpose": "Gives the primary conversion action restrained tactile emphasis."
+      },
+      {
+        "name": "action-structure-hover",
+        "value": "0 16px 28px -17px rgba(35, 75, 217, 0.88)",
+        "purpose": "Strengthens the primary action by one shallow level on hover."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Default state, underline, route, and control easing."
+      },
+      {
+        "name": "control-transition",
+        "value": "180ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Buttons, icon actions, color changes, and one-pixel lifts."
+      },
+      {
+        "name": "route-transition",
+        "value": "700ms cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Backend-confirmed advancement of the cobalt conversion rail."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "0.01ms",
+        "purpose": "Collapses transitions and animations when reduced motion is requested."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide-collapse",
+        "value": "980px"
+      },
+      {
+        "name": "mobile",
+        "value": "720px"
+      },
+      {
+        "name": "compact-mobile",
+        "value": "480px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Conversion Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The full-width cobalt action that advances the configured conversion route.",
+      "html": "<button class=\"ds-convert-button\" type=\"button\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 7h11m0 0-3-3m3 3-3 3M20 17H9m0 0 3 3m-3-3 3-3\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg><span>Convert file</span><svg class=\"ds-convert-arrow\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></button>",
+      "css": ".ds-convert-button { display:grid; width:100%; min-height:58px; grid-template-columns:24px minmax(0,1fr) 24px; align-items:center; gap:12px; padding:0 22px; border:0; border-radius:var(--radius-control,12px); background:var(--cobalt,#315cf5); color:#fff; box-shadow:0 12px 24px -16px rgba(35,75,217,.72); font-family:var(--font-body,Figtree,'Segoe UI',sans-serif); font-size:17px; font-weight:760; cursor:pointer; transition:background 180ms var(--ease-out,cubic-bezier(.16,1,.3,1)),box-shadow 180ms var(--ease-out,cubic-bezier(.16,1,.3,1)),transform 180ms var(--ease-out,cubic-bezier(.16,1,.3,1)); } .ds-convert-button svg { width:23px; height:23px; } .ds-convert-arrow { justify-self:end; transition:transform 180ms var(--ease-out,cubic-bezier(.16,1,.3,1)); } .ds-convert-button:hover { background:var(--cobalt-dark,#2147d4); box-shadow:0 16px 28px -17px rgba(35,75,217,.88); transform:translateY(-1px); } .ds-convert-button:hover .ds-convert-arrow { transform:translateX(3px); } .ds-convert-button:active { transform:translateY(0); } .ds-convert-button:focus-visible { outline:3px solid #7795ff; outline-offset:3px; }"
+    },
+    {
+      "name": "File Picker Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "The familiar bordered action that opens or replaces a local file selection.",
+      "html": "<button class=\"ds-file-picker\" type=\"button\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M3.5 7.5h6l2 2h9v8.75a2.25 2.25 0 0 1-2.25 2.25H5.75a2.25 2.25 0 0 1-2.25-2.25V7.5Z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/></svg><span>Choose a file</span></button>",
+      "css": ".ds-file-picker { display:inline-flex; min-height:48px; align-items:center; justify-content:center; gap:9px; padding:0 19px; border:1px solid #9fb3f3; border-radius:11px; background:#fff; color:var(--cobalt-dark,#2147d4); font-family:var(--font-body,Figtree,'Segoe UI',sans-serif); font-weight:700; cursor:pointer; transition:border-color 180ms var(--ease-out,cubic-bezier(.16,1,.3,1)),background 180ms var(--ease-out,cubic-bezier(.16,1,.3,1)),transform 180ms var(--ease-out,cubic-bezier(.16,1,.3,1)); } .ds-file-picker svg { width:20px; height:20px; } .ds-file-picker:hover { border-color:var(--cobalt,#315cf5); background:var(--cobalt-soft,#e8eeff); transform:translateY(-1px); } .ds-file-picker:active { transform:translateY(0); } .ds-file-picker:focus-visible { outline:3px solid #7795ff; outline-offset:3px; }"
+    },
+    {
+      "name": "File Drop Zone",
+      "kind": "input",
+      "description": "The full-width file target that preserves both drag-and-drop and an explicit picker action.",
+      "html": "<div class=\"ds-file-drop\"><span class=\"ds-file-icon\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\"><path d=\"M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v4.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></span><span class=\"ds-file-copy\"><strong>Choose a file to convert</strong><small>Drag and drop works too</small></span><button type=\"button\">Choose a file</button></div>",
+      "css": ".ds-file-drop { display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; min-height:150px; padding:30px 42px; border:1.5px dashed #91a9ef; border-radius:14px; background:#fbfcff; color:var(--ink-950,#0d1b34); font-family:var(--font-body,Figtree,'Segoe UI',sans-serif); transition:border-color 220ms var(--ease-out,cubic-bezier(.16,1,.3,1)),background 220ms var(--ease-out,cubic-bezier(.16,1,.3,1)); } .ds-file-icon { display:grid; width:58px; height:64px; place-items:center; margin-right:20px; border-radius:13px; background:var(--cobalt-soft,#e8eeff); color:var(--cobalt,#315cf5); } .ds-file-icon svg { width:30px; height:30px; } .ds-file-copy { display:flex; min-width:0; flex-direction:column; gap:4px; } .ds-file-copy strong { font-size:19px; font-weight:720; } .ds-file-copy small { color:var(--ink-650,#465575); font-size:14px; } .ds-file-drop button { min-height:48px; padding:0 19px; border:1px solid #9fb3f3; border-radius:11px; background:#fff; color:var(--cobalt-dark,#2147d4); font-weight:700; cursor:pointer; } .ds-file-drop:hover { border-color:var(--cobalt,#315cf5); background:var(--cobalt-soft,#e8eeff); } .ds-file-drop button:hover { border-color:var(--cobalt,#315cf5); background:#f7f9ff; } .ds-file-drop button:focus-visible { outline:3px solid #7795ff; outline-offset:3px; }"
+    },
+    {
+      "name": "Conversion Route Step",
+      "kind": "custom",
+      "refersTo": "route-step",
+      "description": "A numbered source or destination row joined to the signature cobalt route rail.",
+      "html": "<div class=\"ds-route-wrap\"><span class=\"ds-route-line\" aria-hidden=\"true\"></span><div class=\"ds-route-step\"><span class=\"ds-route-index\">1</span><span class=\"ds-route-symbol\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\"><path d=\"M7 3h7l4 4v14H7zM14 3v5h4M10 13h5M10 17h5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></span><span class=\"ds-route-copy\"><small>Detected format</small><strong>DOCX</strong></span><span class=\"ds-route-confirmed\" aria-label=\"Format detected\"><svg viewBox=\"0 0 24 24\"><path d=\"m7 12 3 3 7-7\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></span></div></div>",
+      "css": ".ds-route-wrap { position:relative; padding-left:60px; font-family:var(--font-body,Figtree,'Segoe UI',sans-serif); } .ds-route-line { position:absolute; top:0; bottom:0; left:24px; width:2px; background:var(--cobalt,#315cf5); } .ds-route-step { position:relative; display:grid; min-height:84px; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; padding:13px 19px; border:1px solid var(--line,#dbe2ef); border-radius:var(--radius-control,12px); background:#fff; color:var(--ink-950,#0d1b34); } .ds-route-index { position:absolute; top:50%; left:-53px; display:grid; width:34px; height:34px; place-items:center; border:4px solid #fff; border-radius:50%; background:var(--cobalt,#315cf5); color:#fff; font-size:13px; font-weight:800; transform:translateY(-50%); } .ds-route-symbol { display:grid; width:46px; height:48px; place-items:center; margin-right:15px; border-radius:10px; background:var(--violet-soft,#f0eaff); color:#7545c7; } .ds-route-symbol svg { width:25px; height:25px; } .ds-route-copy { display:flex; flex-direction:column; gap:2px; } .ds-route-copy small { color:var(--ink-650,#465575); font-size:13px; font-weight:650; } .ds-route-copy strong { font-family:var(--font-display,'Bricolage Grotesque',sans-serif); font-size:21px; font-weight:680; letter-spacing:-.015em; } .ds-route-confirmed { display:grid; width:34px; height:34px; place-items:center; border-radius:50%; background:var(--cobalt-soft,#e8eeff); color:var(--cobalt,#315cf5); } .ds-route-confirmed svg { width:20px; height:20px; } .ds-route-step:hover { border-color:var(--line-strong,#c8d3e6); } .ds-route-step:focus-within { outline:3px solid #7795ff; outline-offset:3px; }"
+    },
+    {
+      "name": "Confirmed Status",
+      "kind": "custom",
+      "description": "A mint lifecycle row reserved for backend-confirmed completion and a real download action.",
+      "html": "<div class=\"ds-status-success\" role=\"status\"><span class=\"ds-status-marker\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\"><path d=\"m7 12 3 3 7-7\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></span><span class=\"ds-status-copy\"><strong>Your file is ready</strong><small>Download the converted file below.</small></span><span class=\"ds-status-progress\"><span></span></span><a href=\"#download\">Download file</a></div>",
+      "css": ".ds-status-success { display:grid; min-height:78px; grid-template-columns:auto minmax(0,1fr) minmax(120px,260px) auto; align-items:center; gap:15px; padding:14px 18px; border:1px solid #cfe5d8; border-radius:var(--radius-control,12px); background:#f5fbf7; color:var(--ink-950,#0d1b34); font-family:var(--font-body,Figtree,'Segoe UI',sans-serif); } .ds-status-marker { display:grid; width:36px; height:36px; place-items:center; border-radius:50%; background:var(--mint,#d9f4e5); color:var(--mint-ink,#17603c); } .ds-status-marker svg { width:21px; height:21px; } .ds-status-copy { display:flex; flex-direction:column; gap:1px; } .ds-status-copy strong { font-size:14px; font-weight:760; } .ds-status-copy small { color:var(--ink-650,#465575); font-size:13px; line-height:1.4; } .ds-status-progress { display:block; height:6px; overflow:hidden; border-radius:5px; background:#dce5df; } .ds-status-progress span { display:block; width:100%; height:100%; border-radius:inherit; background:#28a76a; } .ds-status-success a { display:inline-flex; min-height:48px; align-items:center; padding:0 14px; border:1px solid #9fb3f3; border-radius:11px; background:#fff; color:var(--cobalt-dark,#2147d4); font-size:13px; font-weight:700; text-decoration:none; white-space:nowrap; } .ds-status-success a:hover { border-color:var(--cobalt,#315cf5); background:var(--cobalt-soft,#e8eeff); } .ds-status-success a:focus-visible { outline:3px solid #7795ff; outline-offset:3px; }"
+    },
+    {
+      "name": "Format Tag",
+      "kind": "chip",
+      "refersTo": "format-tag",
+      "description": "A compact neutral badge used to list recognised formats without implying route availability.",
+      "html": "<span class=\"ds-format-tag\">DOCX</span>",
+      "css": ".ds-format-tag { display:inline-flex; align-items:center; padding:6px 9px; border:1px solid var(--line,#dbe2ef); border-radius:7px; background:#fff; color:var(--ink-800,#20304e); font-family:var(--font-body,Figtree,'Segoe UI',sans-serif); font-size:13px; font-weight:730; transition:border-color 180ms var(--ease-out,cubic-bezier(.16,1,.3,1)),background 180ms var(--ease-out,cubic-bezier(.16,1,.3,1)); } .ds-format-tag:hover { border-color:var(--line-strong,#c8d3e6); background:var(--canvas,#f7f9fc); } .ds-format-tag:focus-visible { outline:3px solid #7795ff; outline-offset:3px; }"
+    },
+    {
+      "name": "Compact Header Navigation",
+      "kind": "nav",
+      "description": "Quiet in-page routes paired with the Bricolage wordmark and cobalt exchange mark.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Primary navigation\"><a class=\"ds-brand\" href=\"#home\"><svg viewBox=\"0 0 36 36\" aria-hidden=\"true\"><path d=\"M8 9.5 17.5 18 8 26.5M28 9.5 18.5 18 28 26.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"5.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg><span>Convertix</span></a><span class=\"ds-nav-links\"><a href=\"#how\">How it works</a><a href=\"#formats\">Formats</a><a href=\"#faq\">FAQ</a></span></nav>",
+      "css": ".ds-nav { display:flex; min-height:74px; align-items:center; justify-content:space-between; gap:32px; padding:0 24px; border-bottom:1px solid var(--line,#dbe2ef); background:rgba(247,249,252,.96); color:var(--ink-950,#0d1b34); font-family:var(--font-body,Figtree,'Segoe UI',sans-serif); } .ds-brand { display:inline-flex; align-items:center; gap:9px; color:var(--ink-950,#0d1b34); font-family:var(--font-display,'Bricolage Grotesque',sans-serif); font-size:24px; font-weight:750; letter-spacing:-.025em; text-decoration:none; } .ds-brand svg { width:31px; height:31px; color:var(--cobalt,#315cf5); } .ds-nav-links { display:flex; align-items:center; gap:32px; } .ds-nav-links a { position:relative; color:var(--ink-800,#20304e); font-size:14px; font-weight:650; text-decoration:none; } .ds-nav-links a::after { position:absolute; right:0; bottom:-5px; left:0; height:1px; background:currentColor; content:''; transform:scaleX(0); transform-origin:right; transition:transform 220ms var(--ease-out,cubic-bezier(.16,1,.3,1)); } .ds-nav-links a:hover::after,.ds-nav-links a:focus-visible::after { transform:scaleX(1); transform-origin:left; } .ds-nav a:focus-visible { outline:3px solid #7795ff; outline-offset:3px; }"
+    },
+    {
+      "name": "FAQ Row",
+      "kind": "custom",
+      "description": "A flat disclosure row separated by cool hairlines and opened by a cobalt plus-to-minus cue.",
+      "html": "<details class=\"ds-faq\"><summary><span>Which conversions are available?</span><span class=\"ds-faq-toggle\" aria-hidden=\"true\"></span></summary><p>Convertix adds routes as soon as they’re ready. Availability is shown before a file can be sent.</p></details>",
+      "css": ".ds-faq { border-top:1px solid var(--line-strong,#c8d3e6); border-bottom:1px solid var(--line-strong,#c8d3e6); color:var(--ink-950,#0d1b34); font-family:var(--font-body,Figtree,'Segoe UI',sans-serif); } .ds-faq summary { display:flex; min-height:74px; align-items:center; justify-content:space-between; gap:24px; font-family:var(--font-display,'Bricolage Grotesque',sans-serif); font-size:18px; font-weight:650; cursor:pointer; list-style:none; } .ds-faq summary::-webkit-details-marker { display:none; } .ds-faq-toggle { position:relative; width:24px; height:24px; flex:0 0 auto; } .ds-faq-toggle::before,.ds-faq-toggle::after { position:absolute; top:50%; left:50%; width:14px; height:1.5px; background:var(--cobalt,#315cf5); content:''; transform:translate(-50%,-50%); transition:transform 220ms var(--ease-out,cubic-bezier(.16,1,.3,1)); } .ds-faq-toggle::after { transform:translate(-50%,-50%) rotate(90deg); } .ds-faq[open] .ds-faq-toggle::after { transform:translate(-50%,-50%) rotate(0); } .ds-faq p { max-width:68ch; margin:-4px 44px 26px 0; color:var(--ink-650,#465575); line-height:1.65; } .ds-faq summary:hover { color:var(--cobalt-dark,#2147d4); } .ds-faq summary:focus-visible { outline:3px solid #7795ff; outline-offset:3px; }"
+    },
+    {
+      "name": "Converter Panel",
+      "kind": "card",
+      "refersTo": "converter-panel",
+      "description": "The broad white working canvas that keeps all conversion decisions inside one bounded surface.",
+      "html": "<section class=\"ds-converter-panel\"><span class=\"ds-panel-kicker\">Your conversion route</span><h3>One file. One clear route.</h3><p>File selection, source, destination, action, and status stay together.</p></section>",
+      "css": ".ds-converter-panel { padding:24px; border:1px solid var(--line-strong,#c8d3e6); border-radius:var(--radius-panel,18px); background:#fff; color:var(--ink-950,#0d1b34); box-shadow:0 22px 54px -34px rgba(29,51,94,.35); font-family:var(--font-body,Figtree,'Segoe UI',sans-serif); transition:border-color 220ms var(--ease-out,cubic-bezier(.16,1,.3,1)),box-shadow 220ms var(--ease-out,cubic-bezier(.16,1,.3,1)); } .ds-panel-kicker { color:var(--cobalt-dark,#2147d4); font-size:13px; font-weight:650; } .ds-converter-panel h3 { margin:6px 0 0; font-family:var(--font-display,'Bricolage Grotesque',sans-serif); font-size:21px; font-weight:680; letter-spacing:-.015em; } .ds-converter-panel p { max-width:48ch; margin:8px 0 0; color:var(--ink-650,#465575); line-height:1.5; } .ds-converter-panel:hover { border-color:var(--line-strong,#c8d3e6); box-shadow:0 24px 58px -34px rgba(29,51,94,.4); } .ds-converter-panel:focus-within { outline:3px solid #7795ff; outline-offset:3px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Bright Conversion Path",
+    "overview": "Convertix is a bright consumer utility whose conversion route is visible, continuous, and reassuring. Its atmosphere is approachable rather than technical: a pale powder-blue environment supports a broad translucent-feeling canvas, nested white controls, cool hairlines, and a single cobalt path through the task.\n\nDisciplined product craft keeps the friendliness precise. Compact display type introduces the job, the converter arrives immediately beneath it, and every border, badge, chevron, numbered circle, and status label helps a user understand what happens next. Named external products are quality benchmarks only; Convertix does not imitate their visual identities.",
+    "keyCharacteristics": [
+      "Bright, calm consumer utility with the conversion task in the foreground.",
+      "One cobalt route connects file, source, target, action, and honest lifecycle status.",
+      "Broad white surfaces sit on powder-blue canvas with cool hairlines and shallow structural shadows.",
+      "Bricolage Grotesque supplies warm compact display moments; Figtree keeps controls and guidance plain.",
+      "Violet supports format recognition, neutral slate marks unavailable choices, and mint appears only after confirmed success."
+    ],
+    "rules": [
+      {
+        "name": "The Route Color Rule",
+        "body": "Cobalt describes the active conversion path. Do not scatter it across decorative surfaces or use mint before the backend confirms success.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Voice Rule",
+        "body": "Bricolage Grotesque names destinations and moments; Figtree explains actions and state. Do not use the display face for long instructional copy.",
+        "section": "typography"
+      },
+      {
+        "name": "The Task-First Rule",
+        "body": "The converter remains the first substantial surface after the headline; supporting persuasion may follow it but must not displace it.",
+        "section": "layout"
+      },
+      {
+        "name": "The Structural Shadow Rule",
+        "body": "Shadows establish task hierarchy, never decoration. Ordinary cards, format grids, FAQ rows, and route steps stay flat and rely on tonal layers or hairlines.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Nested Radius Rule",
+        "body": "Radius decreases as surfaces nest: panel, inset, control, compact element. Avoid unrelated pill shapes except for true circular markers or a deliberately capsule-like status primitive.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Honest State Rule",
+        "body": "Every color, marker, and motion in the conversion route corresponds to real state. Never simulate upload, completion, availability, or download readiness.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do keep the conversion route continuous, with the file target immediately above source, target, action, and status.",
+      "Do use cobalt for primary action and route continuity, violet and other soft tints for format recognition, slate for unavailable choices, and mint only for confirmed success.",
+      "Do preserve visible keyboard focus, native file-picker access, semantic status announcements, and reduced-motion behavior.",
+      "Do alternate broad quiet fields with denser functional bands while keeping the 1240px content frame and responsive collapse rules.",
+      "Do use shallow structural shadows selectively and let cool hairlines carry most separation."
+    ],
+    "donts": [
+      "Don't turn the converter into a collection of disconnected cards or move marketing content ahead of the task.",
+      "Don't imitate named benchmark products, fabricate testimonials or guarantees, or introduce glossy gradients and decorative visual noise.",
+      "Don't use mint for readiness, selection, or aspiration; it means confirmed success.",
+      "Don't hide unavailable routes behind optimistic labels or motion that suggests backend progress which has not occurred.",
+      "Don't replace the Bricolage Grotesque and Figtree hierarchy with a single generic voice or use display type for long body copy."
+    ]
+  }
+}
