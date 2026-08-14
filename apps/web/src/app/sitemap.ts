@@ -3,7 +3,7 @@ import { getEnabledConversionPairs } from "@/lib/formats";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const siteUrl = (
-    process.env.NEXT_PUBLIC_CONVERTIX_SITE_URL ?? "http://localhost:3000"
+    process.env.NEXT_PUBLIC_CONVERTIX_SITE_URL ?? "https://convertix.uk"
   ).replace(/\/$/, "");
 
   return [

@@ -31,8 +31,8 @@ export async function generateMetadata({
   const enabled = isConversionPairEnabled(pair);
 
   return {
-    title: `Convert ${source} to ${target}`,
-    description: `Choose a ${source} file and follow one clear route to ${target}. Convertix shows availability before submission.`,
+    title: `${source} to ${target} Converter`,
+    description: `Convert ${source} files to ${target} online with Convertix. Fast, simple file conversion with a clear step-by-step workflow.`,
     alternates: {
       canonical: `/convert/${pair.slug}`,
     },
