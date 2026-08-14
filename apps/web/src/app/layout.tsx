@@ -17,7 +17,7 @@ const bodyFont = Figtree({
 });
 
 const siteUrl =
-  process.env.NEXT_PUBLIC_CONVERTIX_SITE_URL ?? "http://localhost:3000";
+  process.env.NEXT_PUBLIC_CONVERTIX_SITE_URL ?? "https://convertix.uk";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
