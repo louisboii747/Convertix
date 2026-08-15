@@ -197,7 +197,11 @@ function getStatusContent(state: ConversionState) {
     },
     queued: {
       title: "Your request is queued",
-      body: "Your request was accepted. File transfer and live updates aren’t available here yet.",
+      body: "Your file is secure and waiting for a conversion worker.",
+    },
+    starting: {
+      title: "Starting conversion",
+      body: "The conversion service is preparing to process your file.",
     },
     converting: {
       title: "Conversion in progress",
@@ -220,9 +224,11 @@ function getStatusContent(state: ConversionState) {
 
 function getProgressClass(status: ConversionStatus): string {
   if (status === "completed") return "is-complete";
-  if (["uploading", "queued", "converting"].includes(status)) {
+
+  if (["uploading", "queued", "starting", "converting"].includes(status)) {
     return "is-indeterminate";
   }
+
   return "is-idle";
 }
 
@@ -256,7 +262,9 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
       : null;
   const readiness = getSubmissionReadiness();
   const pairEnabled = pair ? isConversionPairEnabled(pair) : false;
-  const isBusy = ["uploading", "queued", "converting"].includes(state.status);
+  const isBusy = ["uploading", "queued", "starting", "converting"].includes(
+    state.status,
+  );
   const canSubmit = Boolean(
     state.file &&
     pair &&
@@ -278,7 +286,9 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
   function statusIcon() {
     if (state.status === "failed") return <CloseIcon />;
     if (state.status === "completed") return <CheckIcon />;
-    if (["uploading", "queued", "converting"].includes(state.status)) {
+    if (
+      ["uploading", "queued", "starting", "converting"].includes(state.status)
+    ) {
       return <RefreshIcon className="is-spinning" />;
     }
     return <RouteIcon />;
@@ -336,25 +346,49 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
   }
 
   async function submitConversion() {
-    if (!state.source || !state.target || !canSubmit) return;
+    const file = state.file;
+
+    if (!file || !state.source || !state.target || !canSubmit) return;
 
     const requestId = requestSequenceRef.current + 1;
     requestSequenceRef.current = requestId;
+
     const controller = new AbortController();
-    activeRequestRef.current = { id: requestId, controller };
-    dispatch({ type: "status", status: "uploading" });
+
+    activeRequestRef.current = {
+      id: requestId,
+      controller,
+    };
+
+    dispatch({
+      type: "status",
+      status: "uploading",
+    });
 
     try {
       const response = await createConversion(
+        file,
         {
           source_format: state.source,
           target_format: state.target,
         },
         controller.signal,
+        (status) => {
+          if (requestSequenceRef.current !== requestId) return;
+
+          dispatch({
+            type: "status",
+            status,
+          });
+        },
       );
 
       if (requestSequenceRef.current !== requestId) return;
-      dispatch({ type: "accepted", response });
+
+      dispatch({
+        type: "accepted",
+        response,
+      });
     } catch (error) {
       if (
         requestSequenceRef.current !== requestId ||
@@ -369,6 +403,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
           message: error.message,
           retryable: error.retryable,
         });
+
         return;
       }
 
@@ -565,9 +600,15 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
                   ? "Conversion service not connected"
                   : state.status === "completed"
                     ? "Conversion complete"
-                    : isBusy
-                      ? "Working on your conversion"
-                      : "Convert file"}
+                    : state.status === "uploading"
+                      ? "Uploading your file"
+                      : state.status === "queued"
+                        ? "Conversion queued"
+                        : state.status === "starting"
+                          ? "Starting conversion"
+                          : state.status === "converting"
+                            ? "Converting your file"
+                            : "Convert file"}
           </span>
           {!isBusy ? <ArrowIcon className="convert-arrow" /> : null}
         </button>
