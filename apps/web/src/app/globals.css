@@ -587,6 +587,14 @@ main {
     transform 180ms var(--ease-out);
 }
 
+.convert-button:focus-visible,
+.convert-another-button:focus-visible,
+.file-picker-button:focus-visible,
+.status-action:focus-visible {
+  outline: 3px solid rgba(49, 92, 245, 0.24);
+  outline-offset: 3px;
+}
+
 .convert-button:hover:not(:disabled) {
   background: var(--cobalt-dark);
   box-shadow: 0 16px 28px -17px rgba(35, 75, 217, 0.88);
@@ -618,6 +626,42 @@ main {
   transform: translateX(3px);
 }
 
+.convert-button.is-download {
+  text-decoration: none;
+  background: #218a59;
+  box-shadow: 0 12px 24px -16px rgba(33, 138, 89, 0.72);
+}
+
+.convert-button.is-download:hover {
+  background: #19764b;
+  box-shadow: 0 16px 28px -17px rgba(33, 138, 89, 0.82);
+  transform: translateY(-1px);
+}
+
+.convert-button.is-download:hover .convert-arrow {
+  transform: translateX(3px);
+}
+
+.convert-another-button {
+  justify-self: center;
+  padding: 5px 8px;
+  border: 0;
+  background: transparent;
+  color: var(--ink-650);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    color 180ms var(--ease-out),
+    transform 180ms var(--ease-out);
+}
+
+.convert-another-button:hover {
+  color: var(--cobalt-dark);
+  transform: translateY(-1px);
+}
+
 .conversion-status {
   display: grid;
   min-height: 78px;
@@ -641,8 +685,8 @@ main {
 }
 
 .conversion-status.is-success {
-  border-color: #cfe5d8;
-  background: #f5fbf7;
+  border-color: #bcdcca;
+  background: #f3faf6;
 }
 
 .status-marker {
@@ -697,7 +741,7 @@ main {
 
 .status-progress {
   display: block;
-  height: 6px;
+  height: 7px;
   overflow: hidden;
   border-radius: 5px;
   background: #dce5df;
@@ -715,7 +759,7 @@ main {
 }
 
 .status-progress.is-indeterminate span {
-  animation: status-scan 1.25s var(--ease-out) infinite;
+  animation: status-scan 1.45s var(--ease-out) infinite;
 }
 
 .status-progress.is-complete span {

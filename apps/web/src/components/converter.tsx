@@ -149,8 +149,8 @@ function formatFileSize(bytes: number): string {
 function getStatusContent(state: ConversionState) {
   if (state.status === "failed") {
     return {
-      title: "We couldn’t start that conversion",
-      body: state.error ?? "Choose the file again and retry.",
+      title: "Conversion failed",
+      body: state.error ?? "Something went wrong while converting your file.",
     };
   }
 
@@ -184,38 +184,38 @@ function getStatusContent(state: ConversionState) {
 
   const content: Record<ConversionStatus, { title: string; body: string }> = {
     idle: {
-      title: "Start with a file",
-      body: "Choose a file to see its compatible destinations.",
+      title: "Ready for your file",
+      body: "Choose a file and we'll show you what it can be converted to.",
     },
     ready: {
-      title: "Ready when you are",
-      body: "Check the route, then start the conversion.",
+      title: "Ready to convert",
+      body: "Your file is ready. Start the conversion when you are.",
     },
     uploading: {
-      title: "Preparing your request",
-      body: "Connecting securely to the conversion service.",
+      title: "Uploading your file",
+      body: "Securely sending your file to Convertix.",
     },
     queued: {
-      title: "Your request is queued",
-      body: "Your file is secure and waiting for a conversion worker.",
+      title: "Almost there",
+      body: "Your conversion is queued and will start shortly.",
     },
     starting: {
-      title: "Starting conversion",
-      body: "The conversion service is preparing to process your file.",
+      title: "Getting things ready",
+      body: "Preparing your file for conversion.",
     },
     converting: {
-      title: "Conversion in progress",
-      body: "The conversion service is working on your file.",
+      title: "Converting your file",
+      body: "This can take a little longer for larger files and videos.",
     },
     completed: {
       title: "Your file is ready",
       body: state.downloadUrl
-        ? "Download the converted file below."
-        : "The conversion finished, but no download link was provided.",
+        ? "Conversion complete. Your download is ready."
+        : "The conversion finished, but the download isn't available.",
     },
     failed: {
-      title: "We couldn’t start that conversion",
-      body: state.error ?? "Choose the file again and retry.",
+      title: "Conversion failed",
+      body: state.error ?? "Something went wrong while converting your file.",
     },
   };
 
@@ -320,7 +320,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
       dispatch({
         type: "invalid",
         message:
-          "We don’t recognise that file type yet. Choose a PDF, document, image, spreadsheet, or presentation format listed below.",
+          "We don’t recognise that file type yet. Choose one of the supported formats below.",
       });
       return;
     }
@@ -584,22 +584,32 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
           </label>
         </div>
 
-        <button
-          className="convert-button"
-          type="button"
-          disabled={!canSubmit}
-          onClick={submitConversion}
-        >
-          {isBusy ? <RefreshIcon className="is-spinning" /> : <RefreshIcon />}
-          <span>
-            {!state.file
-              ? "Choose a file to continue"
-              : !pairEnabled
-                ? "Route not available yet"
-                : !readiness.ready
-                  ? "Conversion service not connected"
-                  : state.status === "completed"
-                    ? "Conversion complete"
+        {state.status === "completed" && state.downloadUrl ? (
+          <a
+            className="convert-button is-download"
+            href={state.downloadUrl}
+            download
+          >
+            <CheckIcon />
+            <span>Download converted file</span>
+            <ArrowIcon className="convert-arrow" />
+          </a>
+        ) : (
+          <button
+            className="convert-button"
+            type="button"
+            disabled={!canSubmit}
+            onClick={submitConversion}
+          >
+            {isBusy ? <RefreshIcon className="is-spinning" /> : <RefreshIcon />}
+
+            <span>
+              {!state.file
+                ? "Choose a file to continue"
+                : !pairEnabled
+                  ? "Route not available yet"
+                  : !readiness.ready
+                    ? "Conversion service not connected"
                     : state.status === "uploading"
                       ? "Uploading your file"
                       : state.status === "queued"
@@ -609,9 +619,21 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
                           : state.status === "converting"
                             ? "Converting your file"
                             : "Convert file"}
-          </span>
-          {!isBusy ? <ArrowIcon className="convert-arrow" /> : null}
-        </button>
+            </span>
+
+            {!isBusy ? <ArrowIcon className="convert-arrow" /> : null}
+          </button>
+        )}
+
+        {state.status === "completed" ? (
+          <button
+            className="convert-another-button"
+            type="button"
+            onClick={reset}
+          >
+            Convert another file
+          </button>
+        ) : null}
 
         <div
           className={`conversion-status ${statusTone}`}
@@ -637,12 +659,6 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
           >
             <span />
           </span>
-          {state.status === "completed" && state.downloadUrl ? (
-            <a className="status-action" href={state.downloadUrl} download>
-              Download file
-              <ArrowIcon />
-            </a>
-          ) : null}
           {state.status === "failed" && state.retryable ? (
             <button
               className="status-action"
