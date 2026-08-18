@@ -95,7 +95,22 @@ export const FORMATS = {
     extensions: ["mp3"],
     accent: "violet",
   },
-
+  mp4: {
+    id: "mp4",
+    label: "MP4",
+    name: "MP4 video",
+    family: "video",
+    extensions: ["mp4"],
+    accent: "violet",
+  },
+  webm: {
+    id: "webm",
+    label: "WEBM",
+    name: "WebM video",
+    family: "video",
+    extensions: ["webm"],
+    accent: "violet",
+  },
   wav: {
     id: "wav",
     label: "WAV",
@@ -108,7 +123,7 @@ export const FORMATS = {
 
 export type FormatId = keyof typeof FORMATS;
 export type FormatFamily =
-  "documents" | "images" | "spreadsheets" | "presentations" | "audio";
+  "documents" | "images" | "spreadsheets" | "presentations" | "audio" | "video";
 
 export interface ConversionPair {
   slug: string;
@@ -134,6 +149,10 @@ export const CONVERSION_PAIRS: readonly ConversionPair[] = [
 
   { slug: "mp3-to-wav", source: "mp3", target: "wav", popular: true },
   { slug: "wav-to-mp3", source: "wav", target: "mp3", popular: true },
+
+  { slug: "mp4-to-webm", source: "mp4", target: "webm", popular: true },
+
+  { slug: "webm-to-mp4", source: "webm", target: "mp4", popular: true },
 ] as const;
 
 export const FORMAT_FAMILIES: readonly {
@@ -165,6 +184,11 @@ export const FORMAT_FAMILIES: readonly {
     id: "presentations",
     label: "Presentations",
     formats: ["pptx"],
+  },
+  {
+    id: "video",
+    label: "Video",
+    formats: ["mp4", "webm"],
   },
 ] as const;
 
