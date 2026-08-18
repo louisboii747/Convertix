@@ -7,9 +7,12 @@ import tempfile
 import time
 from pathlib import Path
 
-import boto3
-from botocore.exceptions import BotoCoreError, ClientError
-
+import boto3  # pyright: ignore[reportMissingImports]
+from botocore.exceptions import (  # pyright: ignore[reportMissingImports]
+    BotoCoreError,
+    ClientError,
+)
+from PIL import Image
 
 QUEUE_URL = os.environ.get("QUEUE_URL")
 AWS_REGION = os.environ.get("AWS_REGION", "eu-west-2")
@@ -72,7 +75,7 @@ def convert_docx_to_pdf(
             flush=True,
         )
 
-        result = subprocess.run(
+        result = subprocess.run(  # noqa: UP022
             command,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -124,6 +127,110 @@ def convert_docx_to_pdf(
     return output_key
 
 
+def convert_image(
+    s3,
+    conversion_id: str,
+    source_format: str,
+    target_format: str,
+    input_key: str,
+) -> str:
+    format_aliases = {
+        "jpg": "JPEG",
+        "jpeg": "JPEG",
+        "png": "PNG",
+        "webp": "WEBP",
+    }
+
+    content_types = {
+        "jpg": "image/jpeg",
+        "jpeg": "image/jpeg",
+        "png": "image/png",
+        "webp": "image/webp",
+    }
+
+    output_extensions = {
+        "jpg": "jpg",
+        "jpeg": "jpg",
+        "png": "png",
+        "webp": "webp",
+    }
+
+    if source_format not in format_aliases:
+        raise ValueError(f"Unsupported image source format: {source_format}")
+
+    if target_format not in format_aliases:
+        raise ValueError(f"Unsupported image target format: {target_format}")
+
+    output_extension = output_extensions[target_format]
+    output_key = f"conversions/{conversion_id}/output.{output_extension}"
+
+    with tempfile.TemporaryDirectory(prefix="convertix-") as temp_dir:
+        temp_path = Path(temp_dir)
+
+        input_path = temp_path / f"input.{source_format}"
+        output_path = temp_path / f"output.{output_extension}"
+
+        print(
+            f"Downloading s3://{STORAGE_BUCKET}/{input_key}",
+            flush=True,
+        )
+
+        s3.download_file(
+            STORAGE_BUCKET,
+            input_key,
+            str(input_path),
+        )
+
+        print(
+            f"Converting image {source_format} -> {target_format}",
+            flush=True,
+        )
+
+        with Image.open(input_path) as image:
+            image.load()
+
+            if target_format in {"jpg", "jpeg"}:
+                if image.mode in {"RGBA", "LA"} or (
+                    image.mode == "P" and "transparency" in image.info
+                ):
+                    background = Image.new("RGB", image.size, "white")
+
+                    if image.mode != "RGBA":
+                        image = image.convert("RGBA")
+
+                    background.paste(image, mask=image.getchannel("A"))
+                    image = background
+
+                elif image.mode != "RGB":
+                    image = image.convert("RGB")
+
+            image.save(
+                output_path,
+                format=format_aliases[target_format],
+            )
+
+        if not output_path.exists():
+            raise RuntimeError(
+                f"Image conversion reported success but {output_path} was not created"
+            )
+
+        s3.upload_file(
+            str(output_path),
+            STORAGE_BUCKET,
+            output_key,
+            ExtraArgs={
+                "ContentType": content_types[target_format],
+            },
+        )
+
+        print(
+            f"Uploaded converted image: {output_key}",
+            flush=True,
+        )
+
+    return output_key
+
+
 def process_conversion(
     s3,
     conversion_id: str,
@@ -138,6 +245,21 @@ def process_conversion(
         return convert_docx_to_pdf(
             s3=s3,
             conversion_id=conversion_id,
+            input_key=input_key,
+        )
+
+    image_formats = {"png", "jpg", "jpeg", "webp"}
+
+    if (
+        source_format in image_formats
+        and target_format in image_formats
+        and source_format != target_format
+    ):
+        return convert_image(
+            s3=s3,
+            conversion_id=conversion_id,
+            source_format=source_format,
+            target_format=target_format,
             input_key=input_key,
         )
 
@@ -298,7 +420,7 @@ def main() -> int:
                 flush=True,
             )
 
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             print(
                 (
                     f"Unexpected error while processing SQS message "
