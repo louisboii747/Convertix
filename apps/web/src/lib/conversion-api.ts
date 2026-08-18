@@ -1,4 +1,8 @@
-import type { FormatId } from "@/lib/formats";
+import {
+  getConversionPair,
+  isConversionPairEnabled,
+  type FormatId,
+} from "@/lib/formats";
 
 export type ConversionStatus =
   | "idle"
@@ -72,9 +76,6 @@ const apiBaseUrl = process.env.NEXT_PUBLIC_CONVERTIX_API_URL?.trim().replace(
   "",
 );
 
-const DOCX_CONTENT_TYPE =
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-
 export function getSubmissionReadiness(): SubmissionReadiness {
   if (!apiBaseUrl) {
     return {
@@ -147,15 +148,15 @@ export async function createConversion(
     throw new ConversionApiError(readiness.message);
   }
 
-  // The AWS worker currently supports the first real route:
-  // DOCX -> PDF.
-  if (request.source_format !== "docx" || request.target_format !== "pdf") {
+  const pair = getConversionPair(request.source_format, request.target_format);
+
+  if (!pair || !isConversionPairEnabled(pair)) {
     throw new ConversionApiError(
       "That conversion route isn’t available on the live service yet.",
     );
   }
 
-  const contentType = file.type || DOCX_CONTENT_TYPE;
+  const contentType = file.type || "application/octet-stream";
 
   onStatus?.("uploading");
 

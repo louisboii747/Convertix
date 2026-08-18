@@ -101,13 +101,51 @@ export interface ConversionPair {
 }
 
 export const CONVERSION_PAIRS: readonly ConversionPair[] = [
-  { slug: "docx-to-pdf", source: "docx", target: "pdf", popular: true },
-  { slug: "pdf-to-docx", source: "pdf", target: "docx", popular: true },
-  { slug: "png-to-jpg", source: "png", target: "jpg", popular: true },
-  { slug: "jpg-to-png", source: "jpg", target: "png", popular: false },
-  { slug: "xlsx-to-csv", source: "xlsx", target: "csv", popular: false },
-  { slug: "csv-to-xlsx", source: "csv", target: "xlsx", popular: false },
-  { slug: "pptx-to-pdf", source: "pptx", target: "pdf", popular: true },
+  // Documents
+  {
+    slug: "docx-to-pdf",
+    source: "docx",
+    target: "pdf",
+    popular: true,
+  },
+
+  // Images
+  {
+    slug: "png-to-jpg",
+    source: "png",
+    target: "jpg",
+    popular: true,
+  },
+  {
+    slug: "png-to-webp",
+    source: "png",
+    target: "webp",
+    popular: true,
+  },
+  {
+    slug: "jpg-to-png",
+    source: "jpg",
+    target: "png",
+    popular: true,
+  },
+  {
+    slug: "jpg-to-webp",
+    source: "jpg",
+    target: "webp",
+    popular: false,
+  },
+  {
+    slug: "webp-to-png",
+    source: "webp",
+    target: "png",
+    popular: false,
+  },
+  {
+    slug: "webp-to-jpg",
+    source: "webp",
+    target: "jpg",
+    popular: false,
+  },
 ] as const;
 
 export const FORMAT_FAMILIES: readonly {

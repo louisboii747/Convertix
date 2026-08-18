@@ -3,10 +3,9 @@ import logging
 import os
 import uuid
 
-import boto3
-from botocore.config import Config
-from botocore.exceptions import ClientError
-
+import boto3  # pyright: ignore[reportMissingImports]
+from botocore.config import Config  # pyright: ignore[reportMissingImports]
+from botocore.exceptions import ClientError  # pyright: ignore[reportMissingImports]
 
 # Environment variables
 STORAGE_BUCKET = os.environ.get("STORAGE_BUCKET")
