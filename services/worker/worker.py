@@ -419,8 +419,7 @@ def convert_audio(
 
         result = subprocess.run(
             command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
             text=True,
             timeout=600,
             check=False,
@@ -457,6 +456,130 @@ def convert_audio(
 
         print(
             f"Uploaded converted audio: {output_key}",
+            flush=True,
+        )
+
+    return output_key
+
+
+def convert_video(
+    s3,
+    conversion_id: str,
+    source_format: str,
+    target_format: str,
+    input_key: str,
+) -> str:
+    video_formats = {"mp4", "webm"}
+
+    if source_format not in video_formats:
+        raise ValueError(f"Unsupported video source format: {source_format}")
+
+    if target_format not in video_formats:
+        raise ValueError(f"Unsupported video target format: {target_format}")
+
+    if source_format == target_format:
+        raise ValueError(
+            f"Video source and target formats are identical: {source_format}"
+        )
+
+    content_types = {
+        "mp4": "video/mp4",
+        "webm": "video/webm",
+    }
+
+    output_key = f"conversions/{conversion_id}/output.{target_format}"
+
+    with tempfile.TemporaryDirectory(prefix="convertix-") as temp_dir:
+        temp_path = Path(temp_dir)
+
+        input_path = temp_path / f"input.{source_format}"
+        output_path = temp_path / f"output.{target_format}"
+
+        print(
+            f"Downloading s3://{STORAGE_BUCKET}/{input_key}",
+            flush=True,
+        )
+
+        s3.download_file(
+            STORAGE_BUCKET,
+            input_key,
+            str(input_path),
+        )
+
+        if target_format == "webm":
+            command = [
+                "ffmpeg",
+                "-y",
+                "-i",
+                str(input_path),
+                "-c:v",
+                "libvpx-vp9",
+                "-c:a",
+                "libopus",
+                str(output_path),
+            ]
+
+        else:
+            command = [
+                "ffmpeg",
+                "-y",
+                "-i",
+                str(input_path),
+                "-c:v",
+                "libx264",
+                "-c:a",
+                "aac",
+                "-movflags",
+                "+faststart",
+                str(output_path),
+            ]
+
+        print(
+            f"Running FFmpeg video conversion "
+            f"{source_format} -> {target_format} "
+            f"for {conversion_id}...",
+            flush=True,
+        )
+
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            timeout=1800,
+            check=False,
+        )
+
+        if result.stdout:
+            print(
+                f"FFmpeg stdout: {result.stdout.strip()}",
+                flush=True,
+            )
+
+        if result.stderr:
+            print(
+                f"FFmpeg stderr: {result.stderr.strip()}",
+                flush=True,
+            )
+
+        if result.returncode != 0:
+            raise RuntimeError(f"FFmpeg exited with code {result.returncode}")
+
+        if not output_path.exists():
+            raise RuntimeError(
+                f"FFmpeg reported success but {output_path} was not created"
+            )
+
+        s3.upload_file(
+            str(output_path),
+            STORAGE_BUCKET,
+            output_key,
+            ExtraArgs={
+                "ContentType": content_types[target_format],
+            },
+        )
+
+        print(
+            f"Uploaded converted video: {output_key}",
             flush=True,
         )
 
@@ -518,6 +641,20 @@ def process_conversion(
             input_key=input_key,
         )
 
+    video_formats = {"mp4", "webm"}
+
+    if (
+        source_format in video_formats
+        and target_format in video_formats
+        and source_format != target_format
+    ):
+        return convert_video(
+            s3=s3,
+            conversion_id=conversion_id,
+            source_format=source_format,
+            target_format=target_format,
+            input_key=input_key,
+        )
     raise ValueError(f"Unsupported conversion: {source_format} -> {target_format}")
 
 
