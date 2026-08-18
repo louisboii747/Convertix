@@ -127,6 +127,115 @@ def convert_docx_to_pdf(
     return output_key
 
 
+def convert_txt_document(
+    s3,
+    conversion_id: str,
+    target_format: str,
+    input_key: str,
+) -> str:
+    output_formats = {
+        "pdf": {
+            "extension": "pdf",
+            "libreoffice_format": "pdf:writer_pdf_Export",
+            "content_type": "application/pdf",
+        },
+        "docx": {
+            "extension": "docx",
+            "libreoffice_format": "docx:Office Open XML Text",
+            "content_type": (
+                "application/vnd.openxmlformats-officedocument."
+                "wordprocessingml.document"
+            ),
+        },
+    }
+
+    if target_format not in output_formats:
+        raise ValueError(f"Unsupported TXT target format: {target_format}")
+
+    output_config = output_formats[target_format]
+    output_extension = output_config["extension"]
+
+    output_key = f"conversions/{conversion_id}/output.{output_extension}"
+
+    with tempfile.TemporaryDirectory(prefix="convertix-") as temp_dir:
+        temp_path = Path(temp_dir)
+
+        input_path = temp_path / "input.txt"
+        output_path = temp_path / f"input.{output_extension}"
+
+        print(
+            f"Downloading s3://{STORAGE_BUCKET}/{input_key}",
+            flush=True,
+        )
+
+        s3.download_file(
+            STORAGE_BUCKET,
+            input_key,
+            str(input_path),
+        )
+
+        print(
+            f"Converting TXT -> {target_format.upper()} for {conversion_id}...",
+            flush=True,
+        )
+
+        command = [
+            "libreoffice",
+            "--headless",
+            "--convert-to",
+            output_config["libreoffice_format"],
+            "--outdir",
+            str(temp_path),
+            str(input_path),
+        ]
+
+        result = subprocess.run(  # noqa: UP022
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            timeout=300,
+            check=False,
+        )
+
+        if result.stdout:
+            print(
+                f"LibreOffice stdout: {result.stdout.strip()}",
+                flush=True,
+            )
+
+        if result.stderr:
+            print(
+                f"LibreOffice stderr: {result.stderr.strip()}",
+                file=sys.stderr,
+                flush=True,
+            )
+
+        if result.returncode != 0:
+            raise RuntimeError(f"LibreOffice exited with code {result.returncode}")
+
+        if not output_path.exists():
+            raise RuntimeError(
+                f"LibreOffice reported success but {output_path} was not created"
+            )
+
+        s3.upload_file(
+            str(output_path),
+            STORAGE_BUCKET,
+            output_key,
+            ExtraArgs={
+                "ContentType": output_config["content_type"],
+            },
+        )
+
+        print(
+            f"Uploaded converted document: {output_key}",
+            flush=True,
+        )
+
+    return output_key
+
+
 def convert_image(
     s3,
     conversion_id: str,
@@ -245,6 +354,14 @@ def process_conversion(
         return convert_docx_to_pdf(
             s3=s3,
             conversion_id=conversion_id,
+            input_key=input_key,
+        )
+
+    if source_format == "txt" and target_format in {"pdf", "docx"}:
+        return convert_txt_document(
+            s3=s3,
+            conversion_id=conversion_id,
+            target_format=target_format,
             input_key=input_key,
         )
 

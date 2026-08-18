@@ -101,51 +101,19 @@ export interface ConversionPair {
 }
 
 export const CONVERSION_PAIRS: readonly ConversionPair[] = [
-  // Documents
-  {
-    slug: "docx-to-pdf",
-    source: "docx",
-    target: "pdf",
-    popular: true,
-  },
+  { slug: "docx-to-pdf", source: "docx", target: "pdf", popular: true },
 
-  // Images
-  {
-    slug: "png-to-jpg",
-    source: "png",
-    target: "jpg",
-    popular: true,
-  },
-  {
-    slug: "png-to-webp",
-    source: "png",
-    target: "webp",
-    popular: true,
-  },
-  {
-    slug: "jpg-to-png",
-    source: "jpg",
-    target: "png",
-    popular: true,
-  },
-  {
-    slug: "jpg-to-webp",
-    source: "jpg",
-    target: "webp",
-    popular: false,
-  },
-  {
-    slug: "webp-to-png",
-    source: "webp",
-    target: "png",
-    popular: false,
-  },
-  {
-    slug: "webp-to-jpg",
-    source: "webp",
-    target: "jpg",
-    popular: false,
-  },
+  { slug: "txt-to-pdf", source: "txt", target: "pdf", popular: true },
+  { slug: "txt-to-docx", source: "txt", target: "docx", popular: false },
+
+  { slug: "png-to-jpg", source: "png", target: "jpg", popular: true },
+  { slug: "png-to-webp", source: "png", target: "webp", popular: true },
+
+  { slug: "jpg-to-png", source: "jpg", target: "png", popular: true },
+  { slug: "jpg-to-webp", source: "jpg", target: "webp", popular: false },
+
+  { slug: "webp-to-png", source: "webp", target: "png", popular: false },
+  { slug: "webp-to-jpg", source: "webp", target: "jpg", popular: false },
 ] as const;
 
 export const FORMAT_FAMILIES: readonly {

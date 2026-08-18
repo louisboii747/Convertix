@@ -49,6 +49,8 @@ SUPPORTED_FORMATS = {
 # Conversion routes that are actually implemented
 SUPPORTED_CONVERSIONS = {
     ("docx", "pdf"),
+    ("txt", "pdf"),
+    ("txt", "docx"),
     ("png", "jpg"),
     ("png", "jpeg"),
     ("png", "webp"),
@@ -69,6 +71,7 @@ UPLOAD_FORMATS = {
     "jpg",
     "jpeg",
     "webp",
+    "txt",
 }
 
 
