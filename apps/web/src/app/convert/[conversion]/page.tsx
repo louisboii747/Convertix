@@ -13,7 +13,9 @@ interface ConversionPageProps {
 }
 
 export function generateStaticParams() {
-  return CONVERSION_PAIRS.map((pair) => ({ conversion: pair.slug }));
+  return CONVERSION_PAIRS.map((pair) => ({
+    conversion: pair.slug,
+  }));
 }
 
 export async function generateMetadata({
@@ -30,15 +32,51 @@ export async function generateMetadata({
   const target = FORMATS[pair.target].label;
   const enabled = isConversionPairEnabled(pair);
 
+  const title = `${source} to ${target} Converter – Free Online Conversion`;
+
+  const description =
+    `Convert ${source} files to ${target} online with Convertix. ` +
+    `Upload your file, convert it using a simple workflow, and download the result.`;
+
   return {
-    title: `${source} to ${target} Converter`,
-    description: `Convert ${source} files to ${target} online with Convertix. Fast, simple file conversion with a clear step-by-step workflow.`,
+    title,
+
+    description,
+
     alternates: {
       canonical: `/convert/${pair.slug}`,
     },
+
     robots: enabled
-      ? { index: true, follow: true }
-      : { index: false, follow: true },
+      ? {
+          index: true,
+          follow: true,
+          googleBot: {
+            index: true,
+            follow: true,
+            "max-image-preview": "large",
+            "max-snippet": -1,
+            "max-video-preview": -1,
+          },
+        }
+      : {
+          index: false,
+          follow: true,
+        },
+
+    openGraph: {
+      type: "website",
+      url: `/convert/${pair.slug}`,
+      title: `${source} to ${target} Converter`,
+      description: `Convert ${source} files to ${target} online with Convertix using a simple, straightforward workflow.`,
+      siteName: "Convertix",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: `${source} to ${target} Converter`,
+      description: `Convert ${source} files to ${target} online with Convertix.`,
+    },
   };
 }
 

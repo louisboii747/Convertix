@@ -52,21 +52,14 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
   );
   const routeEnabled = pair ? isConversionPairEnabled(pair) : true;
   const pageTitle = pair
-    ? `Convert ${FORMATS[pair.source].label} to ${FORMATS[pair.target].label} without the fuss.`
+    ? `Convert ${FORMATS[pair.source].label} to ${FORMATS[pair.target].label} online.`
     : "Convert files without the fuss.";
-  const pageDescription = pair
-    ? `Choose a ${FORMATS[pair.source].label} file and follow one clear route to ${FORMATS[pair.target].label}. ${routeEnabled ? "This conversion is ready to use." : "This conversion isn’t available yet."}`
-    : "Choose a file, see its format, pick an available destination, and follow every step in one clear place.";
 
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    name: "Convertix",
-    applicationCategory: "UtilitiesApplication",
-    operatingSystem: "Any",
-    description:
-      "A simple, accessible way to follow available file conversions.",
-  };
+  const pageDescription = pair
+    ? routeEnabled
+      ? `Convert ${FORMATS[pair.source].label} files to ${FORMATS[pair.target].label} online with Convertix. Upload your file, follow the conversion progress, and download the converted result when it’s ready.`
+      : `${FORMATS[pair.source].label} to ${FORMATS[pair.target].label} is a recognised Convertix conversion route, but it isn’t available yet.`
+    : "Choose a file, see its format, pick an available destination, and follow every step in one clear place.";
 
   const faqStructuredData = {
     "@context": "https://schema.org",
@@ -256,10 +249,6 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
         </p>
       </footer>
 
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}

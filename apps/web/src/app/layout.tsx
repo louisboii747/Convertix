@@ -21,28 +21,57 @@ const siteUrl =
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+
   title: {
-    default: "Convertix — Convert files without the fuss",
+    default: "Convertix — Free Online File Converter",
     template: "%s — Convertix",
   },
+
   description:
-    "A simple, accessible file conversion experience with no account required for basic conversions.",
+    "Convert files online with Convertix. Upload a file, choose an available format, and download the converted result with a simple, secure conversion workflow.",
+
   applicationName: "Convertix",
+
+  keywords: [
+    "file converter",
+    "online file converter",
+    "free file converter",
+    "convert files online",
+    "DOCX to PDF",
+    "document converter",
+    "image converter",
+  ],
+
   alternates: {
     canonical: "/",
   },
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+
   openGraph: {
     type: "website",
-    title: "Convertix — Convert files without the fuss",
-    description:
-      "Choose a file, select an available format, and follow one clear conversion route.",
+    url: "/",
     siteName: "Convertix",
+    title: "Convertix — Free Online File Converter",
+    description:
+      "Convert files online with a simple, secure workflow. Upload a file, choose an available format, and download the result.",
   },
+
   twitter: {
     card: "summary_large_image",
-    title: "Convertix — Convert files without the fuss",
+    title: "Convertix — Free Online File Converter",
     description:
-      "Choose a file, select an available format, and follow one clear conversion route.",
+      "Convert files online with a simple, secure workflow. Upload a file, choose an available format, and download the result.",
   },
 };
 
@@ -55,6 +84,22 @@ FORM: Familiar consumer convention at full craft, approved Single Flow compositi
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
 -->`;
 
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Convertix",
+  url: siteUrl,
+  applicationCategory: "UtilitiesApplication",
+  operatingSystem: "Web",
+  description:
+    "Convert files online with Convertix using a simple, secure conversion workflow.",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "GBP",
+  },
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -63,6 +108,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${displayFont.variable} ${bodyFont.variable}`}>
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(structuredData),
+          }}
+        />
         <div
           className="direction-contract"
           aria-hidden="true"
