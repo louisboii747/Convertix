@@ -8,7 +8,8 @@
     "start": "next start",
     "format": "prettier --write .",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "npm run lint && npm run typecheck"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
