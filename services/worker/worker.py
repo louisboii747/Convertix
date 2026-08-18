@@ -340,6 +340,129 @@ def convert_image(
     return output_key
 
 
+def convert_audio(
+    s3,
+    conversion_id: str,
+    source_format: str,
+    target_format: str,
+    input_key: str,
+) -> str:
+    audio_formats = {"mp3", "wav"}
+
+    if source_format not in audio_formats:
+        raise ValueError(f"Unsupported audio source format: {source_format}")
+
+    if target_format not in audio_formats:
+        raise ValueError(f"Unsupported audio target format: {target_format}")
+
+    if source_format == target_format:
+        raise ValueError(
+            f"Audio source and target formats are identical: {source_format}"
+        )
+
+    content_types = {
+        "mp3": "audio/mpeg",
+        "wav": "audio/wav",
+    }
+
+    output_key = f"conversions/{conversion_id}/output.{target_format}"
+
+    with tempfile.TemporaryDirectory(prefix="convertix-") as temp_dir:
+        temp_path = Path(temp_dir)
+
+        input_path = temp_path / f"input.{source_format}"
+        output_path = temp_path / f"output.{target_format}"
+
+        print(
+            f"Downloading s3://{STORAGE_BUCKET}/{input_key}",
+            flush=True,
+        )
+
+        s3.download_file(
+            STORAGE_BUCKET,
+            input_key,
+            str(input_path),
+        )
+
+        if target_format == "wav":
+            command = [
+                "ffmpeg",
+                "-y",
+                "-i",
+                str(input_path),
+                "-vn",
+                "-c:a",
+                "pcm_s16le",
+                str(output_path),
+            ]
+
+        else:
+            command = [
+                "ffmpeg",
+                "-y",
+                "-i",
+                str(input_path),
+                "-vn",
+                "-c:a",
+                "libmp3lame",
+                "-q:a",
+                "2",
+                str(output_path),
+            ]
+
+        print(
+            f"Running FFmpeg conversion "
+            f"{source_format} -> {target_format} "
+            f"for {conversion_id}...",
+            flush=True,
+        )
+
+        result = subprocess.run(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            timeout=600,
+            check=False,
+        )
+
+        if result.stdout:
+            print(
+                f"FFmpeg stdout: {result.stdout.strip()}",
+                flush=True,
+            )
+
+        if result.stderr:
+            print(
+                f"FFmpeg stderr: {result.stderr.strip()}",
+                flush=True,
+            )
+
+        if result.returncode != 0:
+            raise RuntimeError(f"FFmpeg exited with code {result.returncode}")
+
+        if not output_path.exists():
+            raise RuntimeError(
+                f"FFmpeg reported success but {output_path} was not created"
+            )
+
+        s3.upload_file(
+            str(output_path),
+            STORAGE_BUCKET,
+            output_key,
+            ExtraArgs={
+                "ContentType": content_types[target_format],
+            },
+        )
+
+        print(
+            f"Uploaded converted audio: {output_key}",
+            flush=True,
+        )
+
+    return output_key
+
+
 def process_conversion(
     s3,
     conversion_id: str,
@@ -373,6 +496,21 @@ def process_conversion(
         and source_format != target_format
     ):
         return convert_image(
+            s3=s3,
+            conversion_id=conversion_id,
+            source_format=source_format,
+            target_format=target_format,
+            input_key=input_key,
+        )
+
+    audio_formats = {"mp3", "wav"}
+
+    if (
+        source_format in audio_formats
+        and target_format in audio_formats
+        and source_format != target_format
+    ):
+        return convert_audio(
             s3=s3,
             conversion_id=conversion_id,
             source_format=source_format,

@@ -61,6 +61,8 @@ SUPPORTED_CONVERSIONS = {
     ("webp", "png"),
     ("webp", "jpg"),
     ("webp", "jpeg"),
+    ("mp3", "wav"),
+    ("wav", "mp3"),
 }
 
 
@@ -72,6 +74,8 @@ UPLOAD_FORMATS = {
     "jpeg",
     "webp",
     "txt",
+    "mp3",
+    "wav",
 }
 
 

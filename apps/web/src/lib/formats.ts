@@ -87,11 +87,28 @@ export const FORMATS = {
     extensions: ["pptx"],
     accent: "orange",
   },
+  mp3: {
+    id: "mp3",
+    label: "MP3",
+    name: "MP3 audio",
+    family: "audio",
+    extensions: ["mp3"],
+    accent: "violet",
+  },
+
+  wav: {
+    id: "wav",
+    label: "WAV",
+    name: "WAV audio",
+    family: "audio",
+    extensions: ["wav"],
+    accent: "violet",
+  },
 } as const;
 
 export type FormatId = keyof typeof FORMATS;
 export type FormatFamily =
-  "documents" | "images" | "spreadsheets" | "presentations";
+  "documents" | "images" | "spreadsheets" | "presentations" | "audio";
 
 export interface ConversionPair {
   slug: string;
@@ -114,6 +131,9 @@ export const CONVERSION_PAIRS: readonly ConversionPair[] = [
 
   { slug: "webp-to-png", source: "webp", target: "png", popular: false },
   { slug: "webp-to-jpg", source: "webp", target: "jpg", popular: false },
+
+  { slug: "mp3-to-wav", source: "mp3", target: "wav", popular: true },
+  { slug: "wav-to-mp3", source: "wav", target: "mp3", popular: true },
 ] as const;
 
 export const FORMAT_FAMILIES: readonly {
@@ -130,6 +150,11 @@ export const FORMAT_FAMILIES: readonly {
     id: "images",
     label: "Images",
     formats: ["jpg", "png", "webp"],
+  },
+  {
+    id: "audio",
+    label: "Audio",
+    formats: ["mp3", "wav"],
   },
   {
     id: "spreadsheets",
