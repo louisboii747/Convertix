@@ -1,0 +1,78 @@
+name: Bug report
+description: Report something in Convertix that is broken or behaving unexpectedly.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a problem with Convertix. Please include enough detail for the issue to be reproduced.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the problem and what you expected instead.
+      placeholder: Tell us what went wrong.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Give the smallest reliable set of steps that reproduces the issue.
+      placeholder: |
+        1. Go to ...
+        2. Upload ...
+        3. Convert to ...
+        4. See error ...
+    validations:
+      required: true
+
+  - type: input
+    id: conversion
+    attributes:
+      label: Conversion type
+      description: If relevant, tell us the source and target formats.
+      placeholder: e.g. DOCX -> PDF
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Web frontend
+        - API
+        - Worker / conversion engine
+        - AWS infrastructure
+        - Supabase / database
+        - CI / GitHub Actions
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser, operating system, deployment environment, or other relevant details.
+      placeholder: e.g. Chrome 140 on Windows 11, convertix.uk
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: Paste relevant logs or attach screenshots. Remove secrets or personal information first.
+      render: shell
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for duplicates.
+          required: true
+        - label: I removed secrets, credentials, and sensitive data from any logs.
+          required: true

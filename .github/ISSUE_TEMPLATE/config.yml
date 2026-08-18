@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Convertix website
+    url: https://convertix.uk
+    about: Check the live Convertix site before reporting availability or deployment issues.
