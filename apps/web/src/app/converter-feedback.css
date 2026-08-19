@@ -1,0 +1,95 @@
+.file-drop {
+  transform: translateY(0);
+  transition:
+    border-color 180ms var(--ease-out),
+    background 180ms var(--ease-out),
+    box-shadow 180ms var(--ease-out),
+    transform 180ms var(--ease-out);
+}
+
+.file-drop .file-drop-icon {
+  transition:
+    background 180ms var(--ease-out),
+    color 180ms var(--ease-out),
+    box-shadow 180ms var(--ease-out),
+    transform 180ms var(--ease-out);
+}
+
+.file-drop .file-drop-copy strong,
+.file-drop .file-drop-copy span {
+  transition:
+    color 180ms var(--ease-out),
+    transform 180ms var(--ease-out);
+}
+
+.file-drop.is-dragging {
+  border-width: 2px;
+  border-color: var(--cobalt);
+  background: #f0f4ff;
+  box-shadow:
+    0 0 0 4px rgba(49, 92, 245, 0.12),
+    0 18px 38px -28px rgba(35, 75, 217, 0.72);
+  transform: translateY(-2px);
+}
+
+.file-drop.is-dragging::before {
+  border-color: rgba(49, 92, 245, 0.34);
+}
+
+.file-drop.is-dragging .file-drop-icon {
+  background: var(--cobalt);
+  color: white;
+  box-shadow: 0 10px 22px -14px rgba(35, 75, 217, 0.9);
+  transform: translateY(-3px) scale(1.08);
+}
+
+.file-drop.is-dragging .file-drop-copy strong {
+  color: var(--cobalt-dark);
+  transform: translateX(2px);
+}
+
+.file-drop.is-dragging .file-drop-copy span {
+  color: var(--ink-800);
+  transform: translateX(2px);
+}
+
+.file-drop.is-dragging .file-picker-button {
+  opacity: 0.72;
+}
+
+.file-drop.has-file {
+  border-style: solid;
+  border-color: #b9d9c7;
+  background: #fbfefc;
+  box-shadow: inset 0 0 0 1px rgba(23, 96, 60, 0.04);
+  animation: file-accepted 320ms var(--ease-out);
+}
+
+.file-drop.has-file .file-drop-icon {
+  background: var(--mint);
+  color: var(--mint-ink);
+}
+
+.file-drop.has-file .selected-file-copy span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.file-drop.has-file .selected-file-copy span::before {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #218a59;
+  content: "";
+}
+
+@keyframes file-accepted {
+  0% {
+    transform: scale(0.992);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
