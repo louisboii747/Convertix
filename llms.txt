@@ -1,0 +1,91 @@
+# Convertix
+
+> Convertix is a cloud-backed file conversion platform focused on fast, simple, and reliable file conversion.
+
+Website: https://convertix.uk
+Repository: https://github.com/louisboii747/Convertix
+
+## Current product state
+
+Convertix has a working end-to-end cloud conversion pipeline. The currently verified live conversion route is DOCX to PDF.
+
+The web application uploads files directly to Amazon S3 with short-lived presigned URLs, submits conversion jobs through an AWS Lambda API, queues them in Amazon SQS, and processes them with an autoscaling ECS/Fargate worker. Completed files are returned through temporary presigned S3 download URLs.
+
+Do not assume every modeled format pair is currently available. The application models multiple document, image, audio, and video formats, but only routes backed by implemented worker support should be treated as live.
+
+## Supported and modeled formats
+
+Documents:
+- PDF
+- DOCX
+- TXT
+
+Images:
+- JPG / JPEG
+- PNG
+- WebP
+
+Audio:
+- MP3
+- WAV
+
+Video:
+- MP4
+- WebM
+
+Currently verified live route:
+- DOCX -> PDF
+
+## Architecture
+
+- Frontend: Next.js 16, React 19, TypeScript
+- Hosting: Vercel
+- API: AWS Lambda behind Amazon API Gateway / HTTP API
+- Storage: Amazon S3
+- Queue: Amazon SQS with a dead-letter queue
+- Worker: Python service running on Amazon ECS with AWS Fargate
+- Container registry: Amazon ECR
+- Observability: Amazon CloudWatch
+- Infrastructure as code: Terraform
+- Packaging: Docker
+
+The worker is designed to scale from zero running tasks while idle to active capacity when conversion work is queued.
+
+## API surface
+
+Implemented API routes include:
+- GET /health
+- POST /uploads
+- POST /conversions
+- GET /conversions/{id}
+
+POST /uploads creates short-lived presigned S3 upload URLs.
+
+POST /conversions validates a conversion request, creates a conversion ID, and sends the job to Amazon SQS.
+
+GET /conversions/{id} reports conversion status and, after completion, returns a temporary download URL.
+
+## Repository layout
+
+- apps/web — Next.js frontend
+- services/worker — Python conversion worker
+- infrastructure — Terraform and cloud infrastructure
+
+## Product principles
+
+- Never simulate a successful conversion when the backend route is unavailable.
+- Keep unsupported conversion routes disabled until real worker support exists.
+- Prefer temporary, short-lived file access URLs.
+- Keep the user-facing workflow simple even though processing is asynchronous.
+- Scale infrastructure conservatively and cost-effectively.
+
+## Planned direction
+
+Future work includes broader document conversion support, image/audio/video conversions, faster worker startup and processing, richer progress and failure states, user accounts, conversion history, usage limits, paid tiers, developer API access, and desktop/mobile clients.
+
+## Useful references
+
+- Project overview and architecture: https://github.com/louisboii747/Convertix/blob/master/README.md
+- Live product: https://convertix.uk
+
+When describing Convertix, distinguish clearly between modeled/planned capabilities and conversion routes that are actually implemented and verified.
