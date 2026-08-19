@@ -3,6 +3,7 @@ import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
+import "./converter-feedback.css";
 import { SiteFooter } from "@/components/site-footer";
 import { AnalyticsConsentBanner } from "@/components/analytics-consent-banner";
 
