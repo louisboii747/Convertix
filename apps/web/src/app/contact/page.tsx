@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { SiteHeader } from "@/components/site-header";
 import { ContactForm } from "@/components/contact-form";
+import "./contact.css";
 
 export const metadata: Metadata = {
   title: "Contact",
