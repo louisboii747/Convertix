@@ -31,6 +31,8 @@ export async function SiteHeader() {
           <Link href="/#how-it-works">How it works</Link>
           <Link href="/#formats">Formats</Link>
           <Link href="/#faq">FAQ</Link>
+          <Link href="/contact">Contact</Link>
+          <Link href="/privacy">Privacy</Link>
 
           {user ? (
             <Link className="site-auth-link" href="/account">
