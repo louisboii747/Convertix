@@ -24,6 +24,7 @@ import {
   type ConversionStatus,
   type CreateConversionResponse,
 } from "@/lib/conversion-api";
+import posthog from "posthog-js";
 import {
   ArrowIcon,
   CheckIcon,
@@ -332,6 +333,13 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
         : (targets[0] ?? null);
 
     dispatch({ type: "select", file, source, target: preferredTarget });
+
+    posthog.capture("file_selected", {
+      source_format: source,
+      target_format: preferredTarget,
+      file_size_bytes: file.size,
+      format_family: FORMATS[source].family,
+    });
   }
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
@@ -360,6 +368,13 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
       controller,
     };
 
+    posthog.capture("conversion_started", {
+      source_format: state.source,
+      target_format: state.target,
+      file_size_bytes: file.size,
+      format_family: state.source ? FORMATS[state.source].family : undefined,
+    });
+
     dispatch({
       type: "status",
       status: "uploading",
@@ -385,6 +400,14 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
 
       if (requestSequenceRef.current !== requestId) return;
 
+      posthog.capture("conversion_completed", {
+        source_format: state.source,
+        target_format: state.target,
+        conversion_id: response.conversion_id,
+        output_size_bytes: response.size,
+        format_family: state.source ? FORMATS[state.source].family : undefined,
+      });
+
       dispatch({
         type: "accepted",
         response,
@@ -398,6 +421,13 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
       }
 
       if (error instanceof ConversionApiError) {
+        posthog.capture("conversion_failed", {
+          source_format: state.source,
+          target_format: state.target,
+          retryable: error.retryable,
+          format_family: state.source ? FORMATS[state.source].family : undefined,
+        });
+
         dispatch({
           type: "failed",
           message: error.message,
@@ -406,6 +436,15 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
 
         return;
       }
+
+      posthog.captureException(error);
+
+      posthog.capture("conversion_failed", {
+        source_format: state.source,
+        target_format: state.target,
+        retryable: false,
+        format_family: state.source ? FORMATS[state.source].family : undefined,
+      });
 
       dispatch({
         type: "failed",
@@ -589,6 +628,14 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
             className="convert-button is-download"
             href={state.downloadUrl}
             download
+            onClick={() =>
+              posthog.capture("file_downloaded", {
+                source_format: state.source,
+                target_format: state.target,
+                conversion_id: state.conversionId,
+                format_family: state.source ? FORMATS[state.source].family : undefined,
+              })
+            }
           >
             <CheckIcon />
             <span>Download converted file</span>

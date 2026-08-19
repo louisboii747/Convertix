@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
+import { getPostHogClient } from "@/lib/posthog-server";
 
 export async function login(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
@@ -14,7 +15,7 @@ export async function login(formData: FormData) {
 
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
@@ -27,6 +28,24 @@ export async function login(formData: FormData) {
     });
 
     redirect("/login?error=invalid_credentials");
+  }
+
+  if (data.user) {
+    const posthog = getPostHogClient();
+    posthog.identify({
+      distinctId: data.user.id,
+      properties: {
+        $set: { email: data.user.email },
+      },
+    });
+    posthog.capture({
+      distinctId: data.user.id,
+      event: "user_logged_in",
+      properties: {
+        provider: data.user.app_metadata?.provider ?? "email",
+      },
+    });
+    await posthog.flush();
   }
 
   redirect("/account");
@@ -73,6 +92,27 @@ export async function signup(formData: FormData) {
     }
 
     redirect("/signup?error=signup_failed");
+  }
+
+  if (data.user) {
+    const posthog = getPostHogClient();
+    posthog.identify({
+      distinctId: data.user.id,
+      properties: {
+        $set: {
+          email: data.user.email,
+          display_name: displayName,
+        },
+      },
+    });
+    posthog.capture({
+      distinctId: data.user.id,
+      event: "user_signed_up",
+      properties: {
+        has_session: Boolean(data.session),
+      },
+    });
+    await posthog.flush();
   }
 
   if (data.session) {
