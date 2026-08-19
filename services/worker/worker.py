@@ -127,6 +127,92 @@ def convert_docx_to_pdf(
     return output_key
 
 
+def convert_xlsx_to_pdf(
+    s3,
+    conversion_id: str,
+    input_key: str,
+) -> str:
+    output_key = f"conversions/{conversion_id}/output.pdf"
+
+    with tempfile.TemporaryDirectory(prefix="convertix-") as temp_dir:
+        temp_path = Path(temp_dir)
+
+        input_path = temp_path / "input.xlsx"
+        output_path = temp_path / "input.pdf"
+
+        print(
+            f"Downloading s3://{STORAGE_BUCKET}/{input_key}",
+            flush=True,
+        )
+
+        s3.download_file(
+            STORAGE_BUCKET,
+            input_key,
+            str(input_path),
+        )
+
+        print(
+            f"Converting XLSX -> PDF for {conversion_id}...",
+            flush=True,
+        )
+
+        command = [
+            "libreoffice",
+            "--headless",
+            "--convert-to",
+            "pdf:calc_pdf_Export",
+            "--outdir",
+            str(temp_path),
+            str(input_path),
+        ]
+
+        result = subprocess.run(  # noqa: UP022
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            timeout=300,
+            check=False,
+        )
+
+        if result.stdout:
+            print(
+                f"LibreOffice stdout: {result.stdout.strip()}",
+                flush=True,
+            )
+
+        if result.stderr:
+            print(
+                f"LibreOffice stderr: {result.stderr.strip()}",
+                file=sys.stderr,
+                flush=True,
+            )
+
+        if result.returncode != 0:
+            raise RuntimeError(f"LibreOffice exited with code {result.returncode}")
+
+        if not output_path.exists():
+            raise RuntimeError(
+                f"LibreOffice reported success but {output_path} was not created"
+            )
+
+        s3.upload_file(
+            str(output_path),
+            STORAGE_BUCKET,
+            output_key,
+            ExtraArgs={
+                "ContentType": "application/pdf",
+            },
+        )
+
+        print(
+            f"Uploaded converted spreadsheet: {output_key}",
+            flush=True,
+        )
+
+    return output_key
+
+
 def convert_txt_document(
     s3,
     conversion_id: str,
@@ -598,6 +684,13 @@ def process_conversion(
 
     if source_format == "docx" and target_format == "pdf":
         return convert_docx_to_pdf(
+            s3=s3,
+            conversion_id=conversion_id,
+            input_key=input_key,
+        )
+
+    if source_format == "xlsx" and target_format == "pdf":
+        return convert_xlsx_to_pdf(
             s3=s3,
             conversion_id=conversion_id,
             input_key=input_key,

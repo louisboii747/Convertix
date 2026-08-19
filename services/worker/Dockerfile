@@ -5,6 +5,7 @@ WORKDIR /app
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         libreoffice-writer \
+        libreoffice-calc \
         ffmpeg \
         fonts-dejavu-core \
         fonts-liberation \

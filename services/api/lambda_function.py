@@ -35,6 +35,7 @@ SUPPORTED_FORMATS = {
     "pdf",
     "docx",
     "txt",
+    "xlsx",
     "png",
     "jpg",
     "jpeg",
@@ -49,6 +50,7 @@ SUPPORTED_FORMATS = {
 # Conversion routes that are actually implemented
 SUPPORTED_CONVERSIONS = {
     ("docx", "pdf"),
+    ("xlsx", "pdf"),
     ("txt", "pdf"),
     ("txt", "docx"),
     ("png", "jpg"),
@@ -71,6 +73,7 @@ SUPPORTED_CONVERSIONS = {
 # File types that can currently be uploaded
 UPLOAD_FORMATS = {
     "docx",
+    "xlsx",
     "png",
     "jpg",
     "jpeg",

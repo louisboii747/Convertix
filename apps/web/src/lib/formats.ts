@@ -138,6 +138,8 @@ export const CONVERSION_PAIRS: readonly ConversionPair[] = [
   { slug: "txt-to-pdf", source: "txt", target: "pdf", popular: true },
   { slug: "txt-to-docx", source: "txt", target: "docx", popular: false },
 
+  { slug: "xlsx-to-pdf", source: "xlsx", target: "pdf", popular: true },
+
   { slug: "png-to-jpg", source: "png", target: "jpg", popular: true },
   { slug: "png-to-webp", source: "png", target: "webp", popular: true },
 
