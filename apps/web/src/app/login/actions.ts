@@ -34,9 +34,6 @@ export async function login(formData: FormData) {
     const posthog = getPostHogClient();
     posthog.identify({
       distinctId: data.user.id,
-      properties: {
-        $set: { email: data.user.email },
-      },
     });
     posthog.capture({
       distinctId: data.user.id,
@@ -98,16 +95,10 @@ export async function signup(formData: FormData) {
     const posthog = getPostHogClient();
     posthog.identify({
       distinctId: data.user.id,
-      properties: {
-        $set: {
-          email: data.user.email,
-          display_name: displayName,
-        },
-      },
     });
     posthog.capture({
       distinctId: data.user.id,
-      event: "user_signed_up",
+      event: "signup_submitted",
       properties: {
         has_session: Boolean(data.session),
       },

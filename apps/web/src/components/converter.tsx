@@ -403,7 +403,6 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
       posthog.capture("conversion_completed", {
         source_format: state.source,
         target_format: state.target,
-        conversion_id: response.conversion_id,
         output_size_bytes: response.size,
         format_family: state.source ? FORMATS[state.source].family : undefined,
       });
@@ -425,7 +424,9 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
           source_format: state.source,
           target_format: state.target,
           retryable: error.retryable,
-          format_family: state.source ? FORMATS[state.source].family : undefined,
+          format_family: state.source
+            ? FORMATS[state.source].family
+            : undefined,
         });
 
         dispatch({
@@ -632,8 +633,9 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
               posthog.capture("file_downloaded", {
                 source_format: state.source,
                 target_format: state.target,
-                conversion_id: state.conversionId,
-                format_family: state.source ? FORMATS[state.source].family : undefined,
+                format_family: state.source
+                  ? FORMATS[state.source].family
+                  : undefined,
               })
             }
           >
