@@ -24,7 +24,7 @@ import {
   type ConversionStatus,
   type CreateConversionResponse,
 } from "@/lib/conversion-api";
-import posthog from "posthog-js";
+import { captureEvent, captureException } from "@/lib/posthog-client";
 import {
   ArrowIcon,
   CheckIcon,
@@ -334,7 +334,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
 
     dispatch({ type: "select", file, source, target: preferredTarget });
 
-    posthog.capture("file_selected", {
+    captureEvent("file_selected", {
       source_format: source,
       target_format: preferredTarget,
       file_size_bytes: file.size,
@@ -368,7 +368,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
       controller,
     };
 
-    posthog.capture("conversion_started", {
+    captureEvent("conversion_started", {
       source_format: state.source,
       target_format: state.target,
       file_size_bytes: file.size,
@@ -400,7 +400,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
 
       if (requestSequenceRef.current !== requestId) return;
 
-      posthog.capture("conversion_completed", {
+      captureEvent("conversion_completed", {
         source_format: state.source,
         target_format: state.target,
         output_size_bytes: response.size,
@@ -420,7 +420,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
       }
 
       if (error instanceof ConversionApiError) {
-        posthog.capture("conversion_failed", {
+        captureEvent("conversion_failed", {
           source_format: state.source,
           target_format: state.target,
           retryable: error.retryable,
@@ -438,9 +438,9 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
         return;
       }
 
-      posthog.captureException(error);
+      captureException(error);
 
-      posthog.capture("conversion_failed", {
+      captureEvent("conversion_failed", {
         source_format: state.source,
         target_format: state.target,
         retryable: false,
@@ -509,7 +509,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
 
         {state.file ? (
           <div className="selected-file-copy">
-            <strong>{state.file.name}</strong>
+            <strong data-ph-mask>{state.file.name}</strong>
             <span>
               {state.source ? FORMATS[state.source].label : "Unknown"} ·{" "}
               {formatFileSize(state.file.size)}
@@ -541,7 +541,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
             className="icon-button remove-file"
             type="button"
             onClick={reset}
-            aria-label={`Remove ${state.file.name}`}
+            aria-label="Remove selected file"
           >
             <CloseIcon />
           </button>
@@ -630,7 +630,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
             href={state.downloadUrl}
             download
             onClick={() =>
-              posthog.capture("file_downloaded", {
+              captureEvent("file_downloaded", {
                 source_format: state.source,
                 target_format: state.target,
                 format_family: state.source

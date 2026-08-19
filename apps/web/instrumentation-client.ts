@@ -1,7 +1,36 @@
 import posthog from "posthog-js";
 
+import {
+  getAnalyticsConsent,
+  type AnalyticsConsent,
+} from "@/lib/analytics-consent";
+
 const token = process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN;
 const host = process.env.NEXT_PUBLIC_POSTHOG_HOST;
+
+let initialized = false;
+
+function initPostHog() {
+  if (initialized || !token) {
+    return;
+  }
+
+  posthog.init(token, {
+    api_host: "/ingest",
+    ui_host: host,
+    defaults: "2026-01-30",
+    capture_exceptions: true,
+    debug: process.env.NODE_ENV === "development",
+  });
+
+  initialized = true;
+}
+
+function applyConsent(consent: AnalyticsConsent | null) {
+  if (consent === "accepted") {
+    initPostHog();
+  }
+}
 
 if (!token) {
   if (process.env.NODE_ENV !== "production") {
@@ -12,16 +41,10 @@ if (!token) {
     );
   }
 } else {
-  posthog.init(token, {
-    api_host: "/ingest",
-    ui_host: host,
-    defaults: "2026-01-30",
-    capture_exceptions: true,
-    debug: process.env.NODE_ENV === "development",
+  applyConsent(getAnalyticsConsent());
+
+  window.addEventListener("convertix:analytics-consent", (event) => {
+    const consent = (event as CustomEvent<AnalyticsConsent>).detail;
+    applyConsent(consent);
   });
 }
-
-// IMPORTANT: Never combine this approach with other client-side PostHog initialization
-// approaches, especially components like a PostHogProvider.
-// instrumentation-client.ts is the correct solution for initializing client-side
-// PostHog in Next.js 15.3+ apps.

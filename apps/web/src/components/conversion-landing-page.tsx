@@ -234,21 +234,6 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
         </section>
       </main>
 
-      <footer className="site-footer">
-        <div className="footer-lead">
-          <span className="footer-wordmark">Convertix</span>
-          <p>Convert your files with ease and speed.</p>
-        </div>
-        <nav aria-label="Footer navigation">
-          <Link href="/#how-it-works">How it works</Link>
-          <Link href="/#formats">Formats</Link>
-          <Link href="/#faq">FAQ</Link>
-        </nav>
-        <p className="footer-note">
-          Availability is always shown before a file can be sent.
-        </p>
-      </footer>
-
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}

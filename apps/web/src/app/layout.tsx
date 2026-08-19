@@ -3,6 +3,8 @@ import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
+import { SiteFooter } from "@/components/site-footer";
+import { AnalyticsConsentBanner } from "@/components/analytics-consent-banner";
 
 const displayFont = Bricolage_Grotesque({
   variable: "--font-display",
@@ -123,6 +125,8 @@ export default function RootLayout({
           Skip to converter
         </a>
         {children}
+        <SiteFooter />
+        <AnalyticsConsentBanner />
         <Analytics />
         <SpeedInsights />
       </body>
