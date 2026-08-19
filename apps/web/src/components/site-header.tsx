@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Brand } from "@/components/brand";
+import { MobileNav } from "@/components/mobile-nav";
 import { createClient } from "@/lib/supabase/server";
 
 export async function SiteHeader() {
@@ -44,6 +45,11 @@ export async function SiteHeader() {
             </Link>
           )}
         </nav>
+
+        <MobileNav
+          isAuthenticated={Boolean(user)}
+          accountLabel={displayName ?? "Account"}
+        />
       </div>
     </header>
   );
