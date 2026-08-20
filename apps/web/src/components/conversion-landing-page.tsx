@@ -3,6 +3,7 @@ import { Converter } from "@/components/converter";
 import { ArrowIcon, DeviceIcon, RouteIcon } from "@/components/icons";
 import { FormatMark } from "@/components/format-mark";
 import { SiteHeader } from "@/components/site-header";
+import { getConversionContent } from "@/lib/conversion-content";
 import {
   FORMAT_FAMILIES,
   FORMATS,
@@ -39,6 +40,7 @@ interface ConversionLandingPageProps {
 
 export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
   const routeEnabled = pair ? isConversionPairEnabled(pair) : true;
+  const conversionContent = pair ? getConversionContent(pair.slug) : null;
   const allEnabledPairs = getEnabledConversionPairs();
   const relatedPairs = pair
     ? allEnabledPairs
@@ -73,6 +75,7 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
             ? `Choose your ${source?.label} file, confirm ${target?.label} as the destination, start the conversion, and download the result when it is ready.`
             : `${source?.label} to ${target?.label} is recognised by Convertix, but this route is not available for processing yet.`,
         },
+        ...(conversionContent?.faq ?? []),
         ...genericFaqItems,
       ]
     : genericFaqItems;
@@ -177,6 +180,27 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
                   <span>PNG</span>
                 </div>
               </div>
+            </div>
+          </section>
+        ) : null}
+
+        {pair && conversionContent ? (
+          <section className="why-section" aria-labelledby="conversion-insights-title">
+            <div className="why-heading">
+              <span className="section-kicker">About this conversion</span>
+              <h2 id="conversion-insights-title">
+                What to know about {source?.label} to {target?.label}.
+              </h2>
+              <p>{conversionContent.intro}</p>
+            </div>
+            <div className="why-points">
+              {conversionContent.highlights.map((highlight) => (
+                <article key={highlight.heading}>
+                  <RouteIcon />
+                  <h3>{highlight.heading}</h3>
+                  <p>{highlight.body}</p>
+                </article>
+              ))}
             </div>
           </section>
         ) : null}
