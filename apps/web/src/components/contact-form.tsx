@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useState } from "react";
 
 type FormStatus = "idle" | "sending" | "success" | "error";
@@ -138,7 +139,7 @@ export function ContactForm() {
 
         <p className="contact-privacy-note">
           Your details are used only to respond to your message. See the{" "}
-          <a href="/privacy">privacy policy</a> for more information.
+          <Link href="/privacy">privacy policy</Link> for more information.
         </p>
       </form>
     </div>
