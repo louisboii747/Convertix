@@ -319,6 +319,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
         }}
         onDrop={handleDrop}
       >
+        <label className="sr-only" htmlFor={inputId}>Choose a file to convert</label>
         <input ref={inputRef} id={inputId} className="sr-only" type="file" tabIndex={-1} accept={ACCEPTED_FILE_EXTENSIONS} onChange={handleInputChange} />
 
         <div className="file-drop-icon" aria-hidden="true">
