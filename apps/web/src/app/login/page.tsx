@@ -66,6 +66,12 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             </div>
           )}
 
+          {error === "oauth_callback_failed" && (
+            <div className="auth-alert" role="alert">
+              Google sign-in couldn&apos;t be completed. Please try again.
+            </div>
+          )}
+
           {error === "email_rate_limit" && (
             <div className="auth-alert" role="alert">
               Too many confirmation emails have been sent recently. Please wait
