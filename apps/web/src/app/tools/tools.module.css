@@ -1,0 +1,151 @@
+.main {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: clamp(48px, 7vw, 84px) 0 88px;
+}
+
+.hero {
+  max-width: 760px;
+  margin-bottom: 36px;
+}
+
+.eyebrow,
+.cardEyebrow {
+  color: var(--cobalt);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  max-width: 16ch;
+  margin: 10px 0 16px;
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(2.6rem, 5vw, 4.4rem);
+  font-weight: 720;
+  letter-spacing: -0.045em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.hero p {
+  max-width: 62ch;
+  margin: 0;
+  color: var(--ink-650);
+  font-size: 1.08rem;
+  line-height: 1.65;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.card,
+.comingSoon {
+  display: flex;
+  min-height: 310px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 26px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+}
+
+.card {
+  box-shadow: var(--shadow-panel);
+  transition:
+    border-color 200ms var(--ease-out),
+    transform 200ms var(--ease-out),
+    box-shadow 200ms var(--ease-out);
+}
+
+.card:hover,
+.card:focus-visible {
+  border-color: #91a9ef;
+  transform: translateY(-3px);
+  box-shadow: 0 28px 60px -36px rgba(29, 51, 94, 0.42);
+}
+
+.cardTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.arrow {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--cobalt-soft);
+  color: var(--cobalt);
+  font-size: 21px;
+  font-weight: 800;
+  transition: transform 200ms var(--ease-out);
+}
+
+.card:hover .arrow,
+.card:focus-visible .arrow {
+  transform: translateX(3px);
+}
+
+.card h2,
+.comingSoon h2 {
+  margin: 0 0 10px;
+  font-family: var(--font-display), sans-serif;
+  font-size: clamp(1.65rem, 3vw, 2.15rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.card p,
+.comingSoon p {
+  margin: 0;
+  color: var(--ink-650);
+  line-height: 1.6;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 28px;
+}
+
+.meta span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: var(--cobalt-soft);
+  color: var(--cobalt-dark);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.comingSoon {
+  border-style: dashed;
+  background: transparent;
+}
+
+@media (max-width: 760px) {
+  .main {
+    width: min(100% - 24px, 1120px);
+    padding-top: 38px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card,
+  .comingSoon {
+    min-height: 280px;
+    padding: 22px;
+  }
+}
