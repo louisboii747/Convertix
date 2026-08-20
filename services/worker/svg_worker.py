@@ -43,7 +43,14 @@ def convert_svg(
             flush=True,
         )
         result = subprocess.run(
-            ["rsvg-convert", "--format", "png", "--output", str(rendered_png), str(input_path)],
+            [
+                "rsvg-convert",
+                "--format",
+                "png",
+                "--output",
+                str(rendered_png),
+                str(input_path),
+            ],
             capture_output=True,
             text=True,
             timeout=300,
@@ -104,11 +111,17 @@ def process_conversion(
     source_format: str,
     target_format: str,
     input_key: str,
+    compression_level: str | None = None,
 ) -> str:
     source_format = source_format.lower()
     target_format = target_format.lower()
 
-    if source_format == "svg" and target_format in {"png", "jpg", "jpeg", "webp"}:
+    if source_format == "svg" and target_format in {
+        "png",
+        "jpg",
+        "jpeg",
+        "webp",
+    }:
         return convert_svg(
             s3=s3,
             conversion_id=conversion_id,
@@ -122,6 +135,7 @@ def process_conversion(
         source_format=source_format,
         target_format=target_format,
         input_key=input_key,
+        compression_level=compression_level,
     )
 
 
