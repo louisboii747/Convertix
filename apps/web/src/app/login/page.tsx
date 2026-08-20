@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { login } from "./actions";
+import { login, loginWithGoogle } from "./actions";
 
 type LoginPageProps = {
   searchParams: Promise<{
@@ -60,12 +60,30 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             </div>
           )}
 
+          {error === "oauth_failed" && (
+            <div className="auth-alert" role="alert">
+              We couldn&apos;t start Google sign-in. Please try again.
+            </div>
+          )}
+
           {error === "email_rate_limit" && (
             <div className="auth-alert" role="alert">
               Too many confirmation emails have been sent recently. Please wait
               a little while and try again.
             </div>
           )}
+
+          <form action={loginWithGoogle} className="auth-form">
+            <input type="hidden" name="source" value="login" />
+            <button className="auth-submit" type="submit">
+              <span>Continue with Google</span>
+              <span aria-hidden="true">G</span>
+            </button>
+          </form>
+
+          <p className="auth-back" aria-hidden="true">
+            or continue with email
+          </p>
 
           <form action={login} className="auth-form">
             <div className="auth-field">
