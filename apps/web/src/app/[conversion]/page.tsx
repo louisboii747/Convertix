@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+
 import { ConversionLandingPage } from "@/components/conversion-landing-page";
+import { getConversionContent } from "@/lib/conversion-content";
 import {
   CONVERSION_PAIRS,
   FORMATS,
@@ -80,5 +82,62 @@ export default async function ConversionPage({ params }: ConversionPageProps) {
     notFound();
   }
 
-  return <ConversionLandingPage pair={pair} />;
+  const source = FORMATS[pair.source].label;
+  const target = FORMATS[pair.target].label;
+  const content = getConversionContent(pair.slug);
+  const canonicalUrl = `https://convertix.uk/${pair.slug}`;
+
+  const pageStructuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": `${canonicalUrl}#webpage`,
+        url: canonicalUrl,
+        name: `Convert ${source} to ${target} Online`,
+        description:
+          content?.intro ??
+          `Convert ${source} files to ${target} online with Convertix.`,
+        isPartOf: {
+          "@type": "WebSite",
+          "@id": "https://convertix.uk/#website",
+          name: "Convertix",
+          url: "https://convertix.uk",
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Convertix",
+            item: "https://convertix.uk",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Conversions",
+            item: "https://convertix.uk/conversions",
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: `${source} to ${target}`,
+            item: canonicalUrl,
+          },
+        ],
+      },
+    ],
+  };
+
+  return (
+    <>
+      <ConversionLandingPage pair={pair} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageStructuredData) }}
+      />
+    </>
+  );
 }
