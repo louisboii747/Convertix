@@ -15,7 +15,7 @@ import {
   type ConversionPair,
 } from "@/lib/formats";
 
-const faqItems = [
+const genericFaqItems = [
   {
     question: "Do I need an account to convert a file?",
     answer:
@@ -47,19 +47,53 @@ interface ConversionLandingPageProps {
 }
 
 export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
-  const enabledPairs = getEnabledConversionPairs().filter(
-    (candidate) => candidate.popular,
-  );
   const routeEnabled = pair ? isConversionPairEnabled(pair) : true;
+  const allEnabledPairs = getEnabledConversionPairs();
+  const relatedPairs = pair
+    ? allEnabledPairs
+        .filter((candidate) => candidate.slug !== pair.slug)
+        .sort((a, b) => {
+          const aRelated = a.source === pair.source || a.target === pair.target;
+          const bRelated = b.source === pair.source || b.target === pair.target;
+
+          if (aRelated === bRelated) {
+            return Number(b.popular) - Number(a.popular);
+          }
+
+          return Number(bRelated) - Number(aRelated);
+        })
+        .slice(0, 6)
+    : allEnabledPairs.filter((candidate) => candidate.popular);
+
+  const source = pair ? FORMATS[pair.source] : null;
+  const target = pair ? FORMATS[pair.target] : null;
+
   const pageTitle = pair
-    ? `Convert ${FORMATS[pair.source].label} to ${FORMATS[pair.target].label} online.`
+    ? `Convert ${source?.label} to ${target?.label} online.`
     : "Convert files without the fuss.";
 
   const pageDescription = pair
     ? routeEnabled
-      ? `Convert ${FORMATS[pair.source].label} files to ${FORMATS[pair.target].label} online with Convertix. Upload your file, follow the conversion progress, and download the converted result when it’s ready.`
-      : `${FORMATS[pair.source].label} to ${FORMATS[pair.target].label} is a recognised Convertix conversion route, but it isn’t available yet.`
+      ? `Convert ${source?.label} files to ${target?.label} online with Convertix. Upload your file, follow the conversion progress, and download the converted result when it’s ready.`
+      : `${source?.label} to ${target?.label} is a recognised Convertix conversion route, but it isn’t available yet.`
     : "Choose a file, see its format, pick an available destination, and follow every step in one clear place.";
+
+  const faqItems = pair
+    ? [
+        {
+          question: `How do I convert ${source?.label} to ${target?.label}?`,
+          answer: routeEnabled
+            ? `Upload your ${source?.label} file, confirm ${target?.label} as the destination, start the conversion, and download the result when Convertix reports that it is ready.`
+            : `${source?.label} to ${target?.label} is recognised by Convertix, but this route is not available for processing yet.`,
+        },
+        {
+          question: `Is ${source?.label} to ${target?.label} conversion free?`,
+          answer:
+            "Basic Convertix conversions are designed to be available without requiring an account or a paid sign-up step.",
+        },
+        ...genericFaqItems.slice(2),
+      ]
+    : genericFaqItems;
 
   const faqStructuredData = {
     "@context": "https://schema.org",
@@ -73,6 +107,27 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
       },
     })),
   };
+
+  const breadcrumbStructuredData = pair
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Convertix",
+            item: "https://convertix.uk/",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: `${source?.label} to ${target?.label}`,
+            item: `https://convertix.uk/${pair.slug}`,
+          },
+        ],
+      }
+    : null;
 
   return (
     <>
@@ -94,73 +149,109 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
           </div>
         </section>
 
-        <section className="popular-section" aria-labelledby="popular-title">
-          <div className="section-heading-row">
-            <div>
-              <h2 id="popular-title">Popular conversions</h2>
-              <p>Available conversions appear here as soon as they’re ready.</p>
+        {pair && source && target ? (
+          <section className="process-section" aria-labelledby="about-conversion-title">
+            <div className="process-intro">
+              <h2 id="about-conversion-title">
+                About {source.label} to {target.label} conversion
+              </h2>
+              <p>
+                {source.name} files use the {source.label} format, while the
+                converted result is produced as a {target.name}. Convertix keeps
+                the route focused on that single job: choose the source file,
+                confirm the destination format, convert, and download the result.
+              </p>
             </div>
-          </div>
+            <ol className="process-list">
+              <li>
+                <span>1</span>
+                <div>
+                  <strong>Upload your {source.label}</strong>
+                  <p>Select the file normally or drag it into the converter.</p>
+                </div>
+              </li>
+              <li>
+                <span>2</span>
+                <div>
+                  <strong>Convert to {target.label}</strong>
+                  <p>Confirm the route and follow the live conversion status.</p>
+                </div>
+              </li>
+              <li>
+                <span>3</span>
+                <div>
+                  <strong>Download the result</strong>
+                  <p>Save the converted {target.label} file when it is ready.</p>
+                </div>
+              </li>
+            </ol>
+          </section>
+        ) : null}
 
-          {enabledPairs.length > 0 ? (
+        {relatedPairs.length > 0 ? (
+          <section className="popular-section" aria-labelledby="popular-title">
+            <div className="section-heading-row">
+              <div>
+                <h2 id="popular-title">
+                  {pair ? "Related conversions" : "Popular conversions"}
+                </h2>
+                <p>
+                  {pair
+                    ? "Explore other conversion routes that are available now."
+                    : "Available conversions appear here as soon as they’re ready."}
+                </p>
+              </div>
+            </div>
+
             <div className="popular-links">
-              {enabledPairs.map((enabledPair) => (
-                <Link
-                  key={enabledPair.slug}
-                  href={`/convert/${enabledPair.slug}`}
-                >
+              {relatedPairs.map((enabledPair) => (
+                <Link key={enabledPair.slug} href={`/${enabledPair.slug}`}>
                   <span>{formatPairLabel(enabledPair)}</span>
                   <ArrowIcon />
                 </Link>
               ))}
             </div>
-          ) : (
-            <div className="popular-empty">
-              <span>First route planned</span>
-              <strong>DOCX to PDF</strong>
+          </section>
+        ) : null}
+
+        {!pair ? (
+          <section
+            className="process-section"
+            id="how-it-works"
+            aria-labelledby="process-title"
+          >
+            <div className="process-intro">
+              <h2 id="process-title">One file. One clear route.</h2>
               <p>
-                Conversion links will appear here when they’re ready to use.
+                The interface stays simple because each decision appears only when
+                you need it.
               </p>
             </div>
-          )}
-        </section>
-
-        <section
-          className="process-section"
-          id="how-it-works"
-          aria-labelledby="process-title"
-        >
-          <div className="process-intro">
-            <h2 id="process-title">One file. One clear route.</h2>
-            <p>
-              The interface stays simple because each decision appears only when
-              you need it.
-            </p>
-          </div>
-          <ol className="process-list">
-            <li>
-              <span>1</span>
-              <div>
-                <strong>Choose your file</strong>
-                <p>Select it normally or drag it into the converter.</p>
-              </div>
-            </li>
-            <li>
-              <span>2</span>
-              <div>
-                <strong>Check the route</strong>
-                <p>We detect the source and show compatible destinations.</p>
-              </div>
-            </li>
-            <li>
-              <span>3</span>
-              <div>
-                <strong>Follow the status</strong>
-                <p>Every confirmed step appears in plain language.</p>
-              </div>
-            </li>
-          </ol>
-        </section>
+            <ol className="process-list">
+              <li>
+                <span>1</span>
+                <div>
+                  <strong>Choose your file</strong>
+                  <p>Select it normally or drag it into the converter.</p>
+                </div>
+              </li>
+              <li>
+                <span>2</span>
+                <div>
+                  <strong>Check the route</strong>
+                  <p>We detect the source and show compatible destinations.</p>
+                </div>
+              </li>
+              <li>
+                <span>3</span>
+                <div>
+                  <strong>Follow the status</strong>
+                  <p>Every confirmed step appears in plain language.</p>
+                </div>
+              </li>
+            </ol>
+          </section>
+        ) : null}
 
         <section className="why-section" aria-labelledby="why-title">
           <div className="why-heading">
@@ -238,6 +329,14 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
       />
+      {breadcrumbStructuredData ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(breadcrumbStructuredData),
+          }}
+        />
+      ) : null}
     </>
   );
 }
