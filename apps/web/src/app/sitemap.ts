@@ -7,31 +7,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ).replace(/\/$/, "");
 
   return [
-    {
-      url: siteUrl,
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    {
-      url: `${siteUrl}/tools`,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${siteUrl}/optimize-svg`,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${siteUrl}/contact`,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${siteUrl}/privacy`,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
+    { url: siteUrl, changeFrequency: "weekly", priority: 1 },
+    { url: `${siteUrl}/tools`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${siteUrl}/guides`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${siteUrl}/optimize-svg`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${siteUrl}/contact`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${siteUrl}/privacy`, changeFrequency: "yearly", priority: 0.3 },
     ...getEnabledConversionPairs().map((pair) => ({
       url: `${siteUrl}/${pair.slug}`,
       changeFrequency: "weekly" as const,

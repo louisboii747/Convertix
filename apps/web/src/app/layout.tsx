@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import "./converter-feedback.css";
+import "./feedback-polish.css";
 import { SiteFooter } from "@/components/site-footer";
 import { AnalyticsConsentBanner } from "@/components/analytics-consent-banner";
 
@@ -24,17 +25,13 @@ const siteUrl =
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-
   title: {
     default: "Convertix — Free Online File Converter",
     template: "%s — Convertix",
   },
-
   description:
     "Convert files online with Convertix. Upload a file, choose an available format, and download the converted result with a simple, secure conversion workflow.",
-
   applicationName: "Convertix",
-
   keywords: [
     "file converter",
     "online file converter",
@@ -43,12 +40,9 @@ export const metadata: Metadata = {
     "DOCX to PDF",
     "document converter",
     "image converter",
+    "file format guides",
   ],
-
-  alternates: {
-    canonical: "/",
-  },
-
+  alternates: { canonical: "/" },
   robots: {
     index: true,
     follow: true,
@@ -60,7 +54,6 @@ export const metadata: Metadata = {
       "max-video-preview": -1,
     },
   },
-
   openGraph: {
     type: "website",
     url: "/",
@@ -69,7 +62,6 @@ export const metadata: Metadata = {
     description:
       "Convert files online with a simple, secure workflow. Upload a file, choose an available format, and download the result.",
   },
-
   twitter: {
     card: "summary_large_image",
     title: "Convertix — Free Online File Converter",
@@ -103,28 +95,20 @@ const structuredData = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${displayFont.variable} ${bodyFont.variable}`}>
       <body>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(structuredData),
-          }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
         <div
           className="direction-contract"
           aria-hidden="true"
           dangerouslySetInnerHTML={{ __html: directionContract }}
         />
-        <a className="skip-link" href="#main-content">
-          Skip to converter
-        </a>
+        <a className="skip-link" href="#main-content">Skip to converter</a>
         {children}
         <SiteFooter />
         <AnalyticsConsentBanner />

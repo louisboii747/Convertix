@@ -14,11 +14,9 @@ export function MobileNav({
 
   useEffect(() => {
     if (!open) return;
-
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setOpen(false);
     };
-
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open]);
@@ -40,24 +38,13 @@ export function MobileNav({
 
       <div className="mobile-nav-panel" id="mobile-primary-navigation">
         <nav aria-label="Mobile primary navigation">
-          <Link href="/#how-it-works" onClick={() => setOpen(false)}>
-            How it works
-          </Link>
-          <Link href="/#formats" onClick={() => setOpen(false)}>
-            Formats
-          </Link>
-          <Link href="/tools" onClick={() => setOpen(false)}>
-            Tools
-          </Link>
-          <Link href="/#faq" onClick={() => setOpen(false)}>
-            FAQ
-          </Link>
-          <Link href="/contact" onClick={() => setOpen(false)}>
-            Contact
-          </Link>
-          <Link href="/privacy" onClick={() => setOpen(false)}>
-            Privacy
-          </Link>
+          <Link href="/#how-it-works" onClick={() => setOpen(false)}>How it works</Link>
+          <Link href="/#formats" onClick={() => setOpen(false)}>Formats</Link>
+          <Link href="/tools" onClick={() => setOpen(false)}>Tools</Link>
+          <Link href="/guides" onClick={() => setOpen(false)}>Guides</Link>
+          <Link href="/#faq" onClick={() => setOpen(false)}>FAQ</Link>
+          <Link href="/contact" onClick={() => setOpen(false)}>Contact</Link>
+          <Link href="/privacy" onClick={() => setOpen(false)}>Privacy</Link>
           <Link
             className="mobile-nav-auth-link"
             href={isAuthenticated ? "/account" : "/login"}
