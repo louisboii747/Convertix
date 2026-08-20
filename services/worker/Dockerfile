@@ -7,6 +7,7 @@ RUN apt-get update \
         libreoffice-writer \
         libreoffice-calc \
         ffmpeg \
+        ghostscript \
         librsvg2-bin \
         fonts-dejavu-core \
         fonts-liberation \

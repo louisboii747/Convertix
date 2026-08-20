@@ -7,7 +7,7 @@ import styles from "./tools.module.css";
 export const metadata: Metadata = {
   title: "Tools",
   description:
-    "Explore focused Convertix tools for optimizing and working with files. Start with the Safe SVG Optimizer and discover new utilities as they are added.",
+    "Explore focused Convertix tools for optimizing and working with files, including PDF compression and safe SVG optimization.",
   alternates: {
     canonical: "/tools",
   },
@@ -16,11 +16,19 @@ export const metadata: Metadata = {
     url: "/tools",
     title: "Convertix Tools",
     description:
-      "Focused file tools from Convertix, starting with safe SVG optimization and visual verification.",
+      "Focused file utilities from Convertix, including PDF compression and safe SVG optimization.",
   },
 };
 
 const tools = [
+  {
+    href: "/compress-pdf",
+    eyebrow: "PDF Toolkit",
+    title: "Compress PDF",
+    description:
+      "Reduce PDF file size with adjustable compression levels, compare the original and compressed size, and download the optimized result.",
+    meta: ["3 compression levels", "Size comparison", "Free"],
+  },
   {
     href: "/optimize-svg",
     eyebrow: "SVG Toolkit",
@@ -40,8 +48,8 @@ export default function ToolsPage() {
           <span className={styles.eyebrow}>Convertix Tools</span>
           <h1>Small tools for annoying file problems.</h1>
           <p>
-            Focused utilities built around real file-handling problems. More tools
-            will appear here as Convertix grows.
+            Focused utilities built around real file-handling problems. More
+            tools will appear here as Convertix grows.
           </p>
         </section>
 
@@ -72,8 +80,8 @@ export default function ToolsPage() {
             <span className={styles.cardEyebrow}>More coming</span>
             <h2>Built from real complaints.</h2>
             <p>
-              Future tools will focus on recurring problems such as SVG sanitizing,
-              file health checks, and batch workflows.
+              Future tools will focus on recurring problems such as file
+              optimization, health checks, and batch workflows.
             </p>
           </div>
         </section>

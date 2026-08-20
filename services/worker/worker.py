@@ -213,6 +213,114 @@ def convert_xlsx_to_pdf(
     return output_key
 
 
+def compress_pdf(
+    s3,
+    conversion_id: str,
+    input_key: str,
+    compression_level: str = "balanced",
+) -> str:
+    compression_presets = {
+        "light": "/prepress",
+        "balanced": "/ebook",
+        "maximum": "/screen",
+    }
+
+    if compression_level not in compression_presets:
+        raise ValueError(f"Unsupported PDF compression level: {compression_level}")
+
+    preset = compression_presets[compression_level]
+    output_key = f"conversions/{conversion_id}/output.pdf"
+
+    with tempfile.TemporaryDirectory(prefix="convertix-") as temp_dir:
+        temp_path = Path(temp_dir)
+
+        input_path = temp_path / "input.pdf"
+        output_path = temp_path / "compressed.pdf"
+
+        print(
+            f"Downloading s3://{STORAGE_BUCKET}/{input_key}",
+            flush=True,
+        )
+
+        s3.download_file(
+            STORAGE_BUCKET,
+            input_key,
+            str(input_path),
+        )
+
+        original_size = input_path.stat().st_size
+
+        print(
+            f"Compressing PDF with {compression_level} preset for {conversion_id}...",
+            flush=True,
+        )
+
+        command = [
+            "gs",
+            "-sDEVICE=pdfwrite",
+            "-dCompatibilityLevel=1.4",
+            f"-dPDFSETTINGS={preset}",
+            "-dNOPAUSE",
+            "-dQUIET",
+            "-dBATCH",
+            f"-sOutputFile={output_path}",
+            str(input_path),
+        ]
+
+        result = subprocess.run(  # noqa: UP022
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            timeout=300,
+            check=False,
+        )
+
+        if result.stdout:
+            print(
+                f"Ghostscript stdout: {result.stdout.strip()}",
+                flush=True,
+            )
+
+        if result.stderr:
+            print(
+                f"Ghostscript stderr: {result.stderr.strip()}",
+                file=sys.stderr,
+                flush=True,
+            )
+
+        if result.returncode != 0:
+            raise RuntimeError(f"Ghostscript exited with code {result.returncode}")
+
+        if not output_path.exists():
+            raise RuntimeError(
+                "Ghostscript reported success but compressed.pdf was not created"
+            )
+
+        compressed_size = output_path.stat().st_size
+
+        print(
+            f"PDF compression complete: {original_size} -> {compressed_size} bytes",
+            flush=True,
+        )
+
+        s3.upload_file(
+            str(output_path),
+            STORAGE_BUCKET,
+            output_key,
+            ExtraArgs={
+                "ContentType": "application/pdf",
+            },
+        )
+
+        print(
+            f"Uploaded compressed PDF: {output_key}",
+            flush=True,
+        )
+
+    return output_key
+
+
 def convert_txt_document(
     s3,
     conversion_id: str,
@@ -678,9 +786,18 @@ def process_conversion(
     source_format: str,
     target_format: str,
     input_key: str,
+    compression_level: str | None = None,
 ) -> str:
     source_format = source_format.lower()
     target_format = target_format.lower()
+
+    if source_format == "pdf" and target_format == "pdf" and compression_level:
+        return compress_pdf(
+            s3=s3,
+            conversion_id=conversion_id,
+            input_key=input_key,
+            compression_level=compression_level,
+        )
 
     if source_format == "docx" and target_format == "pdf":
         return convert_docx_to_pdf(
@@ -829,6 +946,7 @@ def main() -> int:
             body = json.loads(message["Body"])
 
             conversion_id = body.get("conversion_id")
+            compression_level = body.get("compression_level")
             source_format = body.get("source_format")
             target_format = body.get("target_format")
             input_key = body.get("input_key")
@@ -861,6 +979,7 @@ def main() -> int:
                 source_format=source_format,
                 target_format=target_format,
                 input_key=input_key,
+                compression_level=compression_level,
             )
 
             sqs.delete_message(

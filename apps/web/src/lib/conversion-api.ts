@@ -136,6 +136,14 @@ function wait(ms: number, signal?: AbortSignal): Promise<void> {
   });
 }
 
+export type PdfCompressionLevel = "light" | "balanced" | "maximum";
+
+export interface CreateConversionRequest {
+  source_format: FormatId;
+  target_format: FormatId;
+  compression_level?: PdfCompressionLevel;
+}
+
 export async function createConversion(
   file: File,
   request: CreateConversionRequest,
@@ -148,12 +156,22 @@ export async function createConversion(
     throw new ConversionApiError(readiness.message);
   }
 
-  const pair = getConversionPair(request.source_format, request.target_format);
+  const isPdfCompression =
+    request.source_format === "pdf" &&
+    request.target_format === "pdf" &&
+    request.compression_level !== undefined;
 
-  if (!pair || !isConversionPairEnabled(pair)) {
-    throw new ConversionApiError(
-      "That conversion route isn’t available on the live service yet.",
+  if (!isPdfCompression) {
+    const pair = getConversionPair(
+      request.source_format,
+      request.target_format,
     );
+
+    if (!pair || !isConversionPairEnabled(pair)) {
+      throw new ConversionApiError(
+        "That conversion route isn’t available on the live service yet.",
+      );
+    }
   }
 
   const contentType = file.type || "application/octet-stream";
@@ -242,6 +260,9 @@ export async function createConversion(
         source_format: request.source_format,
         target_format: request.target_format,
         input_key: upload.object_key,
+        ...(request.compression_level
+          ? { compression_level: request.compression_level }
+          : {}),
       }),
       signal,
     });

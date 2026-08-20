@@ -14,6 +14,8 @@ __pycache__/
 
 # Local deployment and debugging artifacts
 services/api/convertix-api.zip
+services/api/convertix-api-debug.zip
+services/worker/lambda.zip
 services/worker/debug-input.svg
 services/worker/task-def-*.json
 services/worker/convertix-test.svg

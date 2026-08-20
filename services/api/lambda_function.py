@@ -77,6 +77,7 @@ SUPPORTED_CONVERSIONS = {
 
 # File types that can currently be uploaded
 UPLOAD_FORMATS = {
+    "pdf",
     "docx",
     "xlsx",
     "png",
@@ -381,10 +382,27 @@ def lambda_handler(event, context):
             )
 
         source_format = str(body.get("source_format", "")).lower().strip()
-
         target_format = str(body.get("target_format", "")).lower().strip()
-
+        compression_level = str(body.get("compression_level", "")).lower().strip()
         input_key = str(body.get("input_key", "")).strip()
+
+        is_pdf_compression = source_format == "pdf" and target_format == "pdf"
+
+        if is_pdf_compression:
+            allowed_compression_levels = {
+                "light",
+                "balanced",
+                "maximum",
+            }
+
+            if compression_level not in allowed_compression_levels:
+                return response(
+                    400,
+                    {
+                        "error": "invalid_compression_level",
+                        "allowed": sorted(allowed_compression_levels),
+                    },
+                )
 
         if not source_format:
             return response(
@@ -420,7 +438,7 @@ def lambda_handler(event, context):
                 },
             )
 
-        if source_format == target_format:
+        if source_format == target_format and not is_pdf_compression:
             return response(
                 400,
                 {
@@ -429,9 +447,13 @@ def lambda_handler(event, context):
             )
 
         if (
-            source_format,
-            target_format,
-        ) not in SUPPORTED_CONVERSIONS:
+            not is_pdf_compression
+            and (
+                source_format,
+                target_format,
+            )
+            not in SUPPORTED_CONVERSIONS
+        ):
             return response(
                 400,
                 {
@@ -498,6 +520,9 @@ def lambda_handler(event, context):
             "input_key": input_key,
         }
 
+        if is_pdf_compression:
+            job["compression_level"] = compression_level
+
         try:
             sqs_response = sqs.send_message(
                 QueueUrl=QUEUE_URL,
@@ -523,15 +548,20 @@ def lambda_handler(event, context):
             sqs_response.get("MessageId"),
         )
 
+        response_body = {
+            "conversion_id": conversion_id,
+            "source_format": source_format,
+            "target_format": target_format,
+            "input_key": input_key,
+            "status": "queued",
+        }
+
+        if is_pdf_compression:
+            response_body["compression_level"] = compression_level
+
         return response(
             202,
-            {
-                "conversion_id": conversion_id,
-                "source_format": source_format,
-                "target_format": target_format,
-                "input_key": input_key,
-                "status": "queued",
-            },
+            response_body,
         )
 
     # ---------------------------------------------------------
