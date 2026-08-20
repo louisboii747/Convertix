@@ -23,7 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.3,
     },
     ...getEnabledConversionPairs().map((pair) => ({
-      url: `${siteUrl}/convert/${pair.slug}`,
+      url: `${siteUrl}/${pair.slug}`,
       changeFrequency: "weekly" as const,
       priority: 0.8,
     })),
