@@ -44,11 +44,8 @@ export const CONVERSION_PAIRS: readonly ConversionPair[] = [
   { slug: "svg-to-webp", source: "svg", target: "webp", popular: true },
   { slug: "mp3-to-wav", source: "mp3", target: "wav", popular: true },
   { slug: "wav-to-mp3", source: "wav", target: "mp3", popular: true },
-  // Temporarily hidden from live submission after real-user feedback showed
-  // long-running video jobs could appear stuck. Keep the routes recognised so
-  // dedicated pages can explain their status without advertising them as live.
-  { slug: "mp4-to-webm", source: "mp4", target: "webm", popular: false, enabled: false },
-  { slug: "webm-to-mp4", source: "webm", target: "mp4", popular: false, enabled: false },
+  { slug: "mp4-to-webm", source: "mp4", target: "webm", popular: true },
+  { slug: "webm-to-mp4", source: "webm", target: "mp4", popular: true },
 ] as const;
 
 export const FORMAT_FAMILIES: readonly { id: FormatFamily; label: string; formats: readonly FormatId[] }[] = [

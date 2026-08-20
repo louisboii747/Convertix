@@ -65,9 +65,21 @@
   animation: file-accepted 320ms var(--ease-out);
 }
 
+/* Once a format has been detected, the format mark is the icon. Avoid
+   wrapping it in a second mint status tile, which created the nested badge
+   appearance on selected files. */
 .file-drop.has-file .file-drop-icon {
-  background: var(--mint);
-  color: var(--mint-ink);
+  background: transparent;
+  color: inherit;
+  box-shadow: none;
+}
+
+.file-drop.has-file .file-drop-icon > .format-mark {
+  width: 60px;
+  height: 60px;
+  margin-right: 0;
+  border-radius: 12px;
+  box-shadow: 0 10px 24px -18px rgba(13, 27, 52, 0.55);
 }
 
 .file-drop.has-file .selected-file-copy span {
