@@ -15,13 +15,13 @@ const siteUrl = process.env.NEXT_PUBLIC_CONVERTIX_SITE_URL ?? "https://convertix
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: "Convertix — Free Online File Converter", template: "%s — Convertix" },
-  description: "Convert files online with Convertix. Upload a file, choose an available format, and download the converted result with a simple, secure conversion workflow.",
+  description: "Convert files online with Convertix. Upload a file, choose an available format, and download the converted result with a simple conversion workflow.",
   applicationName: "Convertix",
   keywords: ["file converter", "online file converter", "free file converter", "convert files online", "DOCX to PDF", "document converter", "image converter", "file format guides"],
   alternates: { canonical: "/" },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
-  openGraph: { type: "website", url: "/", siteName: "Convertix", title: "Convertix — Free Online File Converter", description: "Convert files online with a simple, secure workflow. Upload a file, choose an available format, and download the result." },
-  twitter: { card: "summary_large_image", title: "Convertix — Free Online File Converter", description: "Convert files online with a simple, secure workflow. Upload a file, choose an available format, and download the result." },
+  openGraph: { type: "website", url: "/", siteName: "Convertix", title: "Convertix — Free Online File Converter", description: "Convert files online with a simple workflow. Upload a file, choose an available format, and download the result." },
+  twitter: { card: "summary_large_image", title: "Convertix — Free Online File Converter", description: "Convert files online with a simple workflow. Upload a file, choose an available format, and download the result." },
 };
 
 const directionContract = `<!--
@@ -48,7 +48,7 @@ const structuredData = [
     url: siteUrl,
     applicationCategory: "UtilitiesApplication",
     operatingSystem: "Web",
-    description: "Convert files online with Convertix using a simple, secure conversion workflow.",
+    description: "Convert files online with Convertix using a simple conversion workflow.",
     offers: { "@type": "Offer", price: "0", priceCurrency: "GBP" },
   },
 ];
