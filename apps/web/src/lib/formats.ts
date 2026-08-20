@@ -194,13 +194,6 @@ export const FORMAT_FAMILIES: readonly {
   },
 ] as const;
 
-const configuredPairKeys = new Set(
-  (process.env.NEXT_PUBLIC_CONVERTIX_ENABLED_CONVERSIONS ?? "")
-    .split(",")
-    .map((value) => value.trim().toLowerCase())
-    .filter(Boolean),
-);
-
 export const ACCEPTED_FILE_EXTENSIONS = Object.values(FORMATS)
   .flatMap((format) => format.extensions)
   .map((extension) => `.${extension}`)
@@ -246,12 +239,14 @@ export function getKnownTargets(source: FormatId): readonly FormatId[] {
 }
 
 export function isConversionPairEnabled(pair: ConversionPair): boolean {
-  return (
-    configuredPairKeys.has(pair.slug) ||
-    configuredPairKeys.has(`${pair.source}:${pair.target}`)
+  return CONVERSION_PAIRS.some(
+    (candidate) =>
+      candidate.slug === pair.slug &&
+      candidate.source === pair.source &&
+      candidate.target === pair.target,
   );
 }
 
 export function getEnabledConversionPairs(): readonly ConversionPair[] {
-  return CONVERSION_PAIRS.filter(isConversionPairEnabled);
+  return CONVERSION_PAIRS;
 }
