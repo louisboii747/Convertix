@@ -55,6 +55,14 @@ export const FORMATS = {
     extensions: ["webp"],
     accent: "violet",
   },
+  svg: {
+    id: "svg",
+    label: "SVG",
+    name: "Scalable Vector Graphic",
+    family: "images",
+    extensions: ["svg"],
+    accent: "violet",
+  },
   xlsx: {
     id: "xlsx",
     label: "XLSX",
@@ -149,6 +157,10 @@ export const CONVERSION_PAIRS: readonly ConversionPair[] = [
   { slug: "webp-to-png", source: "webp", target: "png", popular: false },
   { slug: "webp-to-jpg", source: "webp", target: "jpg", popular: false },
 
+  { slug: "svg-to-png", source: "svg", target: "png", popular: true },
+  { slug: "svg-to-jpg", source: "svg", target: "jpg", popular: true },
+  { slug: "svg-to-webp", source: "svg", target: "webp", popular: true },
+
   { slug: "mp3-to-wav", source: "mp3", target: "wav", popular: true },
   { slug: "wav-to-mp3", source: "wav", target: "mp3", popular: true },
 
@@ -170,7 +182,7 @@ export const FORMAT_FAMILIES: readonly {
   {
     id: "images",
     label: "Images",
-    formats: ["jpg", "png", "webp"],
+    formats: ["jpg", "png", "webp", "svg"],
   },
   {
     id: "audio",
