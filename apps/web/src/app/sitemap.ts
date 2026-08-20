@@ -8,10 +8,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     { url: siteUrl, lastModified: contentUpdated },
-    { url: `${siteUrl}/tools`, lastModified: contentUpdated },
     { url: `${siteUrl}/conversions`, lastModified: contentUpdated },
+    { url: `${siteUrl}/tools`, lastModified: contentUpdated },
+    { url: `${siteUrl}/pdf-tools`, lastModified: contentUpdated },
     { url: `${siteUrl}/guides`, lastModified: contentUpdated },
     { url: `${siteUrl}/optimize-svg`, lastModified: contentUpdated },
+    { url: `${siteUrl}/compress-pdf`, lastModified: contentUpdated },
     { url: `${siteUrl}/contact` },
     { url: `${siteUrl}/privacy` },
     ...GUIDES.map((guide) => ({ url: `${siteUrl}/guides/${guide.slug}`, lastModified: new Date(`${guide.updated}T00:00:00.000Z`) })),
