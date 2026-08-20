@@ -48,6 +48,34 @@ export async function login(formData: FormData) {
   redirect("/account");
 }
 
+export async function loginWithGoogle(formData: FormData) {
+  const source = String(formData.get("source") ?? "login");
+  const errorPath = source === "signup" ? "/signup" : "/login";
+  const supabase = await createClient();
+
+  const siteUrl =
+    process.env.NEXT_PUBLIC_CONVERTIX_SITE_URL ?? "http://localhost:3000";
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${siteUrl}/auth/callback?next=/account`,
+    },
+  });
+
+  if (error || !data.url) {
+    console.error("Supabase Google OAuth error:", {
+      message: error?.message ?? "OAuth provider did not return a redirect URL",
+      code: error?.code,
+      status: error?.status,
+    });
+
+    redirect(`${errorPath}?error=oauth_failed`);
+  }
+
+  redirect(data.url);
+}
+
 export async function signup(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
