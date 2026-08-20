@@ -31,6 +31,7 @@ export async function SiteHeader() {
         <nav className="site-nav" aria-label="Primary navigation">
           <Link href="/#how-it-works">How it works</Link>
           <Link href="/#formats">Formats</Link>
+          <Link href="/tools">Tools</Link>
           <Link href="/#faq">FAQ</Link>
           <Link href="/contact">Contact</Link>
           <Link href="/privacy">Privacy</Link>
