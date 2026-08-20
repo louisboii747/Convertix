@@ -18,7 +18,6 @@ export const metadata: Metadata = {
   description: "Convert files online with Convertix. Upload a file, choose an available format, and download the converted result with a simple conversion workflow.",
   applicationName: "Convertix",
   keywords: ["file converter", "online file converter", "free file converter", "convert files online", "DOCX to PDF", "document converter", "image converter", "file format guides"],
-  alternates: { canonical: "/" },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
   openGraph: { type: "website", url: "/", siteName: "Convertix", title: "Convertix — Free Online File Converter", description: "Convert files online with a simple workflow. Upload a file, choose an available format, and download the result." },
   twitter: { card: "summary_large_image", title: "Convertix — Free Online File Converter", description: "Convert files online with a simple workflow. Upload a file, choose an available format, and download the result." },
@@ -59,7 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
         <div className="direction-contract" aria-hidden="true" dangerouslySetInnerHTML={{ __html: directionContract }} />
-        <a className="skip-link" href="#main-content">Skip to converter</a>
+        <a className="skip-link" href="#main-content">Skip to main content</a>
         {children}
         <SiteFooter />
         <AnalyticsConsentBanner />

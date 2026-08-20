@@ -63,6 +63,7 @@ export function ConversionDirectory({ entries }: ConversionDirectoryProps) {
         <label className={styles.searchLabel}>
           <input
             aria-label="Search conversions"
+            aria-controls="conversion-results"
             className={styles.search}
             type="search"
             placeholder="Search PDF, PNG, Excel, audio..."
@@ -71,9 +72,14 @@ export function ConversionDirectory({ entries }: ConversionDirectoryProps) {
           />
         </label>
 
-        <div className={styles.filters} aria-label="Filter conversions by type">
+        <div
+          className={styles.filters}
+          role="group"
+          aria-label="Filter conversions by type"
+        >
           <button
             type="button"
+            aria-pressed={family === "all"}
             className={family === "all" ? styles.activeFilter : styles.filter}
             onClick={() => setFamily("all")}
           >
@@ -82,6 +88,7 @@ export function ConversionDirectory({ entries }: ConversionDirectoryProps) {
           {families.map((item) => (
             <button
               type="button"
+              aria-pressed={family === item}
               className={family === item ? styles.activeFilter : styles.filter}
               key={item}
               onClick={() => setFamily(item)}
@@ -98,32 +105,34 @@ export function ConversionDirectory({ entries }: ConversionDirectoryProps) {
           : `${filtered.length} matching conversion${filtered.length === 1 ? "" : "s"}`}
       </div>
 
-      {grouped.length > 0 ? (
-        grouped.map(([groupFamily, familyEntries]) => (
-          <div className={styles.group} key={groupFamily}>
-            <div className={styles.groupHeading}>
-              <span>{groupFamily}</span>
-              <h3>{groupFamily.charAt(0).toUpperCase() + groupFamily.slice(1)}</h3>
+      <div id="conversion-results">
+        {grouped.length > 0 ? (
+          grouped.map(([groupFamily, familyEntries]) => (
+            <div className={styles.group} key={groupFamily}>
+              <div className={styles.groupHeading}>
+                <span>{groupFamily}</span>
+                <h3>{groupFamily.charAt(0).toUpperCase() + groupFamily.slice(1)}</h3>
+              </div>
+              <div className={styles.links}>
+                {familyEntries.map((entry) => (
+                  <Link key={entry.slug} href={`/${entry.slug}`}>
+                    <span>
+                      {entry.label}
+                      {entry.popular ? <small>Popular</small> : null}
+                    </span>
+                    <ArrowIcon />
+                  </Link>
+                ))}
+              </div>
             </div>
-            <div className={styles.links}>
-              {familyEntries.map((entry) => (
-                <Link key={entry.slug} href={`/${entry.slug}`}>
-                  <span>
-                    {entry.label}
-                    {entry.popular ? <small>Popular</small> : null}
-                  </span>
-                  <ArrowIcon />
-                </Link>
-              ))}
-            </div>
+          ))
+        ) : (
+          <div className={styles.empty}>
+            <h3>No live route matches that search yet.</h3>
+            <p>Try a format name like PDF, PNG, DOCX, XLSX, MP3, or MP4.</p>
           </div>
-        ))
-      ) : (
-        <div className={styles.empty}>
-          <h3>No live route matches that search yet.</h3>
-          <p>Try a format name like PDF, PNG, DOCX, XLSX, MP3, or MP4.</p>
-        </div>
-      )}
+        )}
+      </div>
     </section>
   );
 }
