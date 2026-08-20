@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Converter } from "@/components/converter";
+import { FeatureMarquee } from "@/components/feature-marquee";
 import { ArrowIcon, DeviceIcon, RouteIcon } from "@/components/icons";
 import { FormatMark } from "@/components/format-mark";
 import { SiteHeader } from "@/components/site-header";
@@ -96,22 +97,19 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
       <main id="main-content">
         <section className="hero-section" aria-labelledby="page-title">
           <div className="hero-copy hero-copy-benefit">
-            <span className="hero-eyebrow">
-              One file in. The right format out.
-            </span>
+            <span className="hero-eyebrow">One file in. The right format out.</span>
             <h1 id="page-title">{pageTitle}</h1>
             <p>{pageDescription}</p>
           </div>
-          <Converter
-            initialSource={pair?.source}
-            initialTarget={pair?.target}
-          />
+          <Converter initialSource={pair?.source} initialTarget={pair?.target} />
           <div className="hero-notes" aria-label="Conversion basics">
             <span>Available routes are verified up front</span>
             <span>Progress stays visible while the job runs</span>
             <span>Works across desktop and mobile</span>
           </div>
         </section>
+
+        {!pair ? <FeatureMarquee /> : null}
 
         {relatedPairs.length > 0 ? (
           <section className="popular-section" aria-labelledby="popular-title">
@@ -155,17 +153,12 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
                 it converts.
               </p>
             </div>
-            <div
-              className="route-demo"
-              aria-label="Animated example conversion routes"
-            >
+            <div className="route-demo" aria-label="Animated example conversion routes">
               <div className="route-demo-file">
                 <FormatMark format="docx" />
                 <span>report.docx</span>
               </div>
-              <div className="route-demo-track" aria-hidden="true">
-                <span />
-              </div>
+              <div className="route-demo-track" aria-hidden="true"><span /></div>
               <div className="route-demo-targets">
                 <div className="route-demo-target is-active">
                   <FormatMark format="pdf" compact />
@@ -217,26 +210,17 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
             <article>
               <RouteIcon />
               <h3>Real routes only</h3>
-              <p>
-                If processing is not wired up, the interface will not pretend
-                that it is.
-              </p>
+              <p>If processing is not wired up, the interface will not pretend that it is.</p>
             </article>
             <article>
               <DeviceIcon />
               <h3>Progressive workflow</h3>
-              <p>
-                Each decision appears after the previous one, so the converter
-                stays calm and obvious.
-              </p>
+              <p>Each decision appears after the previous one, so the converter stays calm and obvious.</p>
             </article>
             <article>
               <ArrowIcon />
               <h3>Built to finish the job</h3>
-              <p>
-                Upload, status, conversion and download live in one continuous
-                flow.
-              </p>
+              <p>Upload, status, conversion and download live in one continuous flow.</p>
             </article>
           </div>
         </section>
@@ -269,9 +253,7 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
         <section className="guides-promo" aria-labelledby="guides-promo-title">
           <div>
             <span className="section-kicker">Useful beyond the converter</span>
-            <h2 id="guides-promo-title">
-              Learn which format actually fits the job.
-            </h2>
+            <h2 id="guides-promo-title">Learn which format actually fits the job.</h2>
             <p>
               Convertix Guides gives the site an indexable knowledge layer with
               practical format comparisons and conversion advice.
