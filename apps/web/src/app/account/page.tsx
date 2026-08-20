@@ -27,6 +27,29 @@ export default async function AccountPage() {
     console.error("Failed to load profile:", profileError);
   }
 
+  const { data: conversions, error: conversionsError } = await supabase
+    .from("conversion_history")
+    .select(
+      `
+      conversion_id,
+      original_filename,
+      source_format,
+      target_format,
+      status,
+      input_size,
+      output_size,
+      created_at,
+      completed_at
+    `,
+    )
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(20);
+
+  if (conversionsError) {
+    console.error("Failed to load conversion history:", conversionsError);
+  }
+
   const displayName = profile?.display_name ?? "Convertix user";
   const memberSince = profile?.created_at
     ? new Date(profile.created_at).toLocaleDateString("en-GB", {
@@ -59,7 +82,7 @@ export default async function AccountPage() {
       <section className="account-shell">
         <div className="account-heading">
           <p className="auth-eyebrow">Your account</p>
-          <h1>Good to see you, {displayName}.</h1>
+          <h1>Hello {displayName}.</h1>
           <p>
             Manage your Convertix account and keep track of your conversions in
             one place.
@@ -102,15 +125,70 @@ export default async function AccountPage() {
             </dl>
           </section>
 
-          <section className="account-panel account-panel-muted">
+          <section className="account-panel">
             <div className="account-panel-heading">
               <span>Conversions</span>
-              <span>Coming next</span>
+              <span>
+                {conversions?.length ?? 0}{" "}
+                {(conversions?.length ?? 0) === 1
+                  ? "conversion"
+                  : "conversions"}
+              </span>
             </div>
 
-            <div className="account-empty-state">
-              <strong>Your conversion history will live here.</strong>
-            </div>
+            {conversions && conversions.length > 0 ? (
+              <div className="account-conversion-list">
+                {conversions.map((conversion) => {
+                  const convertedAt = new Date(
+                    conversion.completed_at ?? conversion.created_at,
+                  ).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  });
+
+                  return (
+                    <div
+                      className="account-conversion-item"
+                      key={conversion.conversion_id}
+                    >
+                      <div
+                        className="account-conversion-icon"
+                        aria-hidden="true"
+                      >
+                        {conversion.target_format.toUpperCase()}
+                      </div>
+
+                      <div className="account-conversion-main">
+                        <strong>{conversion.original_filename}</strong>
+
+                        <div className="account-conversion-route">
+                          <span>{conversion.source_format.toUpperCase()}</span>
+                          <span aria-hidden="true">→</span>
+                          <span>{conversion.target_format.toUpperCase()}</span>
+                        </div>
+                      </div>
+
+                      <div className="account-conversion-meta">
+                        <span>{convertedAt}</span>
+
+                        <span
+                          className="account-conversion-status"
+                          data-status={conversion.status}
+                        >
+                          {conversion.status}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="account-empty-state">
+                <strong>No conversions yet.</strong>
+                <span>Your completed conversions will appear here.</span>
+              </div>
+            )}
           </section>
         </div>
 
