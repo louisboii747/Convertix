@@ -48,6 +48,27 @@ export async function login(formData: FormData) {
   redirect("/account");
 }
 
+export async function loginWithGoogle() {
+  const supabase = await createClient();
+
+  const siteUrl =
+    process.env.NEXT_PUBLIC_CONVERTIX_SITE_URL ?? "http://localhost:3000";
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${siteUrl}/auth/callback`,
+    },
+  });
+
+  if (error || !data.url) {
+    console.error("Supabase Google OAuth error:", error);
+    redirect("/login?error=oauth_failed");
+  }
+
+  redirect(data.url);
+}
+
 export async function signup(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");

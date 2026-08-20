@@ -2296,3 +2296,159 @@ main {
     width: 100%;
   }
 }
+
+.auth-oauth-form {
+  width: 100%;
+  margin: 0;
+}
+
+.gsi-material-button {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -webkit-appearance: none;
+
+  background-color: #ffffff;
+  background-image: none;
+
+  border: 1px solid #747775;
+  border-radius: 12px;
+  box-sizing: border-box;
+
+  color: #1f1f1f;
+  cursor: pointer;
+
+  font-family: "Roboto", Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.25px;
+
+  height: 52px;
+  width: 100%;
+  max-width: none;
+
+  outline: none;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+
+  transition:
+    background-color 0.218s,
+    border-color 0.218s,
+    box-shadow 0.218s,
+    transform 0.16s ease;
+}
+
+.gsi-material-button .gsi-material-button-icon {
+  height: 20px;
+  width: 20px;
+  min-width: 20px;
+  margin-left: 16px;
+}
+
+.gsi-material-button .gsi-material-button-icon svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+.gsi-material-button .gsi-material-button-content-wrapper {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  height: 100%;
+  position: relative;
+  width: 100%;
+}
+
+.gsi-material-button .gsi-material-button-contents {
+  flex-grow: 1;
+
+  /*
+   * Compensates for the icon on the left so the text remains
+   * visually centred across the entire button.
+   */
+  padding-right: 36px;
+
+  font-family: "Roboto", Arial, sans-serif;
+  font-weight: 500;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gsi-material-button .gsi-material-button-state {
+  position: absolute;
+  inset: 0;
+
+  opacity: 0;
+  transition: opacity 0.218s;
+
+  pointer-events: none;
+}
+
+.gsi-material-button:disabled {
+  cursor: default;
+  background-color: #ffffff61;
+  border-color: #1f1f1f1f;
+}
+
+.gsi-material-button:disabled .gsi-material-button-contents,
+.gsi-material-button:disabled .gsi-material-button-icon {
+  opacity: 38%;
+}
+
+.gsi-material-button:not(:disabled):hover {
+  box-shadow:
+    0 1px 2px 0 rgba(60, 64, 67, 0.3),
+    0 1px 3px 1px rgba(60, 64, 67, 0.15);
+
+  transform: translateY(-1px);
+}
+
+.gsi-material-button:not(:disabled):hover .gsi-material-button-state {
+  background-color: #303030;
+  opacity: 8%;
+}
+
+.gsi-material-button:not(:disabled):active {
+  transform: translateY(0);
+}
+
+.gsi-material-button:not(:disabled):active .gsi-material-button-state,
+.gsi-material-button:not(:disabled):focus .gsi-material-button-state {
+  background-color: #303030;
+  opacity: 12%;
+}
+
+.gsi-material-button:focus-visible {
+  outline: 3px solid rgba(49, 92, 245, 0.2);
+  outline-offset: 2px;
+}
+
+/* Divider between OAuth and email/password login */
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  width: 100%;
+  margin: 18px 0;
+
+  color: #7b879d;
+  font-size: 13px;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e2e8f2;
+}

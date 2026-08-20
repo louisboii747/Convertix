@@ -8,7 +8,12 @@ type VerificationState =
   | { status: "idle" }
   | { status: "checking" }
   | { status: "verified"; difference: number; meanError: number }
-  | { status: "failed"; difference?: number; meanError?: number; message: string };
+  | {
+      status: "failed";
+      difference?: number;
+      meanError?: number;
+      message: string;
+    };
 
 type ImageComparison = {
   differentPixelRatio: number;
@@ -33,7 +38,10 @@ function validateSvg(svg: string): string | null {
   const document = parser.parseFromString(svg, "image/svg+xml");
   const parserError = document.querySelector("parsererror");
 
-  if (parserError || document.documentElement.localName.toLowerCase() !== "svg") {
+  if (
+    parserError ||
+    document.documentElement.localName.toLowerCase() !== "svg"
+  ) {
     return "This file does not contain valid SVG markup.";
   }
 
@@ -85,7 +93,8 @@ async function renderSvg(svg: string): Promise<ImageData> {
     canvas.height = RENDER_SIZE;
 
     const context = canvas.getContext("2d", { willReadFrequently: true });
-    if (!context) throw new Error("Visual verification is unavailable in this browser.");
+    if (!context)
+      throw new Error("Visual verification is unavailable in this browser.");
 
     context.clearRect(0, 0, RENDER_SIZE, RENDER_SIZE);
 
@@ -153,7 +162,9 @@ export function SvgOptimizer() {
   const [optimized, setOptimized] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
-  const [verification, setVerification] = useState<VerificationState>({ status: "idle" });
+  const [verification, setVerification] = useState<VerificationState>({
+    status: "idle",
+  });
   const [originalUrl, setOriginalUrl] = useState<string | null>(null);
   const [optimizedUrl, setOptimizedUrl] = useState<string | null>(null);
 
@@ -195,7 +206,9 @@ export function SvgOptimizer() {
     setVerification({ status: "idle" });
 
     if (!file.name.toLowerCase().endsWith(".svg")) {
-      setError("Choose an SVG file. Renaming another image format to .svg does not convert it.");
+      setError(
+        "Choose an SVG file. Renaming another image format to .svg does not convert it.",
+      );
       return;
     }
 
@@ -235,7 +248,9 @@ export function SvgOptimizer() {
       const outputValidationError = validateSvg(output);
 
       if (outputValidationError) {
-        setError("SVGO produced invalid SVG markup, so Convertix discarded the result.");
+        setError(
+          "SVGO produced invalid SVG markup, so Convertix discarded the result.",
+        );
         return;
       }
 
@@ -312,9 +327,9 @@ export function SvgOptimizer() {
         <span className={styles.eyebrow}>Convertix SVG Toolkit</span>
         <h1 id="optimizer-title">Optimize SVG without breaking it.</h1>
         <p>
-          Your SVG stays in your browser. Convertix runs a conservative SVGO pass,
-          renders both versions, and blocks the optimized download if the result
-          visibly changes.
+          Your SVG stays in your browser. Convertix runs a conservative SVGO
+          pass, renders both versions, and blocks the optimized download if the
+          result visibly changes.
         </p>
         <div className={styles.trustRow}>
           <span>✓ No upload</span>
@@ -333,7 +348,11 @@ export function SvgOptimizer() {
         />
 
         {!original ? (
-          <button className={styles.dropZone} type="button" onClick={() => inputRef.current?.click()}>
+          <button
+            className={styles.dropZone}
+            type="button"
+            onClick={() => inputRef.current?.click()}
+          >
             <strong>Choose an SVG to optimize</strong>
             <span>Processed locally in this browser · up to 5 MB</span>
           </button>
@@ -342,7 +361,9 @@ export function SvgOptimizer() {
             <div className={styles.summaryBar}>
               <div>
                 <strong>{fileName}</strong>
-                <span>{formatBytes(originalBytes)} → {formatBytes(optimizedBytes)}</span>
+                <span>
+                  {formatBytes(originalBytes)} → {formatBytes(optimizedBytes)}
+                </span>
               </div>
               <div className={styles.saving}>
                 <strong>{saving.toFixed(1)}%</strong>
@@ -392,18 +413,37 @@ export function SvgOptimizer() {
               }`}
             >
               {verification.status === "checking" ? (
-                <><strong>Comparing renders…</strong><span>Checking the optimized output with antialiasing-aware visual comparison.</span></>
+                <>
+                  <strong>Comparing renders…</strong>
+                  <span>
+                    Checking the optimized output with antialiasing-aware visual
+                    comparison.
+                  </span>
+                </>
               ) : null}
               {verification.status === "verified" ? (
-                <><strong>✓ Visual appearance verified</strong><span>The optimized render passed Convertix's visual-difference tolerance.</span></>
+                <>
+                  <strong>✓ Visual appearance verified</strong>
+                  <span>
+                    The optimized render passed the Convertix visual-difference
+                    tolerance.
+                  </span>
+                </>
               ) : null}
               {verification.status === "failed" ? (
-                <><strong>Optimization blocked</strong><span>{verification.message}</span></>
+                <>
+                  <strong>Optimization blocked</strong>
+                  <span>{verification.message}</span>
+                </>
               ) : null}
             </div>
 
             <div className={styles.actions}>
-              <button className={styles.secondaryButton} type="button" onClick={() => inputRef.current?.click()}>
+              <button
+                className={styles.secondaryButton}
+                type="button"
+                onClick={() => inputRef.current?.click()}
+              >
                 Choose another SVG
               </button>
               <button
@@ -424,15 +464,26 @@ export function SvgOptimizer() {
       <div className={styles.explainer}>
         <article>
           <strong>Why the verification?</strong>
-          <p>SVG optimizers can occasionally change rendering. Convertix compares the before and after result instead of assuming optimization was harmless.</p>
+          <p>
+            SVG optimizers can occasionally change rendering. Convertix compares
+            the before and after result instead of assuming optimization was
+            harmless.
+          </p>
         </article>
         <article>
           <strong>What gets optimized?</strong>
-          <p>Redundant metadata, markup and path data can be simplified by SVGO while Convertix keeps the SVG scalable.</p>
+          <p>
+            Redundant metadata, markup and path data can be simplified by SVGO
+            while Convertix keeps the SVG scalable.
+          </p>
         </article>
         <article>
           <strong>Is this a sanitizer?</strong>
-          <p>No. Optimization and security sanitization are different jobs. Suspicious active content is flagged rather than silently described as safe.</p>
+          <p>
+            No. Optimization and security sanitization are different jobs.
+            Suspicious active content is flagged rather than silently described
+            as safe.
+          </p>
         </article>
       </div>
     </section>
