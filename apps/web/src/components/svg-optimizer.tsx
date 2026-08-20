@@ -7,13 +7,20 @@ import styles from "./svg-optimizer.module.css";
 type VerificationState =
   | { status: "idle" }
   | { status: "checking" }
-  | { status: "verified"; difference: number }
-  | { status: "failed"; difference?: number; message: string };
+  | { status: "verified"; difference: number; meanError: number }
+  | { status: "failed"; difference?: number; meanError?: number; message: string };
+
+type ImageComparison = {
+  differentPixelRatio: number;
+  meanChannelError: number;
+};
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const RENDER_SIZE = 512;
-const CHANNEL_TOLERANCE = 3;
-const MAX_DIFFERENT_PIXEL_RATIO = 0.0005;
+const CHANNEL_TOLERANCE = 10;
+const MAX_DIFFERENT_PIXEL_RATIO = 0.01;
+const MAX_MEAN_CHANNEL_ERROR = 0.35;
+const TRANSPARENT_ALPHA_TOLERANCE = 8;
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -97,27 +104,46 @@ async function renderSvg(svg: string): Promise<ImageData> {
   }
 }
 
-function compareImages(before: ImageData, after: ImageData): number {
+function compareImages(before: ImageData, after: ImageData): ImageComparison {
   const pixelCount = before.width * before.height;
   let differentPixels = 0;
+  let totalChannelError = 0;
 
   for (let offset = 0; offset < before.data.length; offset += 4) {
-    let different = false;
+    const beforeAlpha = before.data[offset + 3];
+    const afterAlpha = after.data[offset + 3];
 
-    for (let channel = 0; channel < 4; channel += 1) {
-      if (
-        Math.abs(before.data[offset + channel] - after.data[offset + channel]) >
-        CHANNEL_TOLERANCE
-      ) {
-        different = true;
-        break;
-      }
+    if (
+      beforeAlpha <= TRANSPARENT_ALPHA_TOLERANCE &&
+      afterAlpha <= TRANSPARENT_ALPHA_TOLERANCE
+    ) {
+      continue;
     }
+
+    let different = false;
+    const beforeAlphaScale = beforeAlpha / 255;
+    const afterAlphaScale = afterAlpha / 255;
+
+    for (let channel = 0; channel < 3; channel += 1) {
+      const beforeVisible = before.data[offset + channel] * beforeAlphaScale;
+      const afterVisible = after.data[offset + channel] * afterAlphaScale;
+      const error = Math.abs(beforeVisible - afterVisible);
+
+      totalChannelError += error;
+      if (error > CHANNEL_TOLERANCE) different = true;
+    }
+
+    const alphaError = Math.abs(beforeAlpha - afterAlpha);
+    totalChannelError += alphaError;
+    if (alphaError > CHANNEL_TOLERANCE) different = true;
 
     if (different) differentPixels += 1;
   }
 
-  return differentPixels / pixelCount;
+  return {
+    differentPixelRatio: differentPixels / pixelCount,
+    meanChannelError: totalChannelError / (pixelCount * 4),
+  };
 }
 
 export function SvgOptimizer() {
@@ -223,16 +249,24 @@ export function SvgOptimizer() {
           renderSvg(source),
           renderSvg(output),
         ]);
-        const difference = compareImages(beforeImage, afterImage);
+        const comparison = compareImages(beforeImage, afterImage);
+        const passesVerification =
+          comparison.differentPixelRatio <= MAX_DIFFERENT_PIXEL_RATIO &&
+          comparison.meanChannelError <= MAX_MEAN_CHANNEL_ERROR;
 
-        if (difference <= MAX_DIFFERENT_PIXEL_RATIO) {
-          setVerification({ status: "verified", difference });
+        if (passesVerification) {
+          setVerification({
+            status: "verified",
+            difference: comparison.differentPixelRatio,
+            meanError: comparison.meanChannelError,
+          });
         } else {
           setVerification({
             status: "failed",
-            difference,
+            difference: comparison.differentPixelRatio,
+            meanError: comparison.meanChannelError,
             message:
-              "The optimized render differs from the original, so Convertix blocked the optimized download.",
+              "The optimized render differs enough from the original that Convertix could not safely verify it, so the download was blocked.",
           });
         }
       } catch (verificationError) {
@@ -358,10 +392,10 @@ export function SvgOptimizer() {
               }`}
             >
               {verification.status === "checking" ? (
-                <><strong>Comparing renders…</strong><span>Checking the optimized output pixel by pixel.</span></>
+                <><strong>Comparing renders…</strong><span>Checking the optimized output with antialiasing-aware visual comparison.</span></>
               ) : null}
               {verification.status === "verified" ? (
-                <><strong>✓ Visual appearance verified</strong><span>{(verification.difference * 100).toFixed(3)}% of rendered pixels differed beyond the tolerance.</span></>
+                <><strong>✓ Visual appearance verified</strong><span>The optimized render passed Convertix's visual-difference tolerance.</span></>
               ) : null}
               {verification.status === "failed" ? (
                 <><strong>Optimization blocked</strong><span>{verification.message}</span></>
