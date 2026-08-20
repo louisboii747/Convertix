@@ -202,16 +202,7 @@ export function SvgOptimizer() {
     try {
       const result = optimize(source, {
         multipass: true,
-        plugins: [
-          {
-            name: "preset-default",
-            params: {
-              overrides: {
-                removeViewBox: false,
-              },
-            },
-          },
-        ],
+        plugins: ["preset-default"],
       });
 
       const output = result.data;
@@ -334,7 +325,11 @@ export function SvgOptimizer() {
                   <span>{formatBytes(originalBytes)}</span>
                 </div>
                 <div className={styles.previewCanvas}>
-                  {originalUrl ? <img src={originalUrl} alt="Original SVG preview" /> : null}
+                  {originalUrl ? (
+                    // Blob-backed previews are generated locally and cannot benefit from next/image optimization.
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={originalUrl} alt="Original SVG preview" />
+                  ) : null}
                 </div>
               </article>
 
@@ -344,7 +339,11 @@ export function SvgOptimizer() {
                   <span>{formatBytes(optimizedBytes)}</span>
                 </div>
                 <div className={styles.previewCanvas}>
-                  {optimizedUrl ? <img src={optimizedUrl} alt="Optimized SVG preview" /> : null}
+                  {optimizedUrl ? (
+                    // Blob-backed previews are generated locally and cannot benefit from next/image optimization.
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={optimizedUrl} alt="Optimized SVG preview" />
+                  ) : null}
                 </div>
               </article>
             </div>
@@ -395,7 +394,7 @@ export function SvgOptimizer() {
         </article>
         <article>
           <strong>What gets optimized?</strong>
-          <p>Redundant metadata, markup and path data can be simplified by SVGO while Convertix deliberately preserves the SVG viewBox.</p>
+          <p>Redundant metadata, markup and path data can be simplified by SVGO while Convertix keeps the SVG scalable.</p>
         </article>
         <article>
           <strong>Is this a sanitizer?</strong>
