@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { signup } from "@/app/login/actions";
+import { loginWithGoogle, signup } from "@/app/login/actions";
 
 type SignupPageProps = {
   searchParams: Promise<{
@@ -60,6 +60,12 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
             </div>
           )}
 
+          {error === "oauth_failed" && (
+            <div className="auth-alert" role="alert">
+              We couldn&apos;t start Google sign-in. Please try again.
+            </div>
+          )}
+
           {error === "email_rate_limit" && (
             <div className="auth-alert" role="alert">
               Too many confirmation emails have been sent recently. Please wait
@@ -81,50 +87,64 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
           )}
 
           {!success && (
-            <form action={signup} className="auth-form">
-              <div className="auth-field">
-                <label htmlFor="display_name">Display name</label>
-                <input
-                  id="display_name"
-                  name="display_name"
-                  type="text"
-                  autoComplete="name"
-                  placeholder="Louis"
-                  maxLength={80}
-                  required
-                />
-              </div>
+            <>
+              <form action={loginWithGoogle} className="auth-form">
+                <input type="hidden" name="source" value="signup" />
+                <button className="auth-submit" type="submit">
+                  <span>Continue with Google</span>
+                  <span aria-hidden="true">G</span>
+                </button>
+              </form>
 
-              <div className="auth-field">
-                <label htmlFor="email">Email</label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  placeholder="you@example.com"
-                  required
-                />
-              </div>
+              <p className="auth-back" aria-hidden="true">
+                or create an account with email
+              </p>
 
-              <div className="auth-field">
-                <label htmlFor="password">Password</label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder="At least 8 characters"
-                  minLength={8}
-                  required
-                />
-              </div>
+              <form action={signup} className="auth-form">
+                <div className="auth-field">
+                  <label htmlFor="display_name">Display name</label>
+                  <input
+                    id="display_name"
+                    name="display_name"
+                    type="text"
+                    autoComplete="name"
+                    placeholder="Louis"
+                    maxLength={80}
+                    required
+                  />
+                </div>
 
-              <button className="auth-submit" type="submit">
-                <span>Create account</span>
-                <span aria-hidden="true">→</span>
-              </button>
-            </form>
+                <div className="auth-field">
+                  <label htmlFor="email">Email</label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="you@example.com"
+                    required
+                  />
+                </div>
+
+                <div className="auth-field">
+                  <label htmlFor="password">Password</label>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="new-password"
+                    placeholder="At least 8 characters"
+                    minLength={8}
+                    required
+                  />
+                </div>
+
+                <button className="auth-submit" type="submit">
+                  <span>Create account</span>
+                  <span aria-hidden="true">→</span>
+                </button>
+              </form>
+            </>
           )}
 
           <div className="auth-card-footer">
