@@ -12,6 +12,12 @@ __pycache__/
 *.pyc
 .vscode/settings.json
 
+# Local deployment and debugging artifacts
+services/api/convertix-api.zip
+services/worker/debug-input.svg
+services/worker/task-def-*.json
+services/worker/convertix-test.svg
+
 # Impeccable working artifacts (keep design.json and surface briefs tracked)
 .impeccable/mocks/
 .impeccable/screenshots/
