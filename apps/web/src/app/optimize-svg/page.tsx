@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { SiteHeader } from "@/components/site-header";
 import { SvgOptimizer } from "@/components/svg-optimizer";
 
 export const metadata: Metadata = {
@@ -20,13 +20,11 @@ export const metadata: Metadata = {
 
 export default function OptimizeSvgPage() {
   return (
-    <main id="main-content">
-      <div style={{ width: "min(1120px, calc(100% - 32px))", margin: "18px auto 0" }}>
-        <Link href="/" style={{ color: "var(--cobalt)", fontWeight: 800 }}>
-          ← Back to Convertix
-        </Link>
-      </div>
-      <SvgOptimizer />
-    </main>
+    <>
+      <SiteHeader />
+      <main id="main-content">
+        <SvgOptimizer />
+      </main>
+    </>
   );
 }
