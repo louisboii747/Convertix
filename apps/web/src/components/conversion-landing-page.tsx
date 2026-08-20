@@ -46,7 +46,8 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
         .sort((a, b) => {
           const aRelated = a.source === pair.source || a.target === pair.target;
           const bRelated = b.source === pair.source || b.target === pair.target;
-          if (aRelated === bRelated) return Number(b.popular) - Number(a.popular);
+          if (aRelated === bRelated)
+            return Number(b.popular) - Number(a.popular);
           return Number(bRelated) - Number(aRelated);
         })
         .slice(0, 6)
@@ -92,11 +93,16 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
       <main id="main-content">
         <section className="hero-section" aria-labelledby="page-title">
           <div className="hero-copy hero-copy-benefit">
-            <span className="hero-eyebrow">One file in. The right format out.</span>
+            <span className="hero-eyebrow">
+              One file in. The right format out.
+            </span>
             <h1 id="page-title">{pageTitle}</h1>
             <p>{pageDescription}</p>
           </div>
-          <Converter initialSource={pair?.source} initialTarget={pair?.target} />
+          <Converter
+            initialSource={pair?.source}
+            initialTarget={pair?.target}
+          />
           <div className="hero-notes" aria-label="Conversion basics">
             <span>Available routes are verified up front</span>
             <span>Progress stays visible while the job runs</span>
@@ -108,8 +114,14 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
           <section className="popular-section" aria-labelledby="popular-title">
             <div className="section-heading-row">
               <div>
-                <h2 id="popular-title">{pair ? "Related conversions" : "Popular conversions"}</h2>
-                <p>{pair ? "Other routes that are live now." : "Jump straight into a route people use most."}</p>
+                <h2 id="popular-title">
+                  {pair ? "Related conversions" : "Popular conversions"}
+                </h2>
+                <p>
+                  {pair
+                    ? "Other routes that are live now."
+                    : "Jump straight into a route people use most."}
+                </p>
               </div>
             </div>
             <div className="popular-links">
@@ -124,24 +136,46 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
         ) : null}
 
         {!pair ? (
-          <section className="route-showcase" id="how-it-works" aria-labelledby="route-showcase-title">
+          <section
+            className="route-showcase"
+            id="how-it-works"
+            aria-labelledby="route-showcase-title"
+          >
             <div className="route-showcase-copy">
-              <span className="section-kicker">The payoff, not the plumbing</span>
-              <h2 id="route-showcase-title">Your file gets one obvious path to the result.</h2>
+              <span className="section-kicker">Quick and easy</span>
+              <h2 id="route-showcase-title">
+                Your file gets one obvious path to the result.
+              </h2>
               <p>
-                No wall of controls. Pick a file first; Convertix detects the source, lights up a valid route, then stays out of the way while it converts.
+                No wall of controls. Pick a file first; Convertix detects the
+                source, lights up a valid route, then stays out of the way while
+                it converts.
               </p>
             </div>
-            <div className="route-demo" aria-label="Animated example conversion routes">
+            <div
+              className="route-demo"
+              aria-label="Animated example conversion routes"
+            >
               <div className="route-demo-file">
                 <FormatMark format="docx" />
                 <span>report.docx</span>
               </div>
-              <div className="route-demo-track" aria-hidden="true"><span /></div>
+              <div className="route-demo-track" aria-hidden="true">
+                <span />
+              </div>
               <div className="route-demo-targets">
-                <div className="route-demo-target is-active"><FormatMark format="pdf" compact /><span>PDF</span></div>
-                <div className="route-demo-target"><FormatMark format="txt" compact /><span>TXT</span></div>
-                <div className="route-demo-target"><FormatMark format="png" compact /><span>PNG</span></div>
+                <div className="route-demo-target is-active">
+                  <FormatMark format="pdf" compact />
+                  <span>PDF</span>
+                </div>
+                <div className="route-demo-target">
+                  <FormatMark format="txt" compact />
+                  <span>TXT</span>
+                </div>
+                <div className="route-demo-target">
+                  <FormatMark format="png" compact />
+                  <span>PNG</span>
+                </div>
               </div>
             </div>
           </section>
@@ -150,31 +184,50 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
         <section className="why-section" aria-labelledby="why-title">
           <div className="why-heading">
             <h2 id="why-title">Less friction. More certainty.</h2>
-            <p>Convertix is built around getting a usable result quickly, while being clear about what is and is not live.</p>
+            <p>
+              Convertix is built around getting a usable result quickly, while
+              being clear about what is and is not live.
+            </p>
           </div>
           <div className="why-points">
             <article>
               <RouteIcon />
               <h3>Real routes only</h3>
-              <p>If processing is not wired up, the interface will not pretend that it is.</p>
+              <p>
+                If processing is not wired up, the interface will not pretend
+                that it is.
+              </p>
             </article>
             <article>
               <DeviceIcon />
               <h3>Progressive workflow</h3>
-              <p>Each decision appears after the previous one, so the converter stays calm and obvious.</p>
+              <p>
+                Each decision appears after the previous one, so the converter
+                stays calm and obvious.
+              </p>
             </article>
             <article>
               <ArrowIcon />
               <h3>Built to finish the job</h3>
-              <p>Upload, status, conversion and download live in one continuous flow.</p>
+              <p>
+                Upload, status, conversion and download live in one continuous
+                flow.
+              </p>
             </article>
           </div>
         </section>
 
-        <section className="formats-section format-cloud-section" id="formats" aria-labelledby="formats-title">
+        <section
+          className="formats-section format-cloud-section"
+          id="formats"
+          aria-labelledby="formats-title"
+        >
           <div className="formats-heading">
             <h2 id="formats-title">Formats at a glance</h2>
-            <p>A visual map of the file types Convertix recognises, without making static labels look like buttons.</p>
+            <p>
+              A visual map of the file types Convertix recognises, without
+              making static labels look like buttons.
+            </p>
           </div>
           <div className="format-cloud" aria-label="Recognised file formats">
             {FORMAT_FAMILIES.flatMap((family) =>
@@ -192,10 +245,17 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
         <section className="guides-promo" aria-labelledby="guides-promo-title">
           <div>
             <span className="section-kicker">Useful beyond the converter</span>
-            <h2 id="guides-promo-title">Learn which format actually fits the job.</h2>
-            <p>Convertix Guides gives the site an indexable knowledge layer with practical format comparisons and conversion advice.</p>
+            <h2 id="guides-promo-title">
+              Learn which format actually fits the job.
+            </h2>
+            <p>
+              Convertix Guides gives the site an indexable knowledge layer with
+              practical format comparisons and conversion advice.
+            </p>
           </div>
-          <Link href="/guides" className="guides-promo-link">Explore guides <ArrowIcon /></Link>
+          <Link href="/guides" className="guides-promo-link">
+            Explore guides <ArrowIcon />
+          </Link>
         </section>
 
         <section className="faq-section" id="faq" aria-labelledby="faq-title">
@@ -206,7 +266,10 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
           <div className="faq-list">
             {faqItems.map((item) => (
               <details key={item.question}>
-                <summary><span>{item.question}</span><span className="faq-toggle" aria-hidden="true" /></summary>
+                <summary>
+                  <span>{item.question}</span>
+                  <span className="faq-toggle" aria-hidden="true" />
+                </summary>
                 <p>{item.answer}</p>
               </details>
             ))}
@@ -214,7 +277,10 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
         </section>
       </main>
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
+      />
     </>
   );
 }
