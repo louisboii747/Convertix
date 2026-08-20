@@ -46,6 +46,9 @@ export function MobileNav({
           <Link href="/#formats" onClick={() => setOpen(false)}>
             Formats
           </Link>
+          <Link href="/tools" onClick={() => setOpen(false)}>
+            Tools
+          </Link>
           <Link href="/#faq" onClick={() => setOpen(false)}>
             FAQ
           </Link>
