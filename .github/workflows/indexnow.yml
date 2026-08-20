@@ -1,0 +1,79 @@
+name: IndexNow
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: indexnow-production
+  cancel-in-progress: true
+
+jobs:
+  submit:
+    name: Submit sitemap URLs to IndexNow
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for production deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in {1..30}; do
+            if curl --fail --silent --show-error --max-time 15 https://convertix.uk/sitemap.xml -o /tmp/sitemap.xml; then
+              echo "Production sitemap is reachable."
+              exit 0
+            fi
+            echo "Waiting for production deployment (attempt ${attempt}/30)..."
+            sleep 10
+          done
+          echo "Production sitemap did not become reachable in time."
+          exit 1
+
+      - name: Submit current public URLs
+        shell: bash
+        env:
+          INDEXNOW_KEY: b1c1d3823c6641f4b281b8388925c592
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY' > /tmp/indexnow.json
+          import json
+          import xml.etree.ElementTree as ET
+
+          tree = ET.parse('/tmp/sitemap.xml')
+          namespace = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+          urls = [
+              node.text.strip()
+              for node in tree.findall('.//sm:loc', namespace)
+              if node.text and node.text.strip().startswith('https://convertix.uk')
+          ]
+
+          payload = {
+              'host': 'convertix.uk',
+              'key': 'b1c1d3823c6641f4b281b8388925c592',
+              'keyLocation': 'https://convertix.uk/b1c1d3823c6641f4b281b8388925c592.txt',
+              'urlList': urls,
+          }
+          print(json.dumps(payload))
+          print(f'Prepared {len(urls)} URLs for IndexNow submission.', file=__import__('sys').stderr)
+          PY
+
+          http_code=$(curl --silent --show-error \
+            --output /tmp/indexnow-response.txt \
+            --write-out '%{http_code}' \
+            --request POST \
+            --header 'Content-Type: application/json; charset=utf-8' \
+            --data-binary @/tmp/indexnow.json \
+            https://api.indexnow.org/indexnow)
+
+          echo "IndexNow returned HTTP ${http_code}."
+          cat /tmp/indexnow-response.txt || true
+
+          case "$http_code" in
+            200|202) exit 0 ;;
+            *) echo "IndexNow submission failed."; exit 1 ;;
+          esac
