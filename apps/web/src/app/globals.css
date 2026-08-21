@@ -2059,6 +2059,8 @@ main {
 }
 
 .site-auth-link {
+  display: inline-block;
+  min-width: 48px;
   color: var(--cobalt-dark);
   font-weight: 760;
 }

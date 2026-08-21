@@ -9,7 +9,8 @@
     "format": "prettier --write .",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "npm run lint && npm run typecheck"
+    "test": "npm run lint && npm run typecheck && npm run test:auth",
+    "test:auth": "node --test src/lib/header-auth.test.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 export function MobileNav({
-  isAuthenticated,
+  accountHref,
   accountLabel,
 }: {
-  isAuthenticated: boolean;
+  accountHref: "/account" | "/login";
   accountLabel: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -54,10 +54,10 @@ export function MobileNav({
             <Link
               className="mobile-nav-auth-link"
               data-ph-mask
-              href={isAuthenticated ? "/account" : "/login"}
+              href={accountHref}
               onClick={() => setOpen(false)}
             >
-              {isAuthenticated ? accountLabel : "Log in"}
+              {accountLabel}
             </Link>
           </nav>
         </div>
