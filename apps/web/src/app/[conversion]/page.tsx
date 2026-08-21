@@ -14,6 +14,29 @@ interface ConversionPageProps {
   params: Promise<{ conversion: string }>;
 }
 
+const SEARCH_INTENT_METADATA: Partial<
+  Record<string, { title: string; description: string; keywords: string[] }>
+> = {
+  "txt-to-docx": {
+    title: "Convert TXT to DOCX Online – Text File to Word",
+    description:
+      "Convert a TXT text file to an editable Word DOCX document online. Turn Notepad and plain-text files into DOCX with a simple upload, convert and download workflow.",
+    keywords: ["txt to docx", "text file to word", "convert txt to word", "notepad to word", "txt to docx online"],
+  },
+  "webp-to-png": {
+    title: "Convert WebP to PNG Online – Keep Transparency",
+    description:
+      "Convert WebP images to PNG online for broader compatibility and transparent-image workflows. Upload a .webp file and download the converted PNG in a few steps.",
+    keywords: ["webp to png", "convert webp to png", "webp transparency to png", "downloaded webp to png", "webp to png online"],
+  },
+  "webm-to-mp4": {
+    title: "Convert WebM to MP4 Online – Video & Screen Recordings",
+    description:
+      "Convert WebM video and screen recordings to MP4 online for easier playback, editing and sharing. Useful for browser recordings, OBS exports and WebM files that need MP4 compatibility.",
+    keywords: ["webm to mp4", "convert webm to mp4", "obs webm to mp4", "screen recording webm to mp4", "webm to mp4 online"],
+  },
+};
+
 export function generateStaticParams() {
   return CONVERSION_PAIRS.map((pair) => ({
     conversion: pair.slug,
@@ -34,12 +57,16 @@ export async function generateMetadata({
   const target = FORMATS[pair.target].label;
   const enabled = isConversionPairEnabled(pair);
   const canonicalPath = `/${pair.slug}`;
-  const title = `Convert ${source} to ${target} Online – Free Converter`;
-  const description = `Convert ${source} files to ${target} online with Convertix. Upload your ${source} file, convert it in a simple workflow, and download the ${target} result.`;
+  const searchIntent = SEARCH_INTENT_METADATA[pair.slug];
+  const title = searchIntent?.title ?? `Convert ${source} to ${target} Online – Free Converter`;
+  const description =
+    searchIntent?.description ??
+    `Convert ${source} files to ${target} online with Convertix. Upload your ${source} file, convert it in a simple workflow, and download the ${target} result.`;
 
   return {
     title,
     description,
+    ...(searchIntent?.keywords ? { keywords: searchIntent.keywords } : {}),
     alternates: {
       canonical: canonicalPath,
     },
@@ -62,13 +89,13 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       url: canonicalPath,
-      title: `Convert ${source} to ${target} Online`,
+      title,
       description,
       siteName: "Convertix",
     },
     twitter: {
       card: "summary_large_image",
-      title: `Convert ${source} to ${target} Online`,
+      title,
       description,
     },
   };
