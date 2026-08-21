@@ -7,7 +7,7 @@ import { FORMATS, getEnabledConversionPairs } from "@/lib/formats";
 export const metadata: Metadata = {
   title: "Online File Converters",
   description:
-    "Browse and search every live Convertix conversion route for documents, spreadsheets, images, audio, and video.",
+    "Find the Convertix converter you need for documents, spreadsheets, images, audio, and video.",
   alternates: {
     canonical: "/conversions",
   },
@@ -16,13 +16,13 @@ export const metadata: Metadata = {
     url: "/conversions",
     title: "Online File Converters – Convertix",
     description:
-      "Browse and search every live Convertix conversion route for documents, spreadsheets, images, audio, and video.",
+      "Find the Convertix converter you need for documents, spreadsheets, images, audio, and video.",
     siteName: "Convertix",
   },
   twitter: {
     card: "summary_large_image",
     title: "Online File Converters — Convertix",
-    description: "Browse and search every live Convertix conversion route for documents, images, audio, spreadsheets, and video.",
+    description: "Search Convertix converters by file type or format.",
   },
 };
 
@@ -55,11 +55,9 @@ export default function ConversionsPage() {
       <main id="main-content">
         <section className="hero-section" aria-labelledby="conversions-title">
           <div className="hero-copy hero-copy-benefit">
-            <span className="hero-eyebrow">Every live route, in one place.</span>
-            <h1 id="conversions-title">Choose the conversion you need.</h1>
+            <h1 id="conversions-title">Find a file converter</h1>
             <p>
-              Search Convertix&apos;s supported file conversions by format or type,
-              then jump straight into the focused converter you need.
+              Search by file type or format, then open the converter you need.
             </p>
           </div>
         </section>

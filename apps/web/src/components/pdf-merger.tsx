@@ -22,9 +22,9 @@ function statusMessage(status: ConversionStatus): string {
     case "uploading":
       return "Uploading PDFs…";
     case "queued":
-      return "Merge queued…";
+      return "Waiting to merge…";
     case "starting":
-      return "Starting PDF merger…";
+      return "Preparing PDFs…";
     case "converting":
       return "Merging PDFs…";
     case "completed":
@@ -86,7 +86,7 @@ export function PdfMerger() {
     const nextTotalSize = nextFiles.reduce((sum, file) => sum + file.size, 0);
     if (nextTotalSize > MAX_TOTAL_SIZE) {
       captureEvent("pdf_merge_file_rejected", { reason: "too_large", limit_bytes: MAX_TOTAL_SIZE });
-      setError("For now, the combined PDF size can be up to 100 MB.");
+      setError("Choose PDFs with a combined size of 100 MB or less.");
       return;
     }
 
@@ -168,13 +168,12 @@ export function PdfMerger() {
   return (
     <section className={styles.tool} aria-labelledby="merger-title">
       <div className={styles.hero}>
-        <span className={styles.eyebrow}>Convertix PDF Toolkit</span>
-        <h1 id="merger-title">Merge PDFs in the order you want.</h1>
-        <p>Add two or more PDFs, reorder them, then combine everything into one download.</p>
+        <h1 id="merger-title">Merge PDF files in any order</h1>
+        <p>Add at least two PDFs, put them in order, and download one combined file.</p>
         <div className={styles.trustRow}>
-          <span>✓ Drag to reorder</span>
-          <span>✓ Up to 20 PDFs</span>
-          <span>✓ No account required</span>
+          <span>Drag to reorder</span>
+          <span>Up to 20 PDFs</span>
+          <span>No account needed</span>
         </div>
       </div>
 
@@ -211,7 +210,7 @@ export function PdfMerger() {
               </div>
               {!busy ? (
                 <button className={styles.addButton} type="button" onClick={() => inputRef.current?.click()}>
-                  + Add PDFs
+                  Add PDFs
                 </button>
               ) : null}
             </div>
@@ -233,7 +232,7 @@ export function PdfMerger() {
                     if (from !== null) moveFile(from, index);
                   }}
                 >
-                  <span className={styles.handle} aria-hidden="true">⋮⋮</span>
+                  <span className={styles.handle}>Drag</span>
                   <span className={styles.position}>{index + 1}</span>
                   <div className={styles.fileInfo}>
                     <strong data-ph-mask>{file.name}</strong>
@@ -241,8 +240,8 @@ export function PdfMerger() {
                   </div>
                   {!busy ? (
                     <div className={styles.rowActions}>
-                      <button type="button" aria-label={`Move ${file.name} up`} disabled={index === 0} onClick={() => moveFile(index, index - 1)}>↑</button>
-                      <button type="button" aria-label={`Move ${file.name} down`} disabled={index === files.length - 1} onClick={() => moveFile(index, index + 1)}>↓</button>
+                      <button type="button" aria-label={`Move ${file.name} up`} disabled={index === 0} onClick={() => moveFile(index, index - 1)}>Up</button>
+                      <button type="button" aria-label={`Move ${file.name} down`} disabled={index === files.length - 1} onClick={() => moveFile(index, index + 1)}>Down</button>
                       <button type="button" aria-label={`Remove ${file.name}`} onClick={() => removeFile(index)}>Remove</button>
                     </div>
                   ) : null}
@@ -266,7 +265,7 @@ export function PdfMerger() {
 
             {downloadUrl ? (
               <div className={styles.success} role="status">
-                <strong>✓ Your merged PDF is ready</strong>
+                <strong>Your merged PDF is ready</strong>
                 <span>{outputSize !== null ? `${formatBytes(outputSize)} · ` : ""}{files.length} PDFs combined.</span>
               </div>
             ) : null}
@@ -302,9 +301,9 @@ export function PdfMerger() {
       </div>
 
       <div className={styles.explainer}>
-        <article><strong>How is the order chosen?</strong><p>The list is the final PDF order. Drag rows or use the arrow buttons before merging.</p></article>
-        <article><strong>What happens to my files?</strong><p>Convertix uploads the PDFs temporarily, merges them on the existing conversion worker, then returns one PDF.</p></article>
-        <article><strong>Can I merge large batches?</strong><p>Version one accepts up to 20 PDFs with a combined size of 100 MB, matching Convertix’s current free upload limit.</p></article>
+        <article><strong>How do I set the order?</strong><p>The PDFs appear in the order they will be merged. Drag a row or use its Up and Down buttons.</p></article>
+        <article><strong>What happens to my files?</strong><p>Convertix uploads the PDFs, combines them, and returns one file. The files are stored temporarily while the job runs.</p></article>
+        <article><strong>How many PDFs can I merge?</strong><p>You can add up to 20 PDFs with a combined size of 100 MB.</p></article>
       </div>
     </section>
   );

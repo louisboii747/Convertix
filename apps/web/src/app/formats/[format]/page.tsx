@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: FormatPageProps): Promise<Met
   const info = FORMATS[format];
   const content = getFormatContent(format);
   const title = `${info.label} File Format: Converters, Uses and Guide`;
-  const description = content?.summary ?? `Learn about ${info.label} files and browse live Convertix conversion routes.`;
+  const description = content?.summary ?? `Learn about ${info.label} files and see the Convertix conversions available for them.`;
   const canonical = `/formats/${format}`;
 
   return {
@@ -81,7 +81,7 @@ export default async function FormatPage({ params }: FormatPageProps) {
     },
     {
       question: `Can Convertix convert ${info.label} files?`,
-      answer: `Yes. The live conversion routes above are the ${info.label}-related routes currently enabled in Convertix.`,
+      answer: `Yes. The conversions listed on this page are the ${info.label} options currently available in Convertix.`,
     },
     {
       question: `Will converting a ${info.label} file preserve everything?`,
@@ -134,17 +134,15 @@ export default async function FormatPage({ params }: FormatPageProps) {
       <main id="main-content">
         <section className="hero-section" aria-labelledby="format-page-title">
           <div className="hero-copy hero-copy-benefit">
-            <span className="hero-eyebrow">Format guide</span>
             <div aria-hidden="true"><FormatMark format={format} /></div>
-            <h1 id="format-page-title">{info.label}: what it is and when to use it.</h1>
+            <h1 id="format-page-title">About {info.label} files</h1>
             <p>{content.description}</p>
           </div>
         </section>
 
         <section className="why-section" aria-labelledby="format-overview-title">
           <div className="why-heading">
-            <span className="section-kicker">At a glance</span>
-            <h2 id="format-overview-title">Where {info.label} fits.</h2>
+            <h2 id="format-overview-title">Where {info.label} works well</h2>
             <p>{content.summary}</p>
           </div>
           <div className="why-points">
@@ -169,9 +167,8 @@ export default async function FormatPage({ params }: FormatPageProps) {
         <section className="popular-section" aria-labelledby="format-routes-title">
           <div className="section-heading-row">
             <div>
-              <span className="section-kicker">Live converters</span>
-              <h2 id="format-routes-title">Convert {info.label} with Convertix.</h2>
-              <p>These routes are generated from the conversion routes currently enabled in Convertix.</p>
+              <h2 id="format-routes-title">{info.label} conversions</h2>
+              <p>Choose an option to open its converter.</p>
             </div>
           </div>
           <div className="popular-links">
@@ -187,9 +184,8 @@ export default async function FormatPage({ params }: FormatPageProps) {
         {guides.length > 0 ? (
           <section className="guides-promo" aria-labelledby="format-guides-title">
             <div>
-              <span className="section-kicker">Learn before you convert</span>
-              <h2 id="format-guides-title">Guides involving {info.label}.</h2>
-              <p>Compare formats and understand what a conversion can change before choosing a route.</p>
+              <h2 id="format-guides-title">Learn more about {info.label}</h2>
+              <p>Compare formats and see what may change during conversion.</p>
             </div>
             <div className="guide-route-links">
               {guides.map((guide) => (
@@ -203,7 +199,7 @@ export default async function FormatPage({ params }: FormatPageProps) {
 
         <section className="faq-section" aria-labelledby="format-faq-title">
           <div className="faq-heading">
-            <h2 id="format-faq-title">Useful things to know about {info.label}.</h2>
+            <h2 id="format-faq-title">Questions about {info.label}</h2>
           </div>
           <div className="faq-list">
             {faqItems.map((item) => (

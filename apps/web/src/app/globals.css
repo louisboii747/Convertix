@@ -1650,17 +1650,8 @@ main {
   max-width: 560px;
 }
 
-.auth-eyebrow {
-  margin: 0 0 14px;
-  color: var(--cobalt-dark);
-  font-size: 13px;
-  font-weight: 760;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
 .auth-intro h1 {
-  max-width: 8ch;
+  max-width: 12ch;
   margin: 0;
   font-family: var(--font-display), sans-serif;
   font-size: clamp(3.25rem, 7vw, 5.6rem);
@@ -1743,7 +1734,7 @@ main {
   width: 100%;
   min-height: 54px;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   margin-top: 4px;
   padding: 0 18px;
   border: 0;
@@ -1868,8 +1859,6 @@ main {
   color: var(--ink-650);
   font-size: 12px;
   font-weight: 760;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
 }
 
 .account-panel-heading span:last-child {
@@ -2152,7 +2141,7 @@ main {
   color: var(--ink);
 }
 
-.legal-hero > p:not(.auth-eyebrow):not(.legal-updated) {
+.legal-hero > p:not(.legal-updated) {
   max-width: 680px;
   font-size: 1.125rem;
   line-height: 1.7;

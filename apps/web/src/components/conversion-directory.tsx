@@ -56,8 +56,7 @@ export function ConversionDirectory({ entries }: ConversionDirectoryProps) {
     <section className={styles.directory} aria-labelledby="conversion-directory-title">
       <div className={styles.controls}>
         <div>
-          <span className={styles.kicker}>Find a route</span>
-          <h2 id="conversion-directory-title">Search every live conversion.</h2>
+          <h2 id="conversion-directory-title">Search available conversions</h2>
         </div>
 
         <label className={styles.searchLabel}>
@@ -66,7 +65,7 @@ export function ConversionDirectory({ entries }: ConversionDirectoryProps) {
             aria-controls="conversion-results"
             className={styles.search}
             type="search"
-            placeholder="Search PDF, PNG, Excel, audio..."
+            placeholder="Try PDF, PNG, Excel or audio"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
@@ -101,7 +100,7 @@ export function ConversionDirectory({ entries }: ConversionDirectoryProps) {
 
       <div aria-live="polite" className={styles.resultSummary}>
         {filtered.length === entries.length
-          ? `${entries.length} live conversions`
+          ? `${entries.length} available conversions`
           : `${filtered.length} matching conversion${filtered.length === 1 ? "" : "s"}`}
       </div>
 
@@ -110,7 +109,6 @@ export function ConversionDirectory({ entries }: ConversionDirectoryProps) {
           grouped.map(([groupFamily, familyEntries]) => (
             <div className={styles.group} key={groupFamily}>
               <div className={styles.groupHeading}>
-                <span>{groupFamily}</span>
                 <h3>{groupFamily.charAt(0).toUpperCase() + groupFamily.slice(1)}</h3>
               </div>
               <div className={styles.links}>
@@ -128,7 +126,7 @@ export function ConversionDirectory({ entries }: ConversionDirectoryProps) {
           ))
         ) : (
           <div className={styles.empty}>
-            <h3>No live route matches that search yet.</h3>
+            <h3>No conversions match that search</h3>
             <p>Try a format name like PDF, PNG, DOCX, XLSX, MP3, or MP4.</p>
           </div>
         )}

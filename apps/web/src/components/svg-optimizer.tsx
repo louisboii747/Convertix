@@ -226,7 +226,7 @@ export function SvgOptimizer() {
 
     if (file.size > MAX_FILE_SIZE) {
       captureEvent("svg_optimization_file_rejected", { reason: "too_large", file_size_bytes: file.size, limit_bytes: MAX_FILE_SIZE });
-      setError("For now, the safe optimizer accepts SVG files up to 5 MB.");
+      setError("Choose an SVG smaller than 5 MB.");
       return;
     }
 
@@ -245,7 +245,7 @@ export function SvgOptimizer() {
     setOriginal(source);
     setWarning(
       containsActiveContent
-        ? "This SVG contains scripts, event handlers, external references, or foreign content. Optimization is not sanitization; Convertix will not claim this file is safe to embed."
+        ? "This SVG may contain active content, such as scripts, event handlers, external references, or foreign markup. Optimization does not make it safe to embed."
         : null,
     );
     captureEvent("svg_optimization_started", { input_size_bytes: file.size, active_content_detected: containsActiveContent });
@@ -262,7 +262,7 @@ export function SvgOptimizer() {
       if (outputValidationError) {
         captureEvent("svg_optimization_failed", { error_category: "invalid_output" });
         setError(
-          "SVGO produced invalid SVG markup, so Convertix discarded the result.",
+          "The optimizer produced invalid SVG markup, so no download was created.",
         );
         return;
       }
@@ -307,7 +307,7 @@ export function SvgOptimizer() {
             difference: comparison.differentPixelRatio,
             meanError: comparison.meanChannelError,
             message:
-              "The optimized render differs enough from the original that Convertix could not safely verify it, so the download was blocked.",
+              "The optimized version looks different from the original, so the download is blocked.",
           });
         }
       } catch (verificationError) {
@@ -357,17 +357,15 @@ export function SvgOptimizer() {
   return (
     <section className={styles.tool} aria-labelledby="optimizer-title">
       <div className={styles.hero}>
-        <span className={styles.eyebrow}>Convertix SVG Toolkit</span>
-        <h1 id="optimizer-title">Optimize SVG without breaking it.</h1>
+        <h1 id="optimizer-title">Optimize an SVG in your browser</h1>
         <p>
-          Your SVG stays in your browser. Convertix runs a conservative SVGO
-          pass, renders both versions, and blocks the optimized download if the
-          result visibly changes.
+          Convertix reduces the file, renders both versions, and blocks the
+          download if the artwork changes.
         </p>
         <div className={styles.trustRow}>
-          <span>✓ No upload</span>
-          <span>✓ Visual verification</span>
-          <span>✓ No account</span>
+          <span>Stays on this device</span>
+          <span>Both renders compared</span>
+          <span>No account needed</span>
         </div>
       </div>
 
@@ -395,7 +393,7 @@ export function SvgOptimizer() {
               <div>
                 <strong data-ph-mask>{fileName}</strong>
                 <span>
-                  {formatBytes(originalBytes)} → {formatBytes(optimizedBytes)}
+                  {formatBytes(originalBytes)} to {formatBytes(optimizedBytes)}
                 </span>
               </div>
               <div className={styles.saving}>
@@ -451,19 +449,13 @@ export function SvgOptimizer() {
               {verification.status === "checking" ? (
                 <>
                   <strong>Comparing renders…</strong>
-                  <span>
-                    Checking the optimized output with antialiasing-aware visual
-                    comparison.
-                  </span>
+                  <span>Checking the optimized SVG against the original.</span>
                 </>
               ) : null}
               {verification.status === "verified" ? (
                 <>
-                  <strong>✓ Visual appearance verified</strong>
-                  <span>
-                    The optimized render passed the Convertix visual-difference
-                    tolerance.
-                  </span>
+                  <strong>The artwork matches</strong>
+                  <span>The optimized SVG passed the visual comparison.</span>
                 </>
               ) : null}
               {verification.status === "failed" ? (
@@ -499,26 +491,24 @@ export function SvgOptimizer() {
 
       <div className={styles.explainer}>
         <article>
-          <strong>Why the verification?</strong>
+          <strong>Why compare the renders?</strong>
           <p>
-            SVG optimizers can occasionally change rendering. Convertix compares
-            the before and after result instead of assuming optimization was
-            harmless.
+            An optimizer can change how an SVG looks. Convertix checks the two
+            renders before it enables the download.
           </p>
         </article>
         <article>
           <strong>What gets optimized?</strong>
           <p>
-            Redundant metadata, markup and path data can be simplified by SVGO
-            while Convertix keeps the SVG scalable.
+            SVGO removes or simplifies metadata, markup, and path data. The
+            result remains an SVG.
           </p>
         </article>
         <article>
           <strong>Is this a sanitizer?</strong>
           <p>
-            No. Optimization and security sanitization are different jobs.
-            Suspicious active content is flagged rather than silently described
-            as safe.
+            No. Convertix warns you when it finds active content, but this tool
+            does not make an untrusted SVG safe to embed.
           </p>
         </article>
       </div>

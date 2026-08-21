@@ -95,14 +95,14 @@ function formatFileSize(bytes: number): string {
 
 function getStatusContent(state: ConversionState) {
   const content: Record<ConversionStatus, { title: string; body: string }> = {
-    idle: { title: "Pick a file to get started", body: "Convertix will detect its format and reveal only the choices that matter next." },
-    ready: { title: "Ready to convert", body: "Your route is set. Start the conversion when you’re ready." },
-    uploading: { title: "Uploading your file", body: "Securely sending your file to Convertix." },
-    queued: { title: "Queued for conversion", body: "Your job is waiting for an available worker." },
-    starting: { title: "Preparing your conversion", body: "The worker is getting your file ready." },
+    idle: { title: "Choose a file", body: "Convertix will show the output formats available for it." },
+    ready: { title: "Ready to convert", body: "Select Convert file to start." },
+    uploading: { title: "Uploading your file", body: "Sending your file to Convertix." },
+    queued: { title: "Waiting to start", body: "Your conversion is in the queue." },
+    starting: { title: "Preparing your file", body: "Convertix is opening the file and preparing the output." },
     converting: { title: "Converting your file", body: "Large files and video transcodes can take longer. Keep this tab open." },
-    completed: { title: "Your file is ready", body: state.downloadUrl ? "Conversion complete. Your download is ready." : "The conversion finished, but no download link was returned." },
-    failed: { title: "Conversion failed", body: state.error ?? "Something went wrong while converting your file." },
+    completed: { title: "Your file is ready", body: state.downloadUrl ? "Use the download button above to save it." : "The file was converted, but the download link is missing." },
+    failed: { title: "We couldn’t convert this file", body: state.error ?? "Choose the file again and retry the conversion." },
   };
   return content[state.status];
 }
@@ -160,14 +160,14 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
     const source = getFormatFromFileName(file.name);
     if (!source) {
       captureEvent("file_rejected", { reason: "unrecognised_format", file_size_bytes: file.size });
-      dispatch({ type: "invalid", message: "We don’t recognise that file type yet. Choose one of the supported formats below." });
+      dispatch({ type: "invalid", message: "Convertix doesn’t recognise that file type. Choose a supported file instead." });
       return;
     }
 
     const targets = getEnabledTargets(source);
     if (targets.length === 0) {
       captureEvent("file_rejected", { reason: "no_live_route", source_format: source, file_size_bytes: file.size, format_family: FORMATS[source].family });
-      dispatch({ type: "invalid", message: `Convertix doesn’t have a live conversion route starting with ${FORMATS[source].label} yet. Choose one of the supported input formats below.` });
+      dispatch({ type: "invalid", message: `Convertix can’t convert ${FORMATS[source].label} files yet. Choose a supported file instead.` });
       return;
     }
 
@@ -220,7 +220,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
         return;
       }
       captureException(error);
-      dispatch({ type: "failed", message: "Something unexpected went wrong. Please choose the file again.", retryable: false });
+      dispatch({ type: "failed", message: "Convertix lost the file details. Choose the file again.", retryable: false });
     } finally {
       if (activeRequestRef.current?.id === requestId) activeRequestRef.current = null;
     }
@@ -257,8 +257,8 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
           <div className="selected-file-copy"><strong data-ph-mask>{state.file.name}</strong><span>{state.source ? FORMATS[state.source].label : "Unknown"} · {formatFileSize(state.file.size)}</span></div>
         ) : (
           <div className="file-drop-copy">
-            <strong>{state.dragging ? "Drop your file here" : "Choose one file. We’ll handle the route."}</strong>
-            <span>Drag and drop, or browse from your device</span>
+            <strong>{state.dragging ? "Drop your file here" : "Choose a file to convert"}</strong>
+            <span>Drop it here or browse your device</span>
             <span>Up to {FREE_FILE_LIMIT_MB} MB · {SUPPORTED_FORMAT_LABELS}</span>
           </div>
         )}
@@ -267,7 +267,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
       </div>
 
       {!state.file && state.status !== "failed" ? (
-        <div className="converter-prompt" role="status"><RouteIcon /><span>Files stay on your device until you start a conversion. Maximum file size: {FREE_FILE_LIMIT_MB} MB.</span></div>
+        <div className="converter-prompt" role="status"><RouteIcon /><span>Your file stays on this device until you select Convert file. Maximum size: {FREE_FILE_LIMIT_MB} MB.</span></div>
       ) : null}
 
       {state.file && state.source ? (
@@ -275,8 +275,8 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
           <span className="route-line" aria-hidden="true" />
           <div className="route-step is-confirmed-step">
             <span className="route-index" aria-hidden="true">1</span><FormatMark format={state.source} />
-            <div className="route-copy"><span>Detected format</span><strong>{FORMATS[state.source].label}</strong></div>
-            <span className="route-confirmed" aria-label="Format detected"><CheckIcon /></span>
+            <div className="route-copy"><span>File type</span><strong>{FORMATS[state.source].label}</strong></div>
+            <span className="route-confirmed" aria-label="File type detected"><CheckIcon /></span>
           </div>
           <div className="route-step">
             <span className="route-index" aria-hidden="true">2</span>
@@ -284,7 +284,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
             <div className="route-copy custom-target-field">
               <span>Convert to</span>
               <button className="target-select-button" type="button" aria-controls={targetMenuId} aria-expanded={targetMenuOpen} disabled={knownTargets.length === 0 || isBusy} onClick={() => setTargetMenuOpen((open) => !open)}>
-                <strong>{state.target ? FORMATS[state.target].label : "No route available"}</strong><ChevronIcon />
+                <strong>{state.target ? FORMATS[state.target].label : "No conversion available"}</strong><ChevronIcon />
               </button>
               {targetMenuOpen ? (
                 <div className="target-select-menu" id={targetMenuId} aria-label="Available output formats">
@@ -292,7 +292,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
                     const candidate = getConversionPair(state.source!, target);
                     const enabled = candidate ? isConversionPairEnabled(candidate) : false;
                     return <button key={target} type="button" aria-pressed={state.target === target} disabled={!enabled} onClick={() => { captureEvent("conversion_target_changed", { source_format: state.source, target_format: target, format_family: FORMATS[state.source!].family }); dispatch({ type: "target", target }); setTargetMenuOpen(false); }}>
-                      <FormatMark format={target} compact /><span>{FORMATS[target].label}</span>{!enabled ? <small>Coming soon</small> : state.target === target ? <CheckIcon /> : null}
+                      <FormatMark format={target} compact /><span>{FORMATS[target].label}</span>{!enabled ? <small>Unavailable</small> : state.target === target ? <CheckIcon /> : null}
                     </button>;
                   })}
                 </div>
@@ -306,7 +306,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
             </a>
           ) : (
             <button className="convert-button" type="button" disabled={!canSubmit} onClick={submitConversion}>
-              <RouteIcon /><span>{!pairEnabled ? "Route not available yet" : !readiness.ready ? "Conversion service not connected" : state.status === "uploading" ? "Uploading your file" : state.status === "queued" ? "Conversion queued" : state.status === "starting" ? "Starting conversion" : state.status === "converting" ? "Converting your file" : "Convert file"}</span>
+              <RouteIcon /><span>{!pairEnabled ? "Conversion unavailable" : !readiness.ready ? "Conversion service unavailable" : state.status === "uploading" ? "Uploading your file" : state.status === "queued" ? "Waiting to start" : state.status === "starting" ? "Preparing your file" : state.status === "converting" ? "Converting your file" : "Convert file"}</span>
               {!isBusy ? <ArrowIcon className="convert-arrow" /> : <span aria-hidden="true" />}
             </button>
           )}
@@ -314,9 +314,8 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
           {state.status === "completed" && state.downloadUrl && state.target ? (
             <div className="post-conversion-panel" aria-labelledby="post-conversion-title">
               <div className="post-conversion-heading">
-                <span>Keep going</span>
-                <strong id="post-conversion-title">Your next useful step</strong>
-                <p>Download your {FORMATS[state.target].label}, then jump straight into another Convertix tool when you need it.</p>
+                <strong id="post-conversion-title">More you can do</strong>
+                <p>After you download the {FORMATS[state.target].label}, you can use it in another Convertix tool.</p>
               </div>
               <div className="post-conversion-actions">
                 {state.target === "pdf" ? (
@@ -334,7 +333,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
                 ))}
 
                 <Link href="/conversions" onClick={() => trackSuccessAction("browse_conversions", "/conversions")}>
-                  <span><strong>Browse all conversions</strong><small>See every route that is live on Convertix.</small></span>
+                  <span><strong>Browse all conversions</strong><small>See every conversion available on Convertix.</small></span>
                   <ArrowIcon />
                 </Link>
               </div>
@@ -352,7 +351,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
       ) : null}
 
       {!state.file && state.status === "failed" ? (
-        <div className="converter-inline-error" role="alert"><CloseIcon /><div><strong>That file can’t be used yet</strong><span>{state.error}</span></div></div>
+        <div className="converter-inline-error" role="alert"><CloseIcon /><div><strong>Choose another file</strong><span>{state.error}</span></div></div>
       ) : null}
     </section>
   );

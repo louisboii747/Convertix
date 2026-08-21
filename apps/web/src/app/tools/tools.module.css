@@ -9,22 +9,13 @@
   margin-bottom: 36px;
 }
 
-.eyebrow,
-.cardEyebrow {
-  color: var(--cobalt);
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
 .hero h1 {
   max-width: 16ch;
   margin: 10px 0 16px;
   font-family: var(--font-display), sans-serif;
   font-size: clamp(2.6rem, 5vw, 4.4rem);
   font-weight: 720;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.04em;
   line-height: 0.98;
   text-wrap: balance;
 }
@@ -44,7 +35,7 @@
 }
 
 .card,
-.comingSoon {
+.suggestion {
   display: flex;
   min-height: 310px;
   flex-direction: column;
@@ -91,13 +82,22 @@
   transition: transform 200ms var(--ease-out);
 }
 
+.arrow svg {
+  width: 20px;
+  height: 20px;
+}
+
+.cardTop .arrow {
+  margin-left: auto;
+}
+
 .card:hover .arrow,
 .card:focus-visible .arrow {
   transform: translateX(3px);
 }
 
 .card h2,
-.comingSoon h2 {
+.suggestion h2 {
   margin: 0 0 10px;
   font-family: var(--font-display), sans-serif;
   font-size: clamp(1.65rem, 3vw, 2.15rem);
@@ -106,7 +106,7 @@
 }
 
 .card p,
-.comingSoon p {
+.suggestion p {
   margin: 0;
   color: var(--ink-650);
   line-height: 1.6;
@@ -128,9 +128,13 @@
   font-weight: 750;
 }
 
-.comingSoon {
+.suggestion {
   border-style: dashed;
   background: transparent;
+}
+
+.suggestion .arrow {
+  margin-left: auto;
 }
 
 @media (max-width: 760px) {
@@ -144,7 +148,7 @@
   }
 
   .card,
-  .comingSoon {
+  .suggestion {
     min-height: 280px;
     padding: 22px;
   }

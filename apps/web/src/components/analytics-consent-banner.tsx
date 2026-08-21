@@ -36,9 +36,8 @@ export function AnalyticsConsentBanner() {
         <strong id="analytics-consent-title">Help improve Convertix</strong>
 
         <p>
-          We&apos;d like to use optional analytics and session replay to
-          understand how Convertix is used and improve the experience. You can
-          say no and still use Convertix normally.
+          Optional analytics and session replay show us where Convertix is
+          confusing or breaks. You can decline and still use the site.
         </p>
       </div>
 
@@ -48,7 +47,7 @@ export function AnalyticsConsentBanner() {
           type="button"
           onClick={() => chooseConsent("rejected")}
         >
-          Reject
+          Decline analytics
         </button>
 
         <button

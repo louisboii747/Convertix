@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { ArrowIcon } from "@/components/icons";
 import { SiteHeader } from "@/components/site-header";
 import styles from "./tools.module.css";
 
 export const metadata: Metadata = {
   title: "Tools",
   description:
-    "Explore focused Convertix tools for working with files, including PDF merging, PDF compression, and safe SVG optimization.",
+    "Use Convertix to merge PDFs, compress PDFs, and optimize SVG files.",
   alternates: {
     canonical: "/tools",
   },
@@ -16,20 +17,19 @@ export const metadata: Metadata = {
     url: "/tools",
     title: "Convertix Tools",
     description:
-      "Focused file utilities from Convertix, including PDF merging, PDF compression, and safe SVG optimization.",
+      "Merge PDFs, compress PDFs, and optimize SVG files with Convertix.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Convertix Tools",
     description:
-      "Focused file utilities from Convertix, including PDF merging, PDF compression, and safe SVG optimization.",
+      "Merge PDFs, compress PDFs, and optimize SVG files with Convertix.",
   },
 };
 
 const tools = [
   {
     href: "/merge-pdf",
-    eyebrow: "PDF Toolkit",
     title: "Merge PDF",
     description:
       "Combine multiple PDFs into one file, drag them into the right order, and download the merged result.",
@@ -37,19 +37,17 @@ const tools = [
   },
   {
     href: "/compress-pdf",
-    eyebrow: "PDF Toolkit",
     title: "Compress PDF",
     description:
-      "Reduce PDF file size with adjustable compression levels, compare the original and compressed size, and download the optimized result.",
+      "Choose how much to shrink a PDF, compare the original and compressed sizes, and download the smaller file.",
     meta: ["3 compression levels", "Size comparison", "Free"],
   },
   {
     href: "/optimize-svg",
-    eyebrow: "SVG Toolkit",
-    title: "Safe SVG Optimizer",
+    title: "Optimize SVG",
     description:
-      "Reduce SVG file size locally in your browser, compare before and after renders, and block the download if optimization changes the artwork.",
-    meta: ["No upload", "Visual verification", "Free"],
+      "Reduce an SVG in your browser, compare both renders, and download it only if the artwork still matches.",
+    meta: ["Runs in your browser", "Compares both renders", "Free"],
   },
 ] as const;
 
@@ -59,11 +57,10 @@ export default function ToolsPage() {
       <SiteHeader />
       <main id="main-content" className={styles.main}>
         <section className={styles.hero}>
-          <span className={styles.eyebrow}>Convertix Tools</span>
           <h1>Small tools for annoying file problems.</h1>
           <p>
-            Focused utilities built around real file-handling problems. More
-            tools will appear here as Convertix grows.
+            Merge PDFs, shrink large files, or clean up an SVG without opening
+            a full editor.
           </p>
         </section>
 
@@ -71,9 +68,8 @@ export default function ToolsPage() {
           {tools.map((tool) => (
             <Link key={tool.href} className={styles.card} href={tool.href}>
               <div className={styles.cardTop}>
-                <span className={styles.cardEyebrow}>{tool.eyebrow}</span>
                 <span className={styles.arrow} aria-hidden="true">
-                  →
+                  <ArrowIcon />
                 </span>
               </div>
 
@@ -90,14 +86,14 @@ export default function ToolsPage() {
             </Link>
           ))}
 
-          <div className={styles.comingSoon}>
-            <span className={styles.cardEyebrow}>More coming</span>
-            <h2>Built from real complaints.</h2>
+          <Link className={styles.suggestion} href="/contact">
+            <span className={styles.arrow} aria-hidden="true"><ArrowIcon /></span>
+            <h2>Missing a tool?</h2>
             <p>
-              Future tools will focus on recurring problems such as file
-              optimization, health checks, and batch workflows.
+              Tell us which file job is slowing you down. A specific example
+              helps us decide what to build next.
             </p>
-          </div>
+          </Link>
         </section>
       </main>
     </>

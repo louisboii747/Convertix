@@ -81,11 +81,9 @@ export default async function AccountPage() {
 
       <section className="account-shell">
         <div className="account-heading">
-          <p className="auth-eyebrow">Your account</p>
-          <h1 data-ph-mask>Hello {displayName}.</h1>
+          <h1 data-ph-mask>Hello, {displayName}</h1>
           <p>
-            Manage your Convertix account and keep track of your conversions in
-            one place.
+            View your profile and recent conversions.
           </p>
         </div>
 
@@ -164,7 +162,7 @@ export default async function AccountPage() {
 
                         <div className="account-conversion-route">
                           <span>{conversion.source_format.toUpperCase()}</span>
-                          <span aria-hidden="true">→</span>
+                          <span aria-hidden="true">to</span>
                           <span>{conversion.target_format.toUpperCase()}</span>
                         </div>
                       </div>
@@ -194,7 +192,7 @@ export default async function AccountPage() {
 
         <div className="account-actions">
           <Link className="account-back-link" href="/">
-            ← Back to converter
+            Back to converter
           </Link>
 
           <form action={logout}>

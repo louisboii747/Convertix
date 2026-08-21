@@ -30,7 +30,6 @@ export default function PrivacyPage() {
 
       <main className="legal-page" id="main-content">
         <header className="legal-hero">
-          <p className="auth-eyebrow">Privacy</p>
           <h1>How Convertix handles your data.</h1>
           <p>
             This policy explains what information Convertix processes, why it is

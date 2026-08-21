@@ -18,21 +18,21 @@ const SEARCH_INTENT_METADATA: Partial<
   Record<string, { title: string; description: string; keywords: string[] }>
 > = {
   "txt-to-docx": {
-    title: "Convert TXT to DOCX Online – Text File to Word",
+    title: "Convert TXT to DOCX Online | Text File to Word",
     description:
-      "Convert a TXT text file to an editable Word DOCX document online. Turn Notepad and plain-text files into DOCX with a simple upload, convert and download workflow.",
+      "Convert a TXT file to an editable Word DOCX document online. Choose a plain-text file and download the converted DOCX.",
     keywords: ["txt to docx", "text file to word", "convert txt to word", "notepad to word", "txt to docx online"],
   },
   "webp-to-png": {
-    title: "Convert WebP to PNG Online – Keep Transparency",
+    title: "Convert WebP to PNG Online | Keep Transparency",
     description:
-      "Convert WebP images to PNG online for broader compatibility and transparent-image workflows. Upload a .webp file and download the converted PNG in a few steps.",
+      "Convert WebP images to PNG online for broader compatibility and transparency support. Choose a WebP file and download the converted PNG.",
     keywords: ["webp to png", "convert webp to png", "webp transparency to png", "downloaded webp to png", "webp to png online"],
   },
   "webm-to-mp4": {
-    title: "Convert WebM to MP4 Online – Video & Screen Recordings",
+    title: "Convert WebM to MP4 Online | Video & Screen Recordings",
     description:
-      "Convert WebM video and screen recordings to MP4 online for easier playback, editing and sharing. Useful for browser recordings, OBS exports and WebM files that need MP4 compatibility.",
+      "Convert WebM video and screen recordings to MP4 online for playback, editing and sharing. Works with browser recordings, OBS exports and other WebM files.",
     keywords: ["webm to mp4", "convert webm to mp4", "obs webm to mp4", "screen recording webm to mp4", "webm to mp4 online"],
   },
 };
@@ -58,10 +58,10 @@ export async function generateMetadata({
   const enabled = isConversionPairEnabled(pair);
   const canonicalPath = `/${pair.slug}`;
   const searchIntent = SEARCH_INTENT_METADATA[pair.slug];
-  const title = searchIntent?.title ?? `Convert ${source} to ${target} Online – Free Converter`;
+  const title = searchIntent?.title ?? `Convert ${source} to ${target} Online | Free Converter`;
   const description =
     searchIntent?.description ??
-    `Convert ${source} files to ${target} online with Convertix. Upload your ${source} file, convert it in a simple workflow, and download the ${target} result.`;
+    `Convert ${source} files to ${target} online with Convertix. Choose a ${source} file and download the converted ${target}.`;
 
   return {
     title,

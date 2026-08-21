@@ -81,7 +81,7 @@ export function getSubmissionReadiness(): SubmissionReadiness {
     return {
       ready: false,
       reason: "api-missing",
-      message: "Conversions aren’t available here yet.",
+      message: "The conversion service is unavailable right now.",
     };
   }
 
@@ -91,27 +91,11 @@ export function getSubmissionReadiness(): SubmissionReadiness {
   };
 }
 
-async function parseApiError(
+function parseApiError(
   response: Response,
   fallback: string,
-): Promise<ConversionApiError> {
+): ConversionApiError {
   const retryable = response.status >= 500 || response.status === 429;
-
-  try {
-    const payload = (await response.json()) as {
-      error?: string;
-    };
-
-    if (payload.error) {
-      return new ConversionApiError(
-        `${fallback} (${payload.error})`,
-        retryable,
-      );
-    }
-  } catch {
-    // Ignore malformed/non-JSON API errors.
-  }
-
   return new ConversionApiError(fallback, retryable);
 }
 
@@ -169,7 +153,7 @@ export async function createConversion(
 
     if (!pair || !isConversionPairEnabled(pair)) {
       throw new ConversionApiError(
-        "That conversion route isn’t available on the live service yet.",
+        "Convertix can’t run that conversion yet. Choose another output format.",
       );
     }
   }
@@ -198,7 +182,7 @@ export async function createConversion(
     }
 
     throw new ConversionApiError(
-      "We couldn’t reach the upload service. Check your connection and try again.",
+      "We couldn’t start the upload. Check your connection and try again.",
       true,
     );
   }
@@ -206,7 +190,7 @@ export async function createConversion(
   if (!uploadResponse.ok) {
     throw await parseApiError(
       uploadResponse,
-      "The upload could not be prepared.",
+      "Convertix couldn’t prepare the upload. Try again.",
     );
   }
 
@@ -214,7 +198,7 @@ export async function createConversion(
 
   if (!upload.upload_url || !upload.object_key) {
     throw new ConversionApiError(
-      "The upload service returned an incomplete response.",
+      "Convertix couldn’t prepare the upload. Try again.",
       true,
     );
   }
@@ -236,14 +220,14 @@ export async function createConversion(
     }
 
     throw new ConversionApiError(
-      "The file could not be uploaded. Please try again.",
+      "We couldn’t upload your file. Check your connection and try again.",
       true,
     );
   }
 
   if (!s3Response.ok) {
     throw new ConversionApiError(
-      "The file upload was rejected by the storage service.",
+      "The upload didn’t complete. Try again.",
       true,
     );
   }
@@ -272,7 +256,7 @@ export async function createConversion(
     }
 
     throw new ConversionApiError(
-      "The conversion service could not be reached.",
+      "We couldn’t start the conversion. Try again.",
       true,
     );
   }
@@ -280,7 +264,7 @@ export async function createConversion(
   if (!queueResponse.ok) {
     throw await parseApiError(
       queueResponse,
-      "The conversion request could not be queued.",
+      "Convertix couldn’t start the conversion. Try again.",
     );
   }
 
@@ -289,7 +273,7 @@ export async function createConversion(
 
   if (!queued.conversion_id) {
     throw new ConversionApiError(
-      "The conversion service returned an incomplete response.",
+      "Convertix couldn’t start the conversion. Try again.",
       true,
     );
   }
@@ -330,7 +314,7 @@ export async function createConversion(
 
       throw await parseApiError(
         statusResponse,
-        "The conversion status could not be checked.",
+        "Convertix lost track of the conversion. Try again.",
       );
     }
 
@@ -352,7 +336,7 @@ export async function createConversion(
     if (status.status === "completed") {
       if (!status.download_url) {
         throw new ConversionApiError(
-          "The conversion finished, but no download link was returned.",
+          "Your file was converted, but the download link is missing. Try the conversion again.",
           true,
         );
       }
@@ -371,7 +355,7 @@ export async function createConversion(
   }
 
   throw new ConversionApiError(
-    "The conversion is taking longer than expected. Please try again.",
+    "This conversion has taken longer than 15 minutes. Try again.",
     true,
   );
 }

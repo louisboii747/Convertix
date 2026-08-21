@@ -51,9 +51,9 @@ function statusMessage(status: ConversionStatus): string {
     case "uploading":
       return "Uploading PDF…";
     case "queued":
-      return "Compression queued…";
+      return "Waiting to compress…";
     case "starting":
-      return "Starting compressor…";
+      return "Preparing PDF…";
     case "converting":
       return "Compressing PDF…";
     case "completed":
@@ -122,7 +122,7 @@ export function PdfCompressor() {
     if (selectedFile.size > MAX_FILE_SIZE) {
       captureEvent("pdf_compression_file_rejected", { reason: "too_large", file_size_bytes: selectedFile.size, limit_bytes: MAX_FILE_SIZE });
       setFile(null);
-      setError("For now, PDF compression accepts files up to 100 MB.");
+      setError("Choose a PDF that is 100 MB or smaller.");
       return;
     }
 
@@ -212,19 +212,17 @@ export function PdfCompressor() {
   return (
     <section className={styles.tool} aria-labelledby="compressor-title">
       <div className={styles.hero}>
-        <span className={styles.eyebrow}>Convertix PDF Toolkit</span>
-
-        <h1 id="compressor-title">Make your PDF smaller.</h1>
+        <h1 id="compressor-title">Compress a PDF</h1>
 
         <p>
-          Upload a PDF, choose how aggressively to compress it, and compare the
-          result before downloading.
+          Choose a compression level, compare both file sizes, and download the
+          result.
         </p>
 
         <div className={styles.trustRow}>
-          <span>✓ Adjustable compression</span>
-          <span>✓ Clear size comparison</span>
-          <span>✓ No account required</span>
+          <span>Three compression levels</span>
+          <span>Before and after sizes</span>
+          <span>No account needed</span>
         </div>
       </div>
 
@@ -343,7 +341,7 @@ export function PdfCompressor() {
                   </div>
 
                   <span className={styles.resultArrow} aria-hidden="true">
-                    →
+                    to
                   </span>
 
                   <div>
@@ -362,20 +360,20 @@ export function PdfCompressor() {
                       <strong>
                         {saving > 0 ? `${saving.toFixed(1)}%` : "0%"}
                       </strong>
-                      <span>{saving > 0 ? "smaller" : "size saved"}</span>
+                      <span>{saving > 0 ? "smaller" : "no size change"}</span>
                     </div>
                   ) : null}
                 </div>
 
                 {saving !== null && saving <= 0 ? (
                   <div className={styles.warning} role="status">
-                    This PDF was already well optimized, so compression did not
-                    reduce its file size.
+                    This PDF is already compressed. The result is not smaller
+                    than the original.
                   </div>
                 ) : null}
 
                 <div className={styles.success} role="status">
-                  <strong>✓ Your compressed PDF is ready</strong>
+                  <strong>Your compressed PDF is ready</strong>
                   <span>
                     Download the result or try another compression level.
                   </span>
@@ -426,9 +424,8 @@ export function PdfCompressor() {
         <article>
           <strong>Will every PDF get smaller?</strong>
           <p>
-            No. Some PDFs are already highly optimized. Convertix shows the real
-            before-and-after sizes rather than promising savings that did not
-            happen.
+            No. Some PDFs have little left to compress. Convertix shows both file
+            sizes so you can decide whether to keep the result.
           </p>
         </article>
       </div>

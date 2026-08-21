@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { signup } from "@/app/login/actions";
+import { Brand } from "@/components/brand";
 
 type SignupPageProps = {
   searchParams: Promise<{
@@ -16,12 +17,7 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
     <main className="auth-page" id="main-content">
       <header className="site-header">
         <div className="site-header-inner">
-          <Link className="brand" href="/" aria-label="Convertix home">
-            <span className="brand-mark" aria-hidden="true">
-              ×
-            </span>
-            <span>Convertix</span>
-          </Link>
+          <Brand />
 
           <nav className="site-nav" aria-label="Primary navigation">
             <Link href="/#how-it-works">How it works</Link>
@@ -33,11 +29,10 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
 
       <section className="auth-shell">
         <div className="auth-intro">
-          <p className="auth-eyebrow">Create an account</p>
-          <h1>Keep more of Convertix together.</h1>
+          <h1>Create a Convertix account</h1>
           <p>
-            Create an account for your profile and future conversion history.
-            Basic conversions still work without signing in.
+            Keep your profile and recent conversions together. You can still
+            convert files without signing in.
           </p>
         </div>
 
@@ -76,7 +71,7 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
 
           {success === "check_email" && (
             <Link className="auth-back" href="/login">
-              Go to login →
+              Go to login
             </Link>
           )}
 
@@ -122,7 +117,6 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
 
               <button className="auth-submit" type="submit">
                 <span>Create account</span>
-                <span aria-hidden="true">→</span>
               </button>
             </form>
           )}
@@ -135,7 +129,7 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
             )}
 
             <Link className="auth-back" href="/">
-              ← Back to Convertix
+              Back to Convertix
             </Link>
           </div>
         </div>

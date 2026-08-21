@@ -73,7 +73,6 @@ export default async function GuidePage({ params }: GuidePageProps) {
             <Link href="/guides">Guides</Link><span aria-hidden="true">/</span><span>{guide.eyebrow}</span>
           </nav>
           <header className="guide-article-header">
-            <span className="section-kicker">{guide.eyebrow}</span>
             <h1>{guide.title}</h1>
             <p>{guide.intro}</p>
             <small>Updated {updatedLabel} · Convertix Guides</small>
@@ -90,13 +89,13 @@ export default async function GuidePage({ params }: GuidePageProps) {
           </div>
 
           <aside className="guide-route-cta" aria-label="Related Convertix tools">
-            <div><span className="section-kicker">Try it in Convertix</span><h2>Ready to convert?</h2><p>Jump directly into a live route related to this guide.</p></div>
+            <div><h2>Convert a file</h2><p>Open a converter related to this guide.</p></div>
             <div className="guide-route-links">
               {guide.routes.map((route) => <Link href={route.href} key={route.href}>{route.label}<ArrowIcon /></Link>)}
             </div>
           </aside>
 
-          {related.length ? <section className="guide-related" aria-labelledby="related-guides-title"><h2 id="related-guides-title">Keep reading</h2><div className="guide-related-links">{related.map((item) => <Link href={`/guides/${item.slug}`} key={item.slug}><span>{item.eyebrow}</span><strong>{item.title}</strong><ArrowIcon /></Link>)}</div></section> : null}
+          {related.length ? <section className="guide-related" aria-labelledby="related-guides-title"><h2 id="related-guides-title">More format guides</h2><div className="guide-related-links">{related.map((item) => <Link href={`/guides/${item.slug}`} key={item.slug}><strong>{item.title}</strong><ArrowIcon /></Link>)}</div></section> : null}
         </article>
       </main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleStructuredData) }} />

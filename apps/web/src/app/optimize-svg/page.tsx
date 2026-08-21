@@ -3,23 +3,23 @@ import { SiteHeader } from "@/components/site-header";
 import { SvgOptimizer } from "@/components/svg-optimizer";
 
 export const metadata: Metadata = {
-  title: "Optimize SVG Without Breaking It",
+  title: "Optimize SVG Online",
   description:
-    "Optimize SVG files locally in your browser with Convertix. Compare the original and optimized render, verify visual appearance, and download only when the result passes verification.",
+    "Optimize an SVG in your browser, compare both renders, and download the result after it passes a visual check.",
   alternates: {
     canonical: "/optimize-svg",
   },
   openGraph: {
     type: "website",
     url: "/optimize-svg",
-    title: "Optimize SVG Without Breaking It — Convertix",
+    title: "Optimize SVG Online — Convertix",
     description:
-      "A safe SVG optimizer that runs locally, compares both renders, and blocks downloads when optimization changes the image.",
+      "Reduce an SVG in your browser and compare the original and optimized renders before downloading.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Optimize SVG Without Breaking It — Convertix",
-    description: "Optimize SVG locally, compare both renders, and download only when the result passes visual verification.",
+    title: "Optimize SVG Online — Convertix",
+    description: "Reduce an SVG in your browser and compare both renders before downloading.",
   },
 };
 

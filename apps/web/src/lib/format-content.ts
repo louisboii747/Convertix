@@ -52,7 +52,7 @@ export const FORMAT_CONTENT: Partial<Record<FormatId, FormatContent>> = {
     considerations: ["No alpha transparency", "Repeated lossy saves can reduce quality", "Flat graphics and text may show compression artefacts"],
   },
   webp: {
-    summary: "WebP is a modern web-focused image format supporting lossy and lossless compression as well as transparency.",
+    summary: "WebP supports lossy and lossless compression, transparency, and broad browser compatibility.",
     description: "WebP is often useful for websites because it can provide smaller image transfers while retaining features such as transparency. Modern browsers support it broadly.",
     useCases: ["Website images", "Optimised web graphics", "Transparent web assets"],
     strengths: ["Efficient compression", "Transparency support", "Lossy and lossless modes"],
@@ -87,7 +87,7 @@ export const FORMAT_CONTENT: Partial<Record<FormatId, FormatContent>> = {
     considerations: ["Codec support still matters", "File size depends on bitrate and encoding settings", "Converting containers can require transcoding"],
   },
   webm: {
-    summary: "WebM is a multimedia container designed for open, browser-focused video and audio delivery.",
+    summary: "WebM is a multimedia container used for video and audio on the web.",
     description: "WebM is closely associated with modern web playback. It can be a good fit for browser-first assets when the target environment supports the codecs used inside the file.",
     useCases: ["Browser video", "Web-first media", "Sites using WebM-compatible codecs"],
     strengths: ["Designed for web delivery", "Supported by modern browsers", "Works with modern open codecs"],

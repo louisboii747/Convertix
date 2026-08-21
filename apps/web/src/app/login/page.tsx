@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { Brand } from "@/components/brand";
+
 import { login, loginWithGoogle } from "./actions";
 
 type LoginPageProps = {
@@ -16,12 +18,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
     <main className="auth-page" id="main-content">
       <header className="site-header">
         <div className="site-header-inner">
-          <Link className="brand" href="/" aria-label="Convertix home">
-            <span className="brand-mark" aria-hidden="true">
-              ×
-            </span>
-            <span>Convertix</span>
-          </Link>
+          <Brand />
 
           <nav className="site-nav" aria-label="Primary navigation">
             <Link href="/#how-it-works">How it works</Link>
@@ -33,11 +30,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
       <section className="auth-shell">
         <div className="auth-intro">
-          <p className="auth-eyebrow">Your account</p>
-          <h1>Welcome back.</h1>
+          <h1>Log in to Convertix</h1>
           <p>
-            Log in to your Convertix account to access your profile and future
-            conversion history.
+            View your profile and recent conversions.
           </p>
         </div>
 
@@ -144,7 +139,6 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
             <button className="auth-submit" type="submit">
               <span>Log in</span>
-              <span aria-hidden="true">→</span>
             </button>
           </form>
 
@@ -154,7 +148,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             </Link>
 
             <Link className="auth-back" href="/">
-              ← Back to Convertix
+              Back to Convertix
             </Link>
           </div>
         </div>

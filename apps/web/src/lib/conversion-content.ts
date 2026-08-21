@@ -231,7 +231,7 @@ export const CONVERSION_CONTENT: Readonly<Record<string, ConversionContent>> = {
       },
       {
         heading: "Does conversion restore JPG detail?",
-        body: "No. Any detail already lost when the source JPG was encoded cannot be recovered simply by converting it to another format.",
+        body: "No. Converting the file cannot recover detail lost when the source JPG was encoded.",
       },
       {
         heading: "When should I keep JPG?",

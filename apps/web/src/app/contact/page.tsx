@@ -33,12 +33,10 @@ export default function ContactPage() {
       <main className="contact-page" id="main-content">
         <section className="contact-shell">
           <div className="contact-intro">
-            <p className="auth-eyebrow">Contact</p>
-            <h1>Talk to Convertix.</h1>
+            <h1>Contact Convertix</h1>
             <p>
-              Got a conversion request, found something that needs fixing, or
-              just want to say hello? Send a message and it will land directly
-              with Convertix.
+              Ask for help, report a problem, or suggest a conversion. Your
+              message goes to the person building Convertix.
             </p>
 
             <div className="contact-details" aria-label="Contact details">
@@ -49,7 +47,7 @@ export default function ContactPage() {
 
               <div>
                 <span>Best for</span>
-                <strong>Support, feedback, ideas and partnerships</strong>
+                <strong>Support, feedback, requests and partnerships</strong>
               </div>
             </div>
           </div>

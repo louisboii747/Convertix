@@ -40,7 +40,7 @@ export function ContactForm() {
 
       form.reset();
       setStatus("success");
-      setMessage("Message sent. Thanks — Convertix will get back to you soon.");
+      setMessage("Thanks, your message has been sent. You’ll hear back soon.");
     } catch (error) {
       setStatus("error");
       setMessage(
@@ -55,7 +55,7 @@ export function ContactForm() {
     <div className="contact-card">
       <div className="contact-card-heading">
         <span>Send a message</span>
-        <span>Usually replied to personally</span>
+        <span>Replies come from a person</span>
       </div>
 
       <form className="contact-form" onSubmit={handleSubmit}>
@@ -134,7 +134,6 @@ export function ContactForm() {
 
         <button className="auth-submit" type="submit" disabled={status === "sending"}>
           <span>{status === "sending" ? "Sending…" : "Send message"}</span>
-          <span aria-hidden="true">→</span>
         </button>
 
         <p className="contact-privacy-note">

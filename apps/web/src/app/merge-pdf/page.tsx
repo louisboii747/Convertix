@@ -15,13 +15,13 @@ export const metadata: Metadata = {
     url: "/merge-pdf",
     title: "Merge PDF Online — Convertix",
     description:
-      "Combine multiple PDFs into one file, with drag-to-reorder controls and a simple download flow.",
+      "Combine multiple PDFs into one file and drag them into the order you need.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Merge PDF Online — Convertix",
     description:
-      "Combine multiple PDFs into one file, with drag-to-reorder controls and a simple download flow.",
+      "Combine multiple PDFs into one file and drag them into the order you need.",
   },
 };
 

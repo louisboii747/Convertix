@@ -10,20 +10,6 @@
   text-align: center;
 }
 
-.eyebrow {
-  display: inline-flex;
-  margin-bottom: 14px;
-  padding: 7px 11px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--cobalt);
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
 .hero h1 {
   margin: 0;
   font-family: var(--font-display), sans-serif;
