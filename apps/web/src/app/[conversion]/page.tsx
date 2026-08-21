@@ -17,23 +17,132 @@ interface ConversionPageProps {
 const SEARCH_INTENT_METADATA: Partial<
   Record<string, { title: string; description: string; keywords: string[] }>
 > = {
+  "docx-to-pdf": {
+    title: "Word to PDF Converter | Convert DOCX to PDF Online",
+    description:
+      "Convert Word documents to PDF online with Convertix. Turn DOCX files into easy-to-share PDF documents quickly and easily.",
+    keywords: [
+      "word to pdf",
+      "docx to pdf",
+      "convert word to pdf",
+      "word to pdf converter",
+      "convert docx to pdf",
+      "docx to pdf online",
+    ],
+  },
+  "xlsx-to-pdf": {
+    title: "Excel to PDF Converter | Convert XLSX to PDF Online",
+    description:
+      "Convert Excel spreadsheets to PDF online with Convertix. Turn XLSX files into fixed, easy-to-share PDF documents for viewing, printing, and sharing.",
+    keywords: [
+      "excel to pdf",
+      "xlsx to pdf",
+      "convert excel to pdf",
+      "excel to pdf converter",
+      "spreadsheet to pdf",
+      "convert xlsx to pdf",
+    ],
+  },
+  "png-to-jpg": {
+    title: "PNG to JPG Converter | Convert PNG to JPEG Online",
+    description:
+      "Convert PNG images to JPG online with Convertix. Turn PNG files into widely supported JPEG images for easier sharing and smaller file sizes.",
+    keywords: [
+      "png to jpg",
+      "png to jpeg",
+      "convert png to jpg",
+      "convert png to jpeg",
+      "png to jpg converter",
+      "png to jpeg online",
+    ],
+  },
+  "jpg-to-png": {
+    title: "JPG to PNG Converter | Convert JPEG to PNG Online",
+    description:
+      "Convert JPG and JPEG images to PNG online with Convertix. Turn JPEG files into PNG images for editing, compatibility, and lossless re-saving.",
+    keywords: [
+      "jpg to png",
+      "jpeg to png",
+      "convert jpg to png",
+      "convert jpeg to png",
+      "jpg to png converter",
+      "jpeg to png online",
+    ],
+  },
+  "svg-to-png": {
+    title: "SVG to PNG Converter | Convert SVG Images Online",
+    description:
+      "Convert SVG vector graphics to PNG online with Convertix. Create fixed-resolution PNG images for apps, websites, uploads, and sharing.",
+    keywords: [
+      "svg to png",
+      "convert svg to png",
+      "svg to png converter",
+      "vector to png",
+      "svg image to png",
+      "svg to png online",
+    ],
+  },
+  "mp3-to-wav": {
+    title: "MP3 to WAV Converter | Convert Audio Online",
+    description:
+      "Convert MP3 audio files to WAV online with Convertix. Create WAV files for editing, compatibility, and audio workflows.",
+    keywords: [
+      "mp3 to wav",
+      "convert mp3 to wav",
+      "mp3 to wav converter",
+      "audio to wav",
+      "mp3 audio to wav",
+      "mp3 to wav online",
+    ],
+  },
+  "wav-to-mp3": {
+    title: "WAV to MP3 Converter | Convert Audio Online",
+    description:
+      "Convert WAV audio files to MP3 online with Convertix. Create smaller, widely compatible MP3 files for sharing and playback.",
+    keywords: [
+      "wav to mp3",
+      "convert wav to mp3",
+      "wav to mp3 converter",
+      "audio to mp3",
+      "wav audio to mp3",
+      "wav to mp3 online",
+    ],
+  },
   "txt-to-docx": {
     title: "Convert TXT to DOCX Online | Text File to Word",
     description:
       "Convert a TXT file to an editable Word DOCX document online. Choose a plain-text file and download the converted DOCX.",
-    keywords: ["txt to docx", "text file to word", "convert txt to word", "notepad to word", "txt to docx online"],
+    keywords: [
+      "txt to docx",
+      "text file to word",
+      "convert txt to word",
+      "notepad to word",
+      "txt to docx online",
+    ],
   },
   "webp-to-png": {
     title: "Convert WebP to PNG Online | Keep Transparency",
     description:
       "Convert WebP images to PNG online for broader compatibility and transparency support. Choose a WebP file and download the converted PNG.",
-    keywords: ["webp to png", "convert webp to png", "webp transparency to png", "downloaded webp to png", "webp to png online"],
+    keywords: [
+      "webp to png",
+      "convert webp to png",
+      "webp transparency to png",
+      "downloaded webp to png",
+      "webp to png online",
+    ],
   },
   "webm-to-mp4": {
     title: "Convert WebM to MP4 Online | Video & Screen Recordings",
     description:
       "Convert WebM video and screen recordings to MP4 online for playback, editing and sharing. Works with browser recordings, OBS exports and other WebM files.",
-    keywords: ["webm to mp4", "convert webm to mp4", "obs webm to mp4", "screen recording webm to mp4", "webm to mp4 online"],
+    keywords: [
+      "webm to mp4",
+      "convert webm to mp4",
+      "obs webm to mp4",
+      "screen recording webm to mp4",
+      "webm to mp4 online",
+    ],
   },
 };
 
@@ -58,7 +167,9 @@ export async function generateMetadata({
   const enabled = isConversionPairEnabled(pair);
   const canonicalPath = `/${pair.slug}`;
   const searchIntent = SEARCH_INTENT_METADATA[pair.slug];
-  const title = searchIntent?.title ?? `Convert ${source} to ${target} Online | Free Converter`;
+  const title =
+    searchIntent?.title ??
+    `Convert ${source} to ${target} Online | Free Converter`;
   const description =
     searchIntent?.description ??
     `Convert ${source} files to ${target} online with Convertix. Choose a ${source} file and download the converted ${target}.`;
