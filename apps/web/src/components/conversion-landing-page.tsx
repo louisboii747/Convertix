@@ -30,6 +30,19 @@ const genericFaqItems = [
   },
 ] as const;
 
+const SEARCH_INTENT_HEADINGS: Partial<Record<string, string>> = {
+  "docx-to-pdf": "Word to PDF Converter",
+  "xlsx-to-pdf": "Excel to PDF Converter",
+  "png-to-jpg": "PNG to JPG Converter",
+  "jpg-to-png": "JPG to PNG Converter",
+  "svg-to-png": "SVG to PNG Converter",
+  "mp3-to-wav": "MP3 to WAV Converter",
+  "wav-to-mp3": "WAV to MP3 Converter",
+  "txt-to-docx": "TXT to DOCX Converter",
+  "webp-to-png": "WebP to PNG Converter",
+  "webm-to-mp4": "WebM to MP4 Converter",
+};
+
 interface ConversionLandingPageProps {
   pair?: ConversionPair;
 }
@@ -62,8 +75,8 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
   const source = pair ? FORMATS[pair.source] : null;
   const target = pair ? FORMATS[pair.target] : null;
   const pageTitle = pair
-    ? `Convert ${getConversionPairLabel(pair)}`
-    : "Convert files without the fuss.";
+    ? SEARCH_INTENT_HEADINGS[pair.slug] ?? `Convert ${getConversionPairLabel(pair)}`
+    : "Convert files online without the fuss.";
 
   const pageDescription = pair
     ? routeEnabled
@@ -139,49 +152,63 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
           </section>
         ) : null}
 
-        {!pair ? (
-          <section
-            className="process-section"
-            id="how-it-works"
-            aria-labelledby="process-title"
-          >
-            <div className="process-intro">
-              <h2 id="process-title">How to convert a file</h2>
-              <p>
-                Choose the file and output format in the same converter. The
-                status stays visible until the download is ready.
-              </p>
-            </div>
-            <ol className="process-list">
-              <li>
-                <span aria-hidden="true">1</span>
-                <div>
-                  <strong>Choose a file</strong>
-                  <p>
-                    Pick one from your device or drop it into the converter.
-                  </p>
-                </div>
-              </li>
-              <li>
-                <span aria-hidden="true">2</span>
-                <div>
-                  <strong>Choose the output</strong>
-                  <p>Convertix shows the formats available for that file.</p>
-                </div>
-              </li>
-              <li>
-                <span aria-hidden="true">3</span>
-                <div>
-                  <strong>Download the result</strong>
-                  <p>
-                    Start the conversion and keep this page open until it
-                    finishes.
-                  </p>
-                </div>
-              </li>
-            </ol>
-          </section>
-        ) : null}
+        <section
+          className="process-section"
+          id="how-it-works"
+          aria-labelledby="process-title"
+        >
+          <div className="process-intro">
+            <h2 id="process-title">
+              {pair
+                ? `How to convert ${source?.label} to ${target?.label}`
+                : "How to convert a file"}
+            </h2>
+            <p>
+              {pair
+                ? `Choose a ${source?.label} file, convert it to ${target?.label}, and download the result when it is ready.`
+                : "Choose the file and output format in the same converter. The status stays visible until the download is ready."}
+            </p>
+          </div>
+          <ol className="process-list">
+            <li>
+              <span aria-hidden="true">1</span>
+              <div>
+                <strong>{pair ? `Choose a ${source?.label} file` : "Choose a file"}</strong>
+                <p>
+                  {pair
+                    ? `Pick a ${source?.label} file from your device or drop it into the converter.`
+                    : "Pick one from your device or drop it into the converter."}
+                </p>
+              </div>
+            </li>
+            <li>
+              <span aria-hidden="true">2</span>
+              <div>
+                <strong>
+                  {pair ? `Convert to ${target?.label}` : "Choose the output"}
+                </strong>
+                <p>
+                  {pair
+                    ? `${target?.label} is preselected on this converter page. Start the conversion when your file is ready.`
+                    : "Convertix shows the formats available for that file."}
+                </p>
+              </div>
+            </li>
+            <li>
+              <span aria-hidden="true">3</span>
+              <div>
+                <strong>
+                  {pair ? `Download the ${target?.label}` : "Download the result"}
+                </strong>
+                <p>
+                  {pair
+                    ? `Keep this page open while Convertix processes the file, then download the finished ${target?.label}.`
+                    : "Start the conversion and keep this page open until it finishes."}
+                </p>
+              </div>
+            </li>
+          </ol>
+        </section>
 
         {pair && conversionContent ? (
           <section

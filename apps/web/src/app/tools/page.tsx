@@ -6,24 +6,24 @@ import { SiteHeader } from "@/components/site-header";
 import styles from "./tools.module.css";
 
 export const metadata: Metadata = {
-  title: "Tools",
+  title: "Free Online File Tools",
   description:
-    "Use Convertix to merge PDFs, compress PDFs, compress images, and optimize SVG files.",
+    "Use free online file tools from Convertix to merge PDFs, compress PDFs, compress images, and optimize SVG files.",
   alternates: {
     canonical: "/tools",
   },
   openGraph: {
     type: "website",
     url: "/tools",
-    title: "Convertix Tools",
+    title: "Free Online File Tools — Convertix",
     description:
-      "Merge PDFs, compress PDFs, compress images, and optimize SVG files with Convertix.",
+      "Merge PDFs, compress PDFs, compress images, and optimize SVG files with free online tools from Convertix.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Convertix Tools",
+    title: "Free Online File Tools — Convertix",
     description:
-      "Merge PDFs, compress PDFs, compress images, and optimize SVG files with Convertix.",
+      "Merge PDFs, compress PDFs, compress images, and optimize SVG files with free online tools from Convertix.",
   },
 };
 
@@ -64,10 +64,10 @@ export default function ToolsPage() {
       <SiteHeader />
       <main id="main-content" className={styles.main}>
         <section className={styles.hero}>
-          <h1>Small tools for annoying file problems.</h1>
+          <h1>Free online file tools</h1>
           <p>
-            Merge PDFs, compress PDFs and images, or clean up an SVG without
-            opening a full editor.
+            Small tools for annoying file problems. Merge PDFs, compress PDFs
+            and images, or clean up an SVG without opening a full editor.
           </p>
         </section>
 
