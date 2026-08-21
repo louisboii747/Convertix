@@ -34,6 +34,13 @@ export default function GuidesPage() {
         </header>
 
         <section className="guide-grid" aria-label="File format guides">
+          <Link className="guide-card" href="/guides/skate-webm-to-mp4">
+            <div>
+              <h2>Skate exporting WebM instead of MP4? How to convert it</h2>
+              <p>A current workaround for Skate clips exported as WebM when your editor, phone or upload workflow needs MP4.</p>
+            </div>
+            <footer><span>Read guide</span><ArrowIcon /></footer>
+          </Link>
           {GUIDES.map((guide) => (
             <Link className="guide-card" href={`/guides/${guide.slug}`} key={guide.slug}>
               <div><h2>{guide.title}</h2><p>{guide.description}</p></div>
