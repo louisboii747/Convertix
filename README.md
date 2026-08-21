@@ -2,6 +2,15 @@
 
 <a href="https://www.producthunt.com/products/convertix-2?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-convertix-4" target="_blank" rel="noopener noreferrer"><img alt="Convertix - Convert files quickly, simply, and securely without the fuss | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1226175&amp;theme=neutral&amp;t=1787081472877"></a>
 
+<a href="https://buildlist.io" target="_blank" rel="noopener">
+  <img src="https://buildlist.io/badge.svg" alt="Featured on Buildlist" style="height:40px;width:auto;" />
+</a>
+
+
+
+
+
+
 https://convertix.uk
 
 **Convertix** is a cloud-backed file conversion platform focused on making file conversion fast, simple, and reliable without exposing users to the infrastructure doing the work.
