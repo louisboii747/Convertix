@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   useEffect,
   useId,
@@ -13,6 +14,7 @@ import {
   ACCEPTED_FILE_EXTENSIONS,
   FORMATS,
   getConversionPair,
+  getEnabledConversionPairs,
   getFormatFromFileName,
   getKnownTargets,
   isConversionPairEnabled,
@@ -125,6 +127,11 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
   const canSubmit = Boolean(state.file && pair && pairEnabled && readiness.ready && !isBusy && state.status !== "completed");
   const statusContent = getStatusContent(state);
   const statusTone = state.status === "failed" ? "is-error" : state.status === "completed" ? "is-success" : isBusy ? "is-active" : "is-neutral";
+  const followUpPairs = state.target
+    ? getEnabledConversionPairs()
+        .filter((candidate) => candidate.source === state.target)
+        .slice(0, 2)
+    : [];
 
   function invalidateActiveRequest() {
     requestSequenceRef.current += 1;
@@ -217,6 +224,15 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
     filePickerRef.current?.focus();
   }
 
+  function trackSuccessAction(action: string, destination: string) {
+    captureEvent("post_conversion_action_clicked", {
+      action,
+      destination,
+      source_format: state.source,
+      target_format: state.target,
+    });
+  }
+
   return (
     <section className="converter-shell converter-progressive" aria-labelledby="converter-title">
       <h2 id="converter-title" className="sr-only">File converter</h2>
@@ -285,7 +301,38 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
               {!isBusy ? <ArrowIcon className="convert-arrow" /> : <span aria-hidden="true" />}
             </button>
           )}
-          {state.status === "completed" ? <button className="convert-another-button" type="button" onClick={reset}>Convert another file</button> : null}
+
+          {state.status === "completed" && state.downloadUrl && state.target ? (
+            <div className="post-conversion-panel" aria-labelledby="post-conversion-title">
+              <div className="post-conversion-heading">
+                <span>Keep going</span>
+                <strong id="post-conversion-title">Your next useful step</strong>
+                <p>Download your {FORMATS[state.target].label}, then jump straight into another Convertix tool when you need it.</p>
+              </div>
+              <div className="post-conversion-actions">
+                {state.target === "pdf" ? (
+                  <Link href="/compress-pdf" onClick={() => trackSuccessAction("compress_pdf", "/compress-pdf")}>
+                    <span><strong>Compress this PDF</strong><small>Reduce the downloaded PDF’s file size.</small></span>
+                    <ArrowIcon />
+                  </Link>
+                ) : null}
+
+                {followUpPairs.map((followUpPair) => (
+                  <Link key={followUpPair.slug} href={`/${followUpPair.slug}`} onClick={() => trackSuccessAction("follow_up_conversion", `/${followUpPair.slug}`)}>
+                    <span><strong>Convert {FORMATS[followUpPair.source].label} to {FORMATS[followUpPair.target].label}</strong><small>Use your downloaded file in another conversion.</small></span>
+                    <ArrowIcon />
+                  </Link>
+                ))}
+
+                <Link href="/conversions" onClick={() => trackSuccessAction("browse_conversions", "/conversions")}>
+                  <span><strong>Browse all conversions</strong><small>See every route that is live on Convertix.</small></span>
+                  <ArrowIcon />
+                </Link>
+              </div>
+            </div>
+          ) : null}
+
+          {state.status === "completed" ? <button className="convert-another-button" type="button" onClick={() => { trackSuccessAction("convert_another", "converter_reset"); reset(); }}>Convert another file</button> : null}
           <div className={`conversion-status ${statusTone}`} role={state.status === "failed" ? "alert" : "status"} aria-live="polite" aria-atomic="true">
             <span className="status-marker" aria-hidden="true">{state.status === "failed" ? <CloseIcon /> : state.status === "completed" ? <CheckIcon /> : isBusy ? <RefreshIcon className="is-spinning" /> : <RouteIcon />}</span>
             <div className="status-copy"><strong>{statusContent.title}</strong><span>{statusContent.body}</span>{state.conversionId ? <span className="conversion-reference">Reference: {state.conversionId}</span> : null}</div>
