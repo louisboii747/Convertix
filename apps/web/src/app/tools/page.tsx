@@ -8,7 +8,7 @@ import styles from "./tools.module.css";
 export const metadata: Metadata = {
   title: "Tools",
   description:
-    "Use Convertix to merge PDFs, compress PDFs, and optimize SVG files.",
+    "Use Convertix to merge PDFs, compress PDFs, compress images, and optimize SVG files.",
   alternates: {
     canonical: "/tools",
   },
@@ -17,13 +17,13 @@ export const metadata: Metadata = {
     url: "/tools",
     title: "Convertix Tools",
     description:
-      "Merge PDFs, compress PDFs, and optimize SVG files with Convertix.",
+      "Merge PDFs, compress PDFs, compress images, and optimize SVG files with Convertix.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Convertix Tools",
     description:
-      "Merge PDFs, compress PDFs, and optimize SVG files with Convertix.",
+      "Merge PDFs, compress PDFs, compress images, and optimize SVG files with Convertix.",
   },
 };
 
@@ -43,6 +43,13 @@ const tools = [
     meta: ["3 compression levels", "Size comparison", "Free"],
   },
   {
+    href: "/compress-image",
+    title: "Compress Image",
+    description:
+      "Shrink JPG, PNG, and WebP images directly in your browser and compare the original and compressed file sizes.",
+    meta: ["Runs in your browser", "JPG, PNG & WebP", "Free"],
+  },
+  {
     href: "/optimize-svg",
     title: "Optimize SVG",
     description:
@@ -59,8 +66,8 @@ export default function ToolsPage() {
         <section className={styles.hero}>
           <h1>Small tools for annoying file problems.</h1>
           <p>
-            Merge PDFs, shrink large files, or clean up an SVG without opening
-            a full editor.
+            Merge PDFs, compress PDFs and images, or clean up an SVG without
+            opening a full editor.
           </p>
         </section>
 
@@ -87,7 +94,9 @@ export default function ToolsPage() {
           ))}
 
           <Link className={styles.suggestion} href="/contact">
-            <span className={styles.arrow} aria-hidden="true"><ArrowIcon /></span>
+            <span className={styles.arrow} aria-hidden="true">
+              <ArrowIcon />
+            </span>
             <h2>Missing a tool?</h2>
             <p>
               Tell us which file job is slowing you down. A specific example

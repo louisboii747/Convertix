@@ -17,6 +17,7 @@
     "@supabase/supabase-js": "^2.112.3",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
+    "browser-image-compression": "^2.0.2",
     "next": "16.3.0",
     "posthog-js": "^1.418.1",
     "posthog-node": "^5.49.1",
