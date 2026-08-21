@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/site-header";
 import { getConversionContent } from "@/lib/conversion-content";
 import {
   FORMATS,
+  getConversionPairLabel,
   getEnabledConversionPairs,
   isConversionPairEnabled,
   type ConversionPair,
@@ -28,18 +29,6 @@ const genericFaqItems = [
       "Yes. You can choose a file and run a conversion from a phone, tablet, laptop, or desktop browser.",
   },
 ] as const;
-
-function formatPairLabel(pair: ConversionPair) {
-  const searchFriendlyLabels: Partial<Record<string, string>> = {
-    "docx-to-pdf": "Word to PDF",
-    "xlsx-to-pdf": "Excel to PDF",
-  };
-
-  return (
-    searchFriendlyLabels[pair.slug] ??
-    `${FORMATS[pair.source].label} to ${FORMATS[pair.target].label}`
-  );
-}
 
 interface ConversionLandingPageProps {
   pair?: ConversionPair;
@@ -73,7 +62,7 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
   const source = pair ? FORMATS[pair.source] : null;
   const target = pair ? FORMATS[pair.target] : null;
   const pageTitle = pair
-    ? `Convert ${formatPairLabel(pair)}`
+    ? `Convert ${getConversionPairLabel(pair)}`
     : "Convert files without the fuss.";
 
   const pageDescription = pair
@@ -142,7 +131,7 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
             <div className="popular-links">
               {relatedPairs.map((enabledPair) => (
                 <Link key={enabledPair.slug} href={`/${enabledPair.slug}`}>
-                  <span>{formatPairLabel(enabledPair)}</span>
+                  <span>{getConversionPairLabel(enabledPair)}</span>
                   <ArrowIcon />
                 </Link>
               ))}

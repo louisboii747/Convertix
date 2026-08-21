@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/site-header";
 import { getFormatContent } from "@/lib/format-content";
 import {
   FORMATS,
+  getConversionPairLabel,
   getEnabledConversionPairs,
   isFormatId,
   type FormatId,
@@ -20,7 +21,9 @@ interface FormatPageProps {
 
 function getLiveFormats(): FormatId[] {
   return Array.from(
-    new Set(getEnabledConversionPairs().flatMap((pair) => [pair.source, pair.target])),
+    new Set(
+      getEnabledConversionPairs().flatMap((pair) => [pair.source, pair.target]),
+    ),
   );
 }
 
@@ -28,14 +31,18 @@ export function generateStaticParams() {
   return getLiveFormats().map((format) => ({ format }));
 }
 
-export async function generateMetadata({ params }: FormatPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: FormatPageProps): Promise<Metadata> {
   const { format } = await params;
   if (!isFormatId(format) || !getLiveFormats().includes(format)) return {};
 
   const info = FORMATS[format];
   const content = getFormatContent(format);
   const title = `${info.label} File Format: Converters, Uses and Guide`;
-  const description = content?.summary ?? `Learn about ${info.label} files and see the Convertix conversions available for them.`;
+  const description =
+    content?.summary ??
+    `Learn about ${info.label} files and see the Convertix conversions available for them.`;
   const canonical = `/formats/${format}`;
 
   return {
@@ -85,7 +92,8 @@ export default async function FormatPage({ params }: FormatPageProps) {
     },
     {
       question: `Will converting a ${info.label} file preserve everything?`,
-      answer: "Not necessarily. File formats support different features, so conversion can change layout, compression, transparency, metadata, codecs or editability. Check important outputs before replacing the original.",
+      answer:
+        "Not necessarily. File formats support different features, so conversion can change layout, compression, transparency, metadata, codecs or editability. Check important outputs before replacing the original.",
     },
   ];
 
@@ -109,9 +117,24 @@ export default async function FormatPage({ params }: FormatPageProps) {
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Convertix", item: "https://convertix.uk" },
-          { "@type": "ListItem", position: 2, name: "Formats", item: "https://convertix.uk/formats" },
-          { "@type": "ListItem", position: 3, name: info.label, item: canonicalUrl },
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Convertix",
+            item: "https://convertix.uk",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Formats",
+            item: "https://convertix.uk/formats",
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: info.label,
+            item: canonicalUrl,
+          },
         ],
       },
       {
@@ -134,13 +157,18 @@ export default async function FormatPage({ params }: FormatPageProps) {
       <main id="main-content">
         <section className="hero-section" aria-labelledby="format-page-title">
           <div className="hero-copy hero-copy-benefit">
-            <div aria-hidden="true"><FormatMark format={format} /></div>
+            <div aria-hidden="true">
+              <FormatMark format={format} />
+            </div>
             <h1 id="format-page-title">About {info.label} files</h1>
             <p>{content.description}</p>
           </div>
         </section>
 
-        <section className="why-section" aria-labelledby="format-overview-title">
+        <section
+          className="why-section"
+          aria-labelledby="format-overview-title"
+        >
           <div className="why-heading">
             <h2 id="format-overview-title">Where {info.label} works well</h2>
             <p>{content.summary}</p>
@@ -164,7 +192,10 @@ export default async function FormatPage({ params }: FormatPageProps) {
           </div>
         </section>
 
-        <section className="popular-section" aria-labelledby="format-routes-title">
+        <section
+          className="popular-section"
+          aria-labelledby="format-routes-title"
+        >
           <div className="section-heading-row">
             <div>
               <h2 id="format-routes-title">{info.label} conversions</h2>
@@ -174,7 +205,7 @@ export default async function FormatPage({ params }: FormatPageProps) {
           <div className="popular-links">
             {routes.map((pair) => (
               <Link href={`/${pair.slug}`} key={pair.slug}>
-                <span>{FORMATS[pair.source].label} to {FORMATS[pair.target].label}</span>
+                <span>{getConversionPairLabel(pair)}</span>
                 <ArrowIcon />
               </Link>
             ))}
@@ -182,7 +213,10 @@ export default async function FormatPage({ params }: FormatPageProps) {
         </section>
 
         {guides.length > 0 ? (
-          <section className="guides-promo" aria-labelledby="format-guides-title">
+          <section
+            className="guides-promo"
+            aria-labelledby="format-guides-title"
+          >
             <div>
               <h2 id="format-guides-title">Learn more about {info.label}</h2>
               <p>Compare formats and see what may change during conversion.</p>
@@ -204,14 +238,20 @@ export default async function FormatPage({ params }: FormatPageProps) {
           <div className="faq-list">
             {faqItems.map((item) => (
               <details key={item.question}>
-                <summary><span>{item.question}</span><span className="faq-toggle" aria-hidden="true" /></summary>
+                <summary>
+                  <span>{item.question}</span>
+                  <span className="faq-toggle" aria-hidden="true" />
+                </summary>
                 <p>{item.answer}</p>
               </details>
             ))}
           </div>
         </section>
       </main>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
     </>
   );
 }
