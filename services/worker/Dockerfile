@@ -18,10 +18,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY worker.py .
 COPY svg_worker.py .
+COPY merge_worker.py .
 
 RUN useradd --create-home convertix \
     && chown -R convertix:convertix /app
 
 USER convertix
 
-CMD ["python", "svg_worker.py"]
+CMD ["python", "merge_worker.py"]

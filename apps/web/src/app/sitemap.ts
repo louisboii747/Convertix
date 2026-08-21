@@ -15,6 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${siteUrl}/conversions` },
     { url: `${siteUrl}/formats` },
     { url: `${siteUrl}/guides` },
+    { url: `${siteUrl}/merge-pdf` },
     { url: `${siteUrl}/compress-pdf` },
     { url: `${siteUrl}/optimize-svg` },
     { url: `${siteUrl}/contact` },
