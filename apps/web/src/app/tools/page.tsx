@@ -7,7 +7,7 @@ import styles from "./tools.module.css";
 export const metadata: Metadata = {
   title: "Tools",
   description:
-    "Explore focused Convertix tools for optimizing and working with files, including PDF compression and safe SVG optimization.",
+    "Explore focused Convertix tools for working with files, including PDF merging, PDF compression, and safe SVG optimization.",
   alternates: {
     canonical: "/tools",
   },
@@ -16,16 +16,25 @@ export const metadata: Metadata = {
     url: "/tools",
     title: "Convertix Tools",
     description:
-      "Focused file utilities from Convertix, including PDF compression and safe SVG optimization.",
+      "Focused file utilities from Convertix, including PDF merging, PDF compression, and safe SVG optimization.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Convertix Tools",
-    description: "Focused file utilities from Convertix, including PDF compression and safe SVG optimization.",
+    description:
+      "Focused file utilities from Convertix, including PDF merging, PDF compression, and safe SVG optimization.",
   },
 };
 
 const tools = [
+  {
+    href: "/merge-pdf",
+    eyebrow: "PDF Toolkit",
+    title: "Merge PDF",
+    description:
+      "Combine multiple PDFs into one file, drag them into the right order, and download the merged result.",
+    meta: ["Drag to reorder", "Up to 20 PDFs", "Free"],
+  },
   {
     href: "/compress-pdf",
     eyebrow: "PDF Toolkit",
