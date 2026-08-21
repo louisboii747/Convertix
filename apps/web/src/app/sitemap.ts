@@ -21,6 +21,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${siteUrl}/conversions` },
     { url: `${siteUrl}/formats` },
     { url: `${siteUrl}/guides` },
+    {
+      url: `${siteUrl}/guides/skate-webm-to-mp4`,
+      lastModified: new Date("2026-08-21T00:00:00.000Z"),
+    },
     { url: `${siteUrl}/merge-pdf` },
     { url: `${siteUrl}/compress-pdf` },
     { url: `${siteUrl}/compress-image` },
