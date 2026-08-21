@@ -30,7 +30,15 @@ const genericFaqItems = [
 ] as const;
 
 function formatPairLabel(pair: ConversionPair) {
-  return `${FORMATS[pair.source].label} to ${FORMATS[pair.target].label}`;
+  const searchFriendlyLabels: Partial<Record<string, string>> = {
+    "docx-to-pdf": "Word to PDF",
+    "xlsx-to-pdf": "Excel to PDF",
+  };
+
+  return (
+    searchFriendlyLabels[pair.slug] ??
+    `${FORMATS[pair.source].label} to ${FORMATS[pair.target].label}`
+  );
 }
 
 interface ConversionLandingPageProps {
@@ -65,7 +73,7 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
   const source = pair ? FORMATS[pair.source] : null;
   const target = pair ? FORMATS[pair.target] : null;
   const pageTitle = pair
-    ? `Convert ${source?.label} to ${target?.label}`
+    ? `Convert ${formatPairLabel(pair)}`
     : "Convert files without the fuss.";
 
   const pageDescription = pair
@@ -160,7 +168,9 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
                 <span aria-hidden="true">1</span>
                 <div>
                   <strong>Choose a file</strong>
-                  <p>Pick one from your device or drop it into the converter.</p>
+                  <p>
+                    Pick one from your device or drop it into the converter.
+                  </p>
                 </div>
               </li>
               <li>
@@ -174,7 +184,10 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
                 <span aria-hidden="true">3</span>
                 <div>
                   <strong>Download the result</strong>
-                  <p>Start the conversion and keep this page open until it finishes.</p>
+                  <p>
+                    Start the conversion and keep this page open until it
+                    finishes.
+                  </p>
                 </div>
               </li>
             </ol>
