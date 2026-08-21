@@ -1,0 +1,201 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+
+import { ArrowIcon, RouteIcon } from "@/components/icons";
+import { FormatMark } from "@/components/format-mark";
+import { SiteHeader } from "@/components/site-header";
+import { getFormatContent } from "@/lib/format-content";
+import {
+  FORMATS,
+  getEnabledConversionPairs,
+  isFormatId,
+  type FormatId,
+} from "@/lib/formats";
+import { GUIDES } from "@/lib/guides";
+
+interface FormatPageProps {
+  params: Promise<{ format: string }>;
+}
+
+function getLiveFormats(): FormatId[] {
+  return Array.from(
+    new Set(getEnabledConversionPairs().flatMap((pair) => [pair.source, pair.target])),
+  );
+}
+
+export function generateStaticParams() {
+  return getLiveFormats().map((format) => ({ format }));
+}
+
+export async function generateMetadata({ params }: FormatPageProps): Promise<Metadata> {
+  const { format } = await params;
+  if (!isFormatId(format) || !getLiveFormats().includes(format)) return {};
+
+  const info = FORMATS[format];
+  const content = getFormatContent(format);
+  const title = `${info.label} File Format: Converters, Uses and Guide`;
+  const description = content?.summary ?? `Learn about ${info.label} files and browse live Convertix conversion routes.`;
+  const canonical = `/formats/${format}`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      type: "website",
+      url: canonical,
+      title,
+      description,
+      siteName: "Convertix",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
+}
+
+export default async function FormatPage({ params }: FormatPageProps) {
+  const { format } = await params;
+  if (!isFormatId(format) || !getLiveFormats().includes(format)) notFound();
+
+  const info = FORMATS[format];
+  const content = getFormatContent(format);
+  if (!content) notFound();
+
+  const routes = getEnabledConversionPairs().filter(
+    (pair) => pair.source === format || pair.target === format,
+  );
+  const guides = GUIDES.filter((guide) =>
+    `${guide.title} ${guide.intro} ${guide.routes.map((route) => route.label).join(" ")}`
+      .toLowerCase()
+      .includes(info.label.toLowerCase()),
+  ).slice(0, 4);
+
+  const canonicalUrl = `https://convertix.uk/formats/${format}`;
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": `${canonicalUrl}#webpage`,
+        url: canonicalUrl,
+        name: `${info.label} file format guide`,
+        description: content.summary,
+        isPartOf: {
+          "@type": "WebSite",
+          "@id": "https://convertix.uk/#website",
+          name: "Convertix",
+          url: "https://convertix.uk",
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Convertix", item: "https://convertix.uk" },
+          { "@type": "ListItem", position: 2, name: "Formats", item: "https://convertix.uk/formats" },
+          { "@type": "ListItem", position: 3, name: info.label, item: canonicalUrl },
+        ],
+      },
+    ],
+  };
+
+  return (
+    <>
+      <SiteHeader />
+      <main id="main-content">
+        <section className="hero-section" aria-labelledby="format-page-title">
+          <div className="hero-copy hero-copy-benefit">
+            <span className="hero-eyebrow">Format guide</span>
+            <div aria-hidden="true"><FormatMark format={format} /></div>
+            <h1 id="format-page-title">{info.label}: what it is and when to use it.</h1>
+            <p>{content.description}</p>
+          </div>
+        </section>
+
+        <section className="why-section" aria-labelledby="format-overview-title">
+          <div className="why-heading">
+            <span className="section-kicker">At a glance</span>
+            <h2 id="format-overview-title">Where {info.label} fits.</h2>
+            <p>{content.summary}</p>
+          </div>
+          <div className="why-points">
+            <article>
+              <RouteIcon />
+              <h3>Common uses</h3>
+              <p>{content.useCases.join(" · ")}</p>
+            </article>
+            <article>
+              <RouteIcon />
+              <h3>Strengths</h3>
+              <p>{content.strengths.join(" · ")}</p>
+            </article>
+            <article>
+              <RouteIcon />
+              <h3>Things to know</h3>
+              <p>{content.considerations.join(" · ")}</p>
+            </article>
+          </div>
+        </section>
+
+        <section className="popular-section" aria-labelledby="format-routes-title">
+          <div className="section-heading-row">
+            <div>
+              <span className="section-kicker">Live converters</span>
+              <h2 id="format-routes-title">Convert {info.label} with Convertix.</h2>
+              <p>These routes are generated from the conversion routes currently enabled in Convertix.</p>
+            </div>
+          </div>
+          <div className="popular-links">
+            {routes.map((pair) => (
+              <Link href={`/${pair.slug}`} key={pair.slug}>
+                <span>{FORMATS[pair.source].label} to {FORMATS[pair.target].label}</span>
+                <ArrowIcon />
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {guides.length > 0 ? (
+          <section className="guides-promo" aria-labelledby="format-guides-title">
+            <div>
+              <span className="section-kicker">Learn before you convert</span>
+              <h2 id="format-guides-title">Guides involving {info.label}.</h2>
+              <p>Compare formats and understand what a conversion can change before choosing a route.</p>
+            </div>
+            <div className="guide-route-links">
+              {guides.map((guide) => (
+                <Link href={`/guides/${guide.slug}`} key={guide.slug}>
+                  {guide.title} <ArrowIcon />
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        <section className="faq-section" aria-labelledby="format-faq-title">
+          <div className="faq-heading">
+            <h2 id="format-faq-title">Useful things to know about {info.label}.</h2>
+          </div>
+          <div className="faq-list">
+            <details>
+              <summary><span>What is a {info.label} file?</span><span className="faq-toggle" aria-hidden="true" /></summary>
+              <p>{content.summary}</p>
+            </details>
+            <details>
+              <summary><span>Can Convertix convert {info.label} files?</span><span className="faq-toggle" aria-hidden="true" /></summary>
+              <p>Yes. The live conversion routes above are the {info.label}-related routes currently enabled in Convertix.</p>
+            </details>
+            <details>
+              <summary><span>Will converting a {info.label} file preserve everything?</span><span className="faq-toggle" aria-hidden="true" /></summary>
+              <p>Not necessarily. File formats support different features, so conversion can change layout, compression, transparency, metadata, codecs or editability. Check important outputs before replacing the original.</p>
+            </details>
+          </div>
+        </section>
+      </main>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+    </>
+  );
+}
