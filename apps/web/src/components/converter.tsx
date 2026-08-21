@@ -70,20 +70,75 @@ type ConversionAction =
   | { type: "failed"; message: string; retryable: boolean }
   | { type: "reset"; source: FormatId | null; target: FormatId | null };
 
-function createInitialState(source: FormatId | null, target: FormatId | null): ConversionState {
-  return { file: null, source, target, status: "idle", error: null, retryable: false, dragging: false, conversionId: null, downloadUrl: null };
+function createInitialState(
+  source: FormatId | null,
+  target: FormatId | null,
+): ConversionState {
+  return {
+    file: null,
+    source,
+    target,
+    status: "idle",
+    error: null,
+    retryable: false,
+    dragging: false,
+    conversionId: null,
+    downloadUrl: null,
+  };
 }
 
-function reducer(state: ConversionState, action: ConversionAction): ConversionState {
+function reducer(
+  state: ConversionState,
+  action: ConversionAction,
+): ConversionState {
   switch (action.type) {
-    case "drag": return { ...state, dragging: action.active };
-    case "select": return { ...state, file: action.file, source: action.source, target: action.target, status: "ready", error: null, retryable: false, dragging: false, conversionId: null, downloadUrl: null };
-    case "invalid": return { ...state, file: null, source: null, target: null, status: "failed", error: action.message, retryable: false, dragging: false };
-    case "target": return { ...state, target: action.target, status: "ready", error: null };
-    case "status": return { ...state, status: action.status, error: null };
-    case "accepted": return { ...state, status: action.response.status, conversionId: action.response.conversion_id, downloadUrl: action.response.download_url ?? null, error: null };
-    case "failed": return { ...state, status: "failed", error: action.message, retryable: action.retryable };
-    case "reset": return createInitialState(action.source, action.target);
+    case "drag":
+      return { ...state, dragging: action.active };
+    case "select":
+      return {
+        ...state,
+        file: action.file,
+        source: action.source,
+        target: action.target,
+        status: "ready",
+        error: null,
+        retryable: false,
+        dragging: false,
+        conversionId: null,
+        downloadUrl: null,
+      };
+    case "invalid":
+      return {
+        ...state,
+        file: null,
+        source: null,
+        target: null,
+        status: "failed",
+        error: action.message,
+        retryable: false,
+        dragging: false,
+      };
+    case "target":
+      return { ...state, target: action.target, status: "ready", error: null };
+    case "status":
+      return { ...state, status: action.status, error: null };
+    case "accepted":
+      return {
+        ...state,
+        status: action.response.status,
+        conversionId: action.response.conversion_id,
+        downloadUrl: action.response.download_url ?? null,
+        error: null,
+      };
+    case "failed":
+      return {
+        ...state,
+        status: "failed",
+        error: action.message,
+        retryable: action.retryable,
+      };
+    case "reset":
+      return createInitialState(action.source, action.target);
   }
 }
 
@@ -95,40 +150,114 @@ function formatFileSize(bytes: number): string {
 
 function getStatusContent(state: ConversionState) {
   const content: Record<ConversionStatus, { title: string; body: string }> = {
-    idle: { title: "Choose a file", body: "Convertix will show the output formats available for it." },
+    idle: {
+      title: "Choose a file",
+      body: "Convertix will show the output formats available for it.",
+    },
     ready: { title: "Ready to convert", body: "Select Convert file to start." },
-    uploading: { title: "Uploading your file", body: "Sending your file to Convertix." },
-    queued: { title: "Waiting to start", body: "Your conversion is in the queue." },
-    starting: { title: "Preparing your file", body: "Convertix is opening the file and preparing the output." },
-    converting: { title: "Converting your file", body: "Large files and video transcodes can take longer. Keep this tab open." },
-    completed: { title: "Your file is ready", body: state.downloadUrl ? "Use the download button above to save it." : "The file was converted, but the download link is missing." },
-    failed: { title: "We couldn’t convert this file", body: state.error ?? "Choose the file again and retry the conversion." },
+    uploading: {
+      title: "Uploading your file",
+      body: "Sending your file to Convertix.",
+    },
+    queued: {
+      title: "Waiting to start",
+      body: "Your conversion is in the queue.",
+    },
+    starting: {
+      title: "Preparing your file",
+      body: "Convertix is opening the file and preparing the output.",
+    },
+    converting: {
+      title: "Converting your file",
+      body: "Large files and video transcodes can take longer. Keep this tab open.",
+    },
+    completed: {
+      title: "Your file is ready",
+      body: state.downloadUrl
+        ? "Use the download button above to save it."
+        : "The file was converted, but the download link is missing.",
+    },
+    failed: {
+      title: "We couldn’t convert this file",
+      body: state.error ?? "Choose the file again and retry the conversion.",
+    },
   };
   return content[state.status];
 }
 
-interface ConverterProps { initialSource?: FormatId; initialTarget?: FormatId; }
+interface ConverterProps {
+  initialSource?: FormatId;
+  initialTarget?: FormatId;
+}
 
 export function Converter({ initialSource, initialTarget }: ConverterProps) {
   const inputId = useId();
   const targetMenuId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const filePickerRef = useRef<HTMLButtonElement>(null);
+  const conversionRouteRef = useRef<HTMLDivElement>(null);
   const requestSequenceRef = useRef(0);
-  const activeRequestRef = useRef<{ id: number; controller: AbortController } | null>(null);
+  const activeRequestRef = useRef<{
+    id: number;
+    controller: AbortController;
+  } | null>(null);
   const [targetMenuOpen, setTargetMenuOpen] = useState(false);
-  const [state, dispatch] = useReducer(reducer, createInitialState(initialSource ?? null, initialTarget ?? null));
+  const [state, dispatch] = useReducer(
+    reducer,
+    createInitialState(initialSource ?? null, initialTarget ?? null),
+  );
 
   useEffect(() => () => activeRequestRef.current?.controller.abort(), []);
 
+  useEffect(() => {
+    if (!state.file) return;
+    if (!window.matchMedia("(max-width: 680px)").matches) return;
+
+    const timeout = window.setTimeout(() => {
+      const route = conversionRouteRef.current;
+      if (!route) return;
+
+      const rect = route.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+
+      if (rect.top > viewportHeight * 0.65) {
+        route.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }, 120);
+
+    return () => window.clearTimeout(timeout);
+  }, [state.file]);
+
   const knownTargets = state.source ? getEnabledTargets(state.source) : [];
-  const pair = state.source && state.target ? getConversionPair(state.source, state.target) : null;
+  const pair =
+    state.source && state.target
+      ? getConversionPair(state.source, state.target)
+      : null;
   const readiness = getSubmissionReadiness();
   const pairEnabled = pair ? isConversionPairEnabled(pair) : false;
-  const isBusy = ["uploading", "queued", "starting", "converting"].includes(state.status);
-  const canSubmit = Boolean(state.file && pair && pairEnabled && readiness.ready && !isBusy && state.status !== "completed");
+  const isBusy = ["uploading", "queued", "starting", "converting"].includes(
+    state.status,
+  );
+  const canSubmit = Boolean(
+    state.file &&
+    pair &&
+    pairEnabled &&
+    readiness.ready &&
+    !isBusy &&
+    state.status !== "completed",
+  );
   const statusContent = getStatusContent(state);
-  const statusTone = state.status === "failed" ? "is-error" : state.status === "completed" ? "is-success" : isBusy ? "is-active" : "is-neutral";
+  const statusTone =
+    state.status === "failed"
+      ? "is-error"
+      : state.status === "completed"
+        ? "is-success"
+        : isBusy
+          ? "is-active"
+          : "is-neutral";
   const followUpPairs = state.target
     ? getEnabledConversionPairs()
         .filter((candidate) => candidate.source === state.target)
@@ -147,33 +276,66 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
     setTargetMenuOpen(false);
 
     if (file.size === 0) {
-      dispatch({ type: "invalid", message: "That file is empty. Choose a file that contains something to convert." });
+      dispatch({
+        type: "invalid",
+        message:
+          "That file is empty. Choose a file that contains something to convert.",
+      });
       return;
     }
 
     if (file.size > FREE_FILE_LIMIT_BYTES) {
-      captureEvent("file_rejected_too_large", { file_size_bytes: file.size, limit_bytes: FREE_FILE_LIMIT_BYTES });
-      dispatch({ type: "invalid", message: `That file is larger than the ${FREE_FILE_LIMIT_MB} MB free limit. Choose a smaller file to continue.` });
+      captureEvent("file_rejected_too_large", {
+        file_size_bytes: file.size,
+        limit_bytes: FREE_FILE_LIMIT_BYTES,
+      });
+      dispatch({
+        type: "invalid",
+        message: `That file is larger than the ${FREE_FILE_LIMIT_MB} MB free limit. Choose a smaller file to continue.`,
+      });
       return;
     }
 
     const source = getFormatFromFileName(file.name);
     if (!source) {
-      captureEvent("file_rejected", { reason: "unrecognised_format", file_size_bytes: file.size });
-      dispatch({ type: "invalid", message: "Convertix doesn’t recognise that file type. Choose a supported file instead." });
+      captureEvent("file_rejected", {
+        reason: "unrecognised_format",
+        file_size_bytes: file.size,
+      });
+      dispatch({
+        type: "invalid",
+        message:
+          "Convertix doesn’t recognise that file type. Choose a supported file instead.",
+      });
       return;
     }
 
     const targets = getEnabledTargets(source);
     if (targets.length === 0) {
-      captureEvent("file_rejected", { reason: "no_live_route", source_format: source, file_size_bytes: file.size, format_family: FORMATS[source].family });
-      dispatch({ type: "invalid", message: `Convertix can’t convert ${FORMATS[source].label} files yet. Choose a supported file instead.` });
+      captureEvent("file_rejected", {
+        reason: "no_live_route",
+        source_format: source,
+        file_size_bytes: file.size,
+        format_family: FORMATS[source].family,
+      });
+      dispatch({
+        type: "invalid",
+        message: `Convertix can’t convert ${FORMATS[source].label} files yet. Choose a supported file instead.`,
+      });
       return;
     }
 
-    const preferredTarget = initialTarget && targets.includes(initialTarget) ? initialTarget : (targets[0] ?? null);
+    const preferredTarget =
+      initialTarget && targets.includes(initialTarget)
+        ? initialTarget
+        : (targets[0] ?? null);
     dispatch({ type: "select", file, source, target: preferredTarget });
-    captureEvent("file_selected", { source_format: source, target_format: preferredTarget, file_size_bytes: file.size, format_family: FORMATS[source].family });
+    captureEvent("file_selected", {
+      source_format: source,
+      target_format: preferredTarget,
+      file_size_bytes: file.size,
+      format_family: FORMATS[source].family,
+    });
   }
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
@@ -194,42 +356,91 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
     requestSequenceRef.current = requestId;
     const controller = new AbortController();
     activeRequestRef.current = { id: requestId, controller };
-    captureEvent("conversion_started", { source_format: state.source, target_format: state.target, file_size_bytes: file.size, format_family: FORMATS[state.source].family });
+    captureEvent("conversion_started", {
+      source_format: state.source,
+      target_format: state.target,
+      file_size_bytes: file.size,
+      format_family: FORMATS[state.source].family,
+    });
     dispatch({ type: "status", status: "uploading" });
 
     try {
-      const response = await createConversion(file, { source_format: state.source, target_format: state.target }, controller.signal, (status) => {
-        if (requestSequenceRef.current === requestId) dispatch({ type: "status", status });
-      });
+      const response = await createConversion(
+        file,
+        { source_format: state.source, target_format: state.target },
+        controller.signal,
+        (status) => {
+          if (requestSequenceRef.current === requestId)
+            dispatch({ type: "status", status });
+        },
+      );
       if (requestSequenceRef.current !== requestId) return;
-      captureEvent("conversion_completed", { source_format: state.source, target_format: state.target, output_size_bytes: response.size, format_family: FORMATS[state.source].family });
+      captureEvent("conversion_completed", {
+        source_format: state.source,
+        target_format: state.target,
+        output_size_bytes: response.size,
+        format_family: FORMATS[state.source].family,
+      });
       try {
         const historyResponse = await fetch("/api/conversion-history", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ conversion_id: response.conversion_id, original_filename: file.name, source_format: state.source, target_format: state.target, input_size: file.size, output_size: response.size, output_key: response.output_key }),
+          body: JSON.stringify({
+            conversion_id: response.conversion_id,
+            original_filename: file.name,
+            source_format: state.source,
+            target_format: state.target,
+            input_size: file.size,
+            output_size: response.size,
+            output_key: response.output_key,
+          }),
         });
-        if (!historyResponse.ok) console.error("Failed to save conversion history.");
-      } catch (historyError) { console.error("Failed to save conversion history:", historyError); }
+        if (!historyResponse.ok)
+          console.error("Failed to save conversion history.");
+      } catch (historyError) {
+        console.error("Failed to save conversion history:", historyError);
+      }
       dispatch({ type: "accepted", response });
     } catch (error) {
-      if (requestSequenceRef.current !== requestId || (error instanceof DOMException && error.name === "AbortError")) return;
+      if (
+        requestSequenceRef.current !== requestId ||
+        (error instanceof DOMException && error.name === "AbortError")
+      )
+        return;
       if (error instanceof ConversionApiError) {
-        captureEvent("conversion_failed", { source_format: state.source, target_format: state.target, retryable: error.retryable, format_family: FORMATS[state.source].family });
-        dispatch({ type: "failed", message: error.message, retryable: error.retryable });
+        captureEvent("conversion_failed", {
+          source_format: state.source,
+          target_format: state.target,
+          retryable: error.retryable,
+          format_family: FORMATS[state.source].family,
+        });
+        dispatch({
+          type: "failed",
+          message: error.message,
+          retryable: error.retryable,
+        });
         return;
       }
       captureException(error);
-      dispatch({ type: "failed", message: "Convertix lost the file details. Choose the file again.", retryable: false });
+      dispatch({
+        type: "failed",
+        message: "Convertix lost the file details. Choose the file again.",
+        retryable: false,
+      });
     } finally {
-      if (activeRequestRef.current?.id === requestId) activeRequestRef.current = null;
+      if (activeRequestRef.current?.id === requestId)
+        activeRequestRef.current = null;
     }
   }
 
   function reset() {
     invalidateActiveRequest();
     setTargetMenuOpen(false);
-    dispatch({ type: "reset", source: initialSource ?? null, target: initialTarget ?? null });
+    dispatch({
+      type: "reset",
+      source: initialSource ?? null,
+      target: initialTarget ?? null,
+    });
     filePickerRef.current?.focus();
   }
 
@@ -243,57 +454,177 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
   }
 
   return (
-    <section className="converter-shell converter-progressive" aria-labelledby="converter-title">
-      <h2 id="converter-title" className="sr-only">File converter</h2>
-      <div className={`file-drop ${state.dragging ? "is-dragging" : ""} ${state.file ? "has-file" : ""}`}
-        onDragEnter={(event) => { event.preventDefault(); dispatch({ type: "drag", active: true }); }}
+    <section
+      className="converter-shell converter-progressive"
+      aria-labelledby="converter-title"
+    >
+      <h2 id="converter-title" className="sr-only">
+        File converter
+      </h2>
+      <div
+        className={`file-drop ${state.dragging ? "is-dragging" : ""} ${state.file ? "has-file" : ""}`}
+        onDragEnter={(event) => {
+          event.preventDefault();
+          dispatch({ type: "drag", active: true });
+        }}
         onDragOver={(event) => event.preventDefault()}
-        onDragLeave={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) dispatch({ type: "drag", active: false }); }}
-        onDrop={handleDrop}>
-        <label className="sr-only" htmlFor={inputId}>Choose a file to convert</label>
-        <input ref={inputRef} id={inputId} className="sr-only" type="file" tabIndex={-1} accept={ACCEPTED_FILE_EXTENSIONS} onChange={handleInputChange} />
-        <div className="file-drop-icon" aria-hidden="true">{state.source ? <FormatMark format={state.source} /> : <UploadIcon />}</div>
+        onDragLeave={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget as Node | null))
+            dispatch({ type: "drag", active: false });
+        }}
+        onDrop={handleDrop}
+      >
+        <label className="sr-only" htmlFor={inputId}>
+          Choose a file to convert
+        </label>
+        <input
+          ref={inputRef}
+          id={inputId}
+          className="sr-only"
+          type="file"
+          tabIndex={-1}
+          accept={ACCEPTED_FILE_EXTENSIONS}
+          onChange={handleInputChange}
+        />
+        <div className="file-drop-icon" aria-hidden="true">
+          {state.source ? <FormatMark format={state.source} /> : <UploadIcon />}
+        </div>
         {state.file ? (
-          <div className="selected-file-copy"><strong data-ph-mask>{state.file.name}</strong><span>{state.source ? FORMATS[state.source].label : "Unknown"} · {formatFileSize(state.file.size)}</span></div>
+          <div className="selected-file-copy">
+            <strong data-ph-mask>{state.file.name}</strong>
+            <span>
+              {state.source ? FORMATS[state.source].label : "Unknown"} ·{" "}
+              {formatFileSize(state.file.size)}
+            </span>
+          </div>
         ) : (
           <div className="file-drop-copy">
-            <strong>{state.dragging ? "Drop your file here" : "Choose a file to convert"}</strong>
+            <strong>
+              {state.dragging
+                ? "Drop your file here"
+                : "Choose a file to convert"}
+            </strong>
             <span>Drop it here or browse your device</span>
-            <span>Up to {FREE_FILE_LIMIT_MB} MB · {SUPPORTED_FORMAT_LABELS}</span>
+            <span>
+              Up to {FREE_FILE_LIMIT_MB} MB · {SUPPORTED_FORMAT_LABELS}
+            </span>
           </div>
         )}
-        <button ref={filePickerRef} className="file-picker-button" type="button" onClick={() => inputRef.current?.click()}><FolderIcon />{state.file ? "Replace file" : "Choose a file"}</button>
-        {state.file ? <button className="icon-button remove-file" type="button" onClick={reset} aria-label="Remove selected file"><CloseIcon /></button> : null}
+        <button
+          ref={filePickerRef}
+          className="file-picker-button"
+          type="button"
+          onClick={() => inputRef.current?.click()}
+        >
+          <FolderIcon />
+          {state.file ? "Replace file" : "Choose a file"}
+        </button>
+        {state.file ? (
+          <button
+            className="icon-button remove-file"
+            type="button"
+            onClick={reset}
+            aria-label="Remove selected file"
+          >
+            <CloseIcon />
+          </button>
+        ) : null}
       </div>
 
       {!state.file && state.status !== "failed" ? (
-        <div className="converter-prompt" role="status"><RouteIcon /><span>Your file stays on this device until you select Convert file. Maximum size: {FREE_FILE_LIMIT_MB} MB.</span></div>
+        <div className="converter-prompt" role="status">
+          <RouteIcon />
+          <span>
+            Your file stays on this device until you select Convert file.
+            Maximum size: {FREE_FILE_LIMIT_MB} MB.
+          </span>
+        </div>
       ) : null}
 
       {state.file && state.source ? (
-        <div className="conversion-route is-revealed" data-status={state.status}>
+        <div
+          ref={conversionRouteRef}
+          className="conversion-route is-revealed"
+          data-status={state.status}
+        >
           <span className="route-line" aria-hidden="true" />
           <div className="route-step is-confirmed-step">
-            <span className="route-index" aria-hidden="true">1</span><FormatMark format={state.source} />
-            <div className="route-copy"><span>File type</span><strong>{FORMATS[state.source].label}</strong></div>
-            <span className="route-confirmed" aria-label="File type detected"><CheckIcon /></span>
+            <span className="route-index" aria-hidden="true">
+              1
+            </span>
+            <FormatMark format={state.source} />
+            <div className="route-copy">
+              <span>File type</span>
+              <strong>{FORMATS[state.source].label}</strong>
+            </div>
+            <span className="route-confirmed" aria-label="File type detected">
+              <CheckIcon />
+            </span>
           </div>
           <div className="route-step">
-            <span className="route-index" aria-hidden="true">2</span>
-            {state.target ? <FormatMark format={state.target} /> : <div className="format-symbol" data-accent="slate"><FileIcon /></div>}
+            <span className="route-index" aria-hidden="true">
+              2
+            </span>
+            {state.target ? (
+              <FormatMark format={state.target} />
+            ) : (
+              <div className="format-symbol" data-accent="slate">
+                <FileIcon />
+              </div>
+            )}
             <div className="route-copy custom-target-field">
               <span>Convert to</span>
-              <button className="target-select-button" type="button" aria-controls={targetMenuId} aria-expanded={targetMenuOpen} disabled={knownTargets.length === 0 || isBusy} onClick={() => setTargetMenuOpen((open) => !open)}>
-                <strong>{state.target ? FORMATS[state.target].label : "No conversion available"}</strong><ChevronIcon />
+              <button
+                className="target-select-button"
+                type="button"
+                aria-controls={targetMenuId}
+                aria-expanded={targetMenuOpen}
+                disabled={knownTargets.length === 0 || isBusy}
+                onClick={() => setTargetMenuOpen((open) => !open)}
+              >
+                <strong>
+                  {state.target
+                    ? FORMATS[state.target].label
+                    : "No conversion available"}
+                </strong>
+                <ChevronIcon />
               </button>
               {targetMenuOpen ? (
-                <div className="target-select-menu" id={targetMenuId} aria-label="Available output formats">
+                <div
+                  className="target-select-menu"
+                  id={targetMenuId}
+                  aria-label="Available output formats"
+                >
                   {knownTargets.map((target) => {
                     const candidate = getConversionPair(state.source!, target);
-                    const enabled = candidate ? isConversionPairEnabled(candidate) : false;
-                    return <button key={target} type="button" aria-pressed={state.target === target} disabled={!enabled} onClick={() => { captureEvent("conversion_target_changed", { source_format: state.source, target_format: target, format_family: FORMATS[state.source!].family }); dispatch({ type: "target", target }); setTargetMenuOpen(false); }}>
-                      <FormatMark format={target} compact /><span>{FORMATS[target].label}</span>{!enabled ? <small>Unavailable</small> : state.target === target ? <CheckIcon /> : null}
-                    </button>;
+                    const enabled = candidate
+                      ? isConversionPairEnabled(candidate)
+                      : false;
+                    return (
+                      <button
+                        key={target}
+                        type="button"
+                        aria-pressed={state.target === target}
+                        disabled={!enabled}
+                        onClick={() => {
+                          captureEvent("conversion_target_changed", {
+                            source_format: state.source,
+                            target_format: target,
+                            format_family: FORMATS[state.source!].family,
+                          });
+                          dispatch({ type: "target", target });
+                          setTargetMenuOpen(false);
+                        }}
+                      >
+                        <FormatMark format={target} compact />
+                        <span>{FORMATS[target].label}</span>
+                        {!enabled ? (
+                          <small>Unavailable</small>
+                        ) : state.target === target ? (
+                          <CheckIcon />
+                        ) : null}
+                      </button>
+                    );
                   })}
                 </div>
               ) : null}
@@ -301,57 +632,186 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
           </div>
 
           {state.status === "completed" && state.downloadUrl ? (
-            <a className="convert-button is-download" href={state.downloadUrl} download onClick={() => captureEvent("file_downloaded", { source_format: state.source, target_format: state.target, format_family: FORMATS[state.source!].family })}>
-              <CheckIcon /><span>Download converted file</span><ArrowIcon className="convert-arrow" />
+            <a
+              className="convert-button is-download"
+              href={state.downloadUrl}
+              download
+              onClick={() =>
+                captureEvent("file_downloaded", {
+                  source_format: state.source,
+                  target_format: state.target,
+                  format_family: FORMATS[state.source!].family,
+                })
+              }
+            >
+              <CheckIcon />
+              <span>Download converted file</span>
+              <ArrowIcon className="convert-arrow" />
             </a>
           ) : (
-            <button className="convert-button" type="button" disabled={!canSubmit} onClick={submitConversion}>
-              <RouteIcon /><span>{!pairEnabled ? "Conversion unavailable" : !readiness.ready ? "Conversion service unavailable" : state.status === "uploading" ? "Uploading your file" : state.status === "queued" ? "Waiting to start" : state.status === "starting" ? "Preparing your file" : state.status === "converting" ? "Converting your file" : "Convert file"}</span>
-              {!isBusy ? <ArrowIcon className="convert-arrow" /> : <span aria-hidden="true" />}
+            <button
+              className="convert-button"
+              type="button"
+              disabled={!canSubmit}
+              onClick={submitConversion}
+            >
+              <RouteIcon />
+              <span>
+                {!pairEnabled
+                  ? "Conversion unavailable"
+                  : !readiness.ready
+                    ? "Conversion service unavailable"
+                    : state.status === "uploading"
+                      ? "Uploading your file"
+                      : state.status === "queued"
+                        ? "Waiting to start"
+                        : state.status === "starting"
+                          ? "Preparing your file"
+                          : state.status === "converting"
+                            ? "Converting your file"
+                            : "Convert file"}
+              </span>
+              {!isBusy ? (
+                <ArrowIcon className="convert-arrow" />
+              ) : (
+                <span aria-hidden="true" />
+              )}
             </button>
           )}
 
           {state.status === "completed" && state.downloadUrl && state.target ? (
-            <div className="post-conversion-panel" aria-labelledby="post-conversion-title">
+            <div
+              className="post-conversion-panel"
+              aria-labelledby="post-conversion-title"
+            >
               <div className="post-conversion-heading">
                 <strong id="post-conversion-title">More you can do</strong>
-                <p>After you download the {FORMATS[state.target].label}, you can use it in another Convertix tool.</p>
+                <p>
+                  After you download the {FORMATS[state.target].label}, you can
+                  use it in another Convertix tool.
+                </p>
               </div>
               <div className="post-conversion-actions">
                 {state.target === "pdf" ? (
-                  <Link href="/compress-pdf" onClick={() => trackSuccessAction("compress_pdf", "/compress-pdf")}>
-                    <span><strong>Compress this PDF</strong><small>Reduce the downloaded PDF’s file size.</small></span>
+                  <Link
+                    href="/compress-pdf"
+                    onClick={() =>
+                      trackSuccessAction("compress_pdf", "/compress-pdf")
+                    }
+                  >
+                    <span>
+                      <strong>Compress this PDF</strong>
+                      <small>Reduce the downloaded PDF’s file size.</small>
+                    </span>
                     <ArrowIcon />
                   </Link>
                 ) : null}
 
                 {followUpPairs.map((followUpPair) => (
-                  <Link key={followUpPair.slug} href={`/${followUpPair.slug}`} onClick={() => trackSuccessAction("follow_up_conversion", `/${followUpPair.slug}`)}>
-                    <span><strong>Convert {FORMATS[followUpPair.source].label} to {FORMATS[followUpPair.target].label}</strong><small>Use your downloaded file in another conversion.</small></span>
+                  <Link
+                    key={followUpPair.slug}
+                    href={`/${followUpPair.slug}`}
+                    onClick={() =>
+                      trackSuccessAction(
+                        "follow_up_conversion",
+                        `/${followUpPair.slug}`,
+                      )
+                    }
+                  >
+                    <span>
+                      <strong>
+                        Convert {FORMATS[followUpPair.source].label} to{" "}
+                        {FORMATS[followUpPair.target].label}
+                      </strong>
+                      <small>
+                        Use your downloaded file in another conversion.
+                      </small>
+                    </span>
                     <ArrowIcon />
                   </Link>
                 ))}
 
-                <Link href="/conversions" onClick={() => trackSuccessAction("browse_conversions", "/conversions")}>
-                  <span><strong>Browse all conversions</strong><small>See every conversion available on Convertix.</small></span>
+                <Link
+                  href="/conversions"
+                  onClick={() =>
+                    trackSuccessAction("browse_conversions", "/conversions")
+                  }
+                >
+                  <span>
+                    <strong>Browse all conversions</strong>
+                    <small>See every conversion available on Convertix.</small>
+                  </span>
                   <ArrowIcon />
                 </Link>
               </div>
             </div>
           ) : null}
 
-          {state.status === "completed" ? <button className="convert-another-button" type="button" onClick={() => { trackSuccessAction("convert_another", "converter_reset"); reset(); }}>Convert another file</button> : null}
-          <div className={`conversion-status ${statusTone}`} role={state.status === "failed" ? "alert" : "status"} aria-live="polite" aria-atomic="true">
-            <span className="status-marker" aria-hidden="true">{state.status === "failed" ? <CloseIcon /> : state.status === "completed" ? <CheckIcon /> : isBusy ? <RefreshIcon className="is-spinning" /> : <RouteIcon />}</span>
-            <div className="status-copy"><strong>{statusContent.title}</strong><span>{statusContent.body}</span>{state.conversionId ? <span className="conversion-reference">Reference: {state.conversionId}</span> : null}</div>
-            <span className={`status-progress ${state.status === "completed" ? "is-complete" : isBusy ? "is-indeterminate" : "is-idle"}`} aria-hidden="true"><span /></span>
-            {state.status === "failed" && state.retryable ? <button className="status-action" type="button" onClick={submitConversion}>Try again <RefreshIcon /></button> : null}
+          {state.status === "completed" ? (
+            <button
+              className="convert-another-button"
+              type="button"
+              onClick={() => {
+                trackSuccessAction("convert_another", "converter_reset");
+                reset();
+              }}
+            >
+              Convert another file
+            </button>
+          ) : null}
+          <div
+            className={`conversion-status ${statusTone}`}
+            role={state.status === "failed" ? "alert" : "status"}
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <span className="status-marker" aria-hidden="true">
+              {state.status === "failed" ? (
+                <CloseIcon />
+              ) : state.status === "completed" ? (
+                <CheckIcon />
+              ) : isBusy ? (
+                <RefreshIcon className="is-spinning" />
+              ) : (
+                <RouteIcon />
+              )}
+            </span>
+            <div className="status-copy">
+              <strong>{statusContent.title}</strong>
+              <span>{statusContent.body}</span>
+              {state.conversionId ? (
+                <span className="conversion-reference">
+                  Reference: {state.conversionId}
+                </span>
+              ) : null}
+            </div>
+            <span
+              className={`status-progress ${state.status === "completed" ? "is-complete" : isBusy ? "is-indeterminate" : "is-idle"}`}
+              aria-hidden="true"
+            >
+              <span />
+            </span>
+            {state.status === "failed" && state.retryable ? (
+              <button
+                className="status-action"
+                type="button"
+                onClick={submitConversion}
+              >
+                Try again <RefreshIcon />
+              </button>
+            ) : null}
           </div>
         </div>
       ) : null}
 
       {!state.file && state.status === "failed" ? (
-        <div className="converter-inline-error" role="alert"><CloseIcon /><div><strong>Choose another file</strong><span>{state.error}</span></div></div>
+        <div className="converter-inline-error" role="alert">
+          <CloseIcon />
+          <div>
+            <strong>Choose another file</strong>
+            <span>{state.error}</span>
+          </div>
+        </div>
       ) : null}
     </section>
   );
