@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type ChangeEvent, type DragEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from "react";
 
 import {
   ConversionApiError,
@@ -8,6 +8,7 @@ import {
   type ConversionStatus,
   type PdfCompressionLevel,
 } from "@/lib/conversion-api";
+import { captureEvent, captureException } from "@/lib/posthog-client";
 
 import styles from "./pdf-compressor.module.css";
 
@@ -78,6 +79,8 @@ export function PdfCompressor() {
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [compressedSize, setCompressedSize] = useState<number | null>(null);
 
+  useEffect(() => () => abortRef.current?.abort(), []);
+
   const busy = ["uploading", "queued", "starting", "converting"].includes(
     status,
   );
@@ -103,18 +106,21 @@ export function PdfCompressor() {
       selectedFile.type !== "application/pdf" &&
       !selectedFile.name.toLowerCase().endsWith(".pdf")
     ) {
+      captureEvent("pdf_compression_file_rejected", { reason: "not_pdf", file_size_bytes: selectedFile.size });
       setFile(null);
       setError("Choose a PDF file to compress.");
       return;
     }
 
     if (selectedFile.size === 0) {
+      captureEvent("pdf_compression_file_rejected", { reason: "empty" });
       setFile(null);
       setError("That PDF is empty.");
       return;
     }
 
     if (selectedFile.size > MAX_FILE_SIZE) {
+      captureEvent("pdf_compression_file_rejected", { reason: "too_large", file_size_bytes: selectedFile.size, limit_bytes: MAX_FILE_SIZE });
       setFile(null);
       setError("For now, PDF compression accepts files up to 100 MB.");
       return;
@@ -122,6 +128,7 @@ export function PdfCompressor() {
 
     setFile(selectedFile);
     setStatus("ready");
+    captureEvent("pdf_compression_file_selected", { file_size_bytes: selectedFile.size });
   }
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
@@ -148,6 +155,7 @@ export function PdfCompressor() {
     setError(null);
     setDownloadUrl(null);
     setCompressedSize(null);
+    captureEvent("pdf_compression_started", { compression_level: compressionLevel, input_size_bytes: file.size });
 
     try {
       const result = await createConversion(
@@ -163,6 +171,11 @@ export function PdfCompressor() {
 
       setDownloadUrl(result.download_url);
       setCompressedSize(result.size ?? null);
+      captureEvent("pdf_compression_completed", {
+        compression_level: compressionLevel,
+        input_size_bytes: file.size,
+        output_size_bytes: result.size ?? null,
+      });
     } catch (compressionError) {
       if (
         compressionError instanceof DOMException &&
@@ -174,12 +187,18 @@ export function PdfCompressor() {
       setStatus("failed");
 
       if (compressionError instanceof ConversionApiError) {
+        captureEvent("pdf_compression_failed", { compression_level: compressionLevel, error_category: "service", retryable: compressionError.retryable });
         setError(compressionError.message);
       } else if (compressionError instanceof Error) {
+        captureException(compressionError);
+        captureEvent("pdf_compression_failed", { compression_level: compressionLevel, error_category: "unexpected", retryable: false });
         setError(compressionError.message);
       } else {
+        captureEvent("pdf_compression_failed", { compression_level: compressionLevel, error_category: "unknown", retryable: false });
         setError("The PDF could not be compressed.");
       }
+    } finally {
+      if (abortRef.current === controller) abortRef.current = null;
     }
   }
 
@@ -233,7 +252,7 @@ export function PdfCompressor() {
           <>
             <div className={styles.fileBar}>
               <div>
-                <strong>{file.name}</strong>
+                <strong data-ph-mask>{file.name}</strong>
                 <span>{formatBytes(file.size)}</span>
               </div>
 
@@ -268,7 +287,10 @@ export function PdfCompressor() {
                           name="compression-level"
                           value={option.id}
                           checked={compressionLevel === option.id}
-                          onChange={() => setCompressionLevel(option.id)}
+                          onChange={() => {
+                            setCompressionLevel(option.id);
+                            captureEvent("pdf_compression_level_changed", { compression_level: option.id });
+                          }}
                         />
 
                         <span>
@@ -281,7 +303,7 @@ export function PdfCompressor() {
                 </fieldset>
 
                 {busy ? (
-                  <div className={styles.progress}>
+                  <div className={styles.progress} role="status" aria-live="polite" aria-atomic="true">
                     <span className={styles.spinner} aria-hidden="true" />
                     <div>
                       <strong>{statusMessage(status)}</strong>
@@ -346,13 +368,13 @@ export function PdfCompressor() {
                 </div>
 
                 {saving !== null && saving <= 0 ? (
-                  <div className={styles.warning}>
+                  <div className={styles.warning} role="status">
                     This PDF was already well optimized, so compression did not
                     reduce its file size.
                   </div>
                 ) : null}
 
-                <div className={styles.success}>
+                <div className={styles.success} role="status">
                   <strong>✓ Your compressed PDF is ready</strong>
                   <span>
                     Download the result or try another compression level.
@@ -372,14 +394,14 @@ export function PdfCompressor() {
                     Try another level
                   </button>
 
-                  <a className={styles.primaryButton} href={downloadUrl}>
+                  <a className={styles.primaryButton} href={downloadUrl} onClick={() => captureEvent("pdf_compression_downloaded", { compression_level: compressionLevel, input_size_bytes: file.size, output_size_bytes: compressedSize })}>
                     Download compressed PDF
                   </a>
                 </div>
               </>
             )}
 
-            {error ? <div className={styles.error}>{error}</div> : null}
+            {error ? <div className={styles.error} role="alert">{error}</div> : null}
           </>
         )}
       </div>

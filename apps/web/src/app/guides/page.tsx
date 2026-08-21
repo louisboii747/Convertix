@@ -9,6 +9,18 @@ export const metadata: Metadata = {
   title: "File Format Guides & Conversion Help",
   description: "Practical guides to PDF, DOCX, PNG, JPG, WebP, SVG, MP3, WAV, MP4 and WebM. Compare formats and choose the right conversion route.",
   alternates: { canonical: "/guides" },
+  openGraph: {
+    type: "website",
+    url: "/guides",
+    title: "File Format Guides & Conversion Help — Convertix",
+    description: "Practical file format comparisons and conversion guidance from Convertix.",
+    siteName: "Convertix",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "File Format Guides & Conversion Help — Convertix",
+    description: "Practical file format comparisons and conversion guidance from Convertix.",
+  },
 };
 
 export default function GuidesPage() {
@@ -33,7 +45,7 @@ export default function GuidesPage() {
 
         <section className="guides-promo" aria-labelledby="guide-tools-title">
           <div><span className="section-kicker">Need the tool instead?</span><h2 id="guide-tools-title">Browse every live conversion route.</h2><p>If you already know the format you need, skip the reading and go straight to the converter.</p></div>
-          <Link href="/tools" className="guides-promo-link">Explore tools <ArrowIcon /></Link>
+          <Link href="/conversions" className="guides-promo-link">Browse conversions <ArrowIcon /></Link>
         </section>
       </main>
     </>

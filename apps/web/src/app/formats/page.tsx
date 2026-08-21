@@ -17,6 +17,11 @@ export const metadata: Metadata = {
     description: "Explore file formats supported by Convertix and find live conversion routes for documents, images, audio and video.",
     siteName: "Convertix",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "File Formats and Conversion Guides — Convertix",
+    description: "Explore file formats supported by Convertix and find the live conversion routes that use them.",
+  },
 };
 
 function getLiveFormats(): FormatId[] {

@@ -16,6 +16,11 @@ export const metadata: Metadata = {
     description:
       "A safe SVG optimizer that runs locally, compares both renders, and blocks downloads when optimization changes the image.",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Optimize SVG Without Breaking It — Convertix",
+    description: "Optimize SVG locally, compare both renders, and download only when the result passes visual verification.",
+  },
 };
 
 export default function OptimizeSvgPage() {

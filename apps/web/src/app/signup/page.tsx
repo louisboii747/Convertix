@@ -25,7 +25,7 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
 
           <nav className="site-nav" aria-label="Primary navigation">
             <Link href="/#how-it-works">How it works</Link>
-            <Link href="/#formats">Formats</Link>
+            <Link href="/formats">Formats</Link>
             <Link href="/#faq">FAQ</Link>
           </nav>
         </div>

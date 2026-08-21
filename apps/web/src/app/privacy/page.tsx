@@ -6,6 +6,21 @@ export const metadata: Metadata = {
   title: "Privacy",
   description:
     "Learn how Convertix handles account information, uploaded files, analytics, and other data.",
+  alternates: {
+    canonical: "/privacy",
+  },
+  openGraph: {
+    type: "website",
+    url: "/privacy",
+    title: "Privacy — Convertix",
+    description: "Learn how Convertix handles account information, uploaded files, analytics, and other data.",
+    siteName: "Convertix",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Privacy — Convertix",
+    description: "Learn how Convertix handles account information, uploaded files, analytics, and other data.",
+  },
 };
 
 export default function PrivacyPage() {

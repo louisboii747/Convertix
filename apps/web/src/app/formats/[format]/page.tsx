@@ -74,6 +74,21 @@ export default async function FormatPage({ params }: FormatPageProps) {
       .includes(info.label.toLowerCase()),
   ).slice(0, 4);
 
+  const faqItems = [
+    {
+      question: `What is a ${info.label} file?`,
+      answer: content.summary,
+    },
+    {
+      question: `Can Convertix convert ${info.label} files?`,
+      answer: `Yes. The live conversion routes above are the ${info.label}-related routes currently enabled in Convertix.`,
+    },
+    {
+      question: `Will converting a ${info.label} file preserve everything?`,
+      answer: "Not necessarily. File formats support different features, so conversion can change layout, compression, transparency, metadata, codecs or editability. Check important outputs before replacing the original.",
+    },
+  ];
+
   const canonicalUrl = `https://convertix.uk/formats/${format}`;
   const structuredData = {
     "@context": "https://schema.org",
@@ -98,6 +113,17 @@ export default async function FormatPage({ params }: FormatPageProps) {
           { "@type": "ListItem", position: 2, name: "Formats", item: "https://convertix.uk/formats" },
           { "@type": "ListItem", position: 3, name: info.label, item: canonicalUrl },
         ],
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: faqItems.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: item.answer,
+          },
+        })),
       },
     ],
   };
@@ -180,18 +206,12 @@ export default async function FormatPage({ params }: FormatPageProps) {
             <h2 id="format-faq-title">Useful things to know about {info.label}.</h2>
           </div>
           <div className="faq-list">
-            <details>
-              <summary><span>What is a {info.label} file?</span><span className="faq-toggle" aria-hidden="true" /></summary>
-              <p>{content.summary}</p>
-            </details>
-            <details>
-              <summary><span>Can Convertix convert {info.label} files?</span><span className="faq-toggle" aria-hidden="true" /></summary>
-              <p>Yes. The live conversion routes above are the {info.label}-related routes currently enabled in Convertix.</p>
-            </details>
-            <details>
-              <summary><span>Will converting a {info.label} file preserve everything?</span><span className="faq-toggle" aria-hidden="true" /></summary>
-              <p>Not necessarily. File formats support different features, so conversion can change layout, compression, transparency, metadata, codecs or editability. Check important outputs before replacing the original.</p>
-            </details>
+            {faqItems.map((item) => (
+              <details key={item.question}>
+                <summary><span>{item.question}</span><span className="faq-toggle" aria-hidden="true" /></summary>
+                <p>{item.answer}</p>
+              </details>
+            ))}
           </div>
         </section>
       </main>

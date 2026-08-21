@@ -5,6 +5,9 @@
   --ink-800: #20304e;
   --ink-650: #465575;
   --ink-500: #66728d;
+  --ink: var(--ink-950);
+  --ink-700: var(--ink-650);
+  --ink-muted: var(--ink-650);
   --surface: #ffffff;
   --canvas: #f7f9fc;
   --canvas-blue: #edf2ff;
@@ -74,10 +77,6 @@ svg {
 ::selection {
   background: #c9d6ff;
   color: var(--ink-950);
-}
-
-.direction-contract {
-  display: contents;
 }
 
 .sr-only {
@@ -1666,7 +1665,7 @@ main {
   font-family: var(--font-display), sans-serif;
   font-size: clamp(3.25rem, 7vw, 5.6rem);
   line-height: 0.96;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.04em;
 }
 
 .auth-intro > p:last-child {
@@ -1730,7 +1729,7 @@ main {
 }
 
 .auth-field input::placeholder {
-  color: #8a96aa;
+  color: var(--ink-500);
 }
 
 .auth-field input:focus {
@@ -1826,7 +1825,7 @@ main {
   font-family: var(--font-display), sans-serif;
   font-size: clamp(3rem, 6vw, 5.2rem);
   line-height: 0.98;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.04em;
 }
 
 .account-heading > p:last-child {
@@ -2147,7 +2146,7 @@ main {
   font-family: var(--font-display);
   font-size: clamp(3rem, 7vw, 5.5rem);
   line-height: 0.95;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.04em;
   color: var(--ink);
 }
 

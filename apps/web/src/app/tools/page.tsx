@@ -18,6 +18,11 @@ export const metadata: Metadata = {
     description:
       "Focused file utilities from Convertix, including PDF compression and safe SVG optimization.",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Convertix Tools",
+    description: "Focused file utilities from Convertix, including PDF compression and safe SVG optimization.",
+  },
 };
 
 const tools = [

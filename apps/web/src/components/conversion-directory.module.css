@@ -52,6 +52,10 @@
   box-shadow: 0 0 0 4px rgba(49, 92, 245, 0.09);
 }
 
+.search::placeholder {
+  color: #66728d;
+}
+
 .filters {
   display: flex;
   flex-wrap: wrap;
@@ -60,6 +64,7 @@
 
 .filter,
 .activeFilter {
+  min-height: 44px;
   appearance: none;
   border: 1px solid rgba(13, 27, 52, 0.1);
   border-radius: 999px;

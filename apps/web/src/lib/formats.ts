@@ -57,11 +57,6 @@ export const FORMAT_FAMILIES: readonly { id: FormatFamily; label: string; format
   { id: "video", label: "Video", formats: ["mp4", "webm"] },
 ] as const;
 
-export const ACCEPTED_FILE_EXTENSIONS = Object.values(FORMATS)
-  .flatMap((format) => format.extensions)
-  .map((extension) => `.${extension}`)
-  .join(",");
-
 export function isFormatId(value: string): value is FormatId {
   return value in FORMATS;
 }
@@ -84,6 +79,21 @@ export function getConversionPairBySlug(slug: string): ConversionPair | null {
 export function getKnownTargets(source: FormatId): readonly FormatId[] {
   return CONVERSION_PAIRS.filter((pair) => pair.source === source).map((pair) => pair.target);
 }
+
+export function getEnabledTargets(source: FormatId): readonly FormatId[] {
+  return getEnabledConversionPairs()
+    .filter((pair) => pair.source === source)
+    .map((pair) => pair.target);
+}
+
+export function getEnabledSourceFormats(): readonly FormatId[] {
+  return Array.from(new Set(getEnabledConversionPairs().map((pair) => pair.source)));
+}
+
+export const ACCEPTED_FILE_EXTENSIONS = getEnabledSourceFormats()
+  .flatMap((formatId) => FORMATS[formatId].extensions)
+  .map((extension) => `.${extension}`)
+  .join(",");
 
 export function isConversionPairEnabled(pair: ConversionPair): boolean {
   const candidate = CONVERSION_PAIRS.find(

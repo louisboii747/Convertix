@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { optimize } from "svgo/browser";
+import { captureEvent, captureException } from "@/lib/posthog-client";
 import styles from "./svg-optimizer.module.css";
 
 type VerificationState =
@@ -157,6 +158,7 @@ function compareImages(before: ImageData, after: ImageData): ImageComparison {
 
 export function SvgOptimizer() {
   const inputRef = useRef<HTMLInputElement>(null);
+  const processSequenceRef = useRef(0);
   const [fileName, setFileName] = useState<string | null>(null);
   const [original, setOriginal] = useState<string | null>(null);
   const [optimized, setOptimized] = useState<string | null>(null);
@@ -197,8 +199,11 @@ export function SvgOptimizer() {
 
   async function processFile(file: File | undefined) {
     if (!file) return;
+    const processId = processSequenceRef.current + 1;
+    processSequenceRef.current = processId;
 
     resetUrls();
+    setFileName(null);
     setError(null);
     setWarning(null);
     setOriginal(null);
@@ -206,6 +211,7 @@ export function SvgOptimizer() {
     setVerification({ status: "idle" });
 
     if (!file.name.toLowerCase().endsWith(".svg")) {
+      captureEvent("svg_optimization_file_rejected", { reason: "not_svg", file_size_bytes: file.size });
       setError(
         "Choose an SVG file. Renaming another image format to .svg does not convert it.",
       );
@@ -213,30 +219,36 @@ export function SvgOptimizer() {
     }
 
     if (file.size === 0) {
+      captureEvent("svg_optimization_file_rejected", { reason: "empty" });
       setError("That SVG is empty.");
       return;
     }
 
     if (file.size > MAX_FILE_SIZE) {
+      captureEvent("svg_optimization_file_rejected", { reason: "too_large", file_size_bytes: file.size, limit_bytes: MAX_FILE_SIZE });
       setError("For now, the safe optimizer accepts SVG files up to 5 MB.");
       return;
     }
 
     const source = await file.text();
+    if (processSequenceRef.current !== processId) return;
     const validationError = validateSvg(source);
 
     if (validationError) {
+      captureEvent("svg_optimization_file_rejected", { reason: "invalid_markup", file_size_bytes: file.size });
       setError(validationError);
       return;
     }
 
+    const containsActiveContent = hasPotentiallyActiveContent(source);
     setFileName(file.name);
     setOriginal(source);
     setWarning(
-      hasPotentiallyActiveContent(source)
+      containsActiveContent
         ? "This SVG contains scripts, event handlers, external references, or foreign content. Optimization is not sanitization; Convertix will not claim this file is safe to embed."
         : null,
     );
+    captureEvent("svg_optimization_started", { input_size_bytes: file.size, active_content_detected: containsActiveContent });
 
     try {
       const result = optimize(source, {
@@ -248,6 +260,7 @@ export function SvgOptimizer() {
       const outputValidationError = validateSvg(output);
 
       if (outputValidationError) {
+        captureEvent("svg_optimization_failed", { error_category: "invalid_output" });
         setError(
           "SVGO produced invalid SVG markup, so Convertix discarded the result.",
         );
@@ -264,18 +277,31 @@ export function SvgOptimizer() {
           renderSvg(source),
           renderSvg(output),
         ]);
+        if (processSequenceRef.current !== processId) return;
         const comparison = compareImages(beforeImage, afterImage);
         const passesVerification =
           comparison.differentPixelRatio <= MAX_DIFFERENT_PIXEL_RATIO &&
           comparison.meanChannelError <= MAX_MEAN_CHANNEL_ERROR;
 
         if (passesVerification) {
+          const outputBytes = new TextEncoder().encode(output).length;
+          captureEvent("svg_optimization_completed", {
+            input_size_bytes: file.size,
+            output_size_bytes: outputBytes,
+            different_pixel_ratio: comparison.differentPixelRatio,
+            mean_channel_error: comparison.meanChannelError,
+          });
           setVerification({
             status: "verified",
             difference: comparison.differentPixelRatio,
             meanError: comparison.meanChannelError,
           });
         } else {
+          captureEvent("svg_optimization_failed", {
+            error_category: "visual_difference",
+            different_pixel_ratio: comparison.differentPixelRatio,
+            mean_channel_error: comparison.meanChannelError,
+          });
           setVerification({
             status: "failed",
             difference: comparison.differentPixelRatio,
@@ -285,6 +311,9 @@ export function SvgOptimizer() {
           });
         }
       } catch (verificationError) {
+        if (processSequenceRef.current !== processId) return;
+        captureException(verificationError);
+        captureEvent("svg_optimization_failed", { error_category: "verification_unavailable" });
         setVerification({
           status: "failed",
           message:
@@ -294,6 +323,9 @@ export function SvgOptimizer() {
         });
       }
     } catch (optimizationError) {
+      if (processSequenceRef.current !== processId) return;
+      captureException(optimizationError);
+      captureEvent("svg_optimization_failed", { error_category: "optimizer" });
       setError(
         optimizationError instanceof Error
           ? `Optimization failed: ${optimizationError.message}`
@@ -318,6 +350,7 @@ export function SvgOptimizer() {
     document.body.appendChild(anchor);
     anchor.click();
     anchor.remove();
+    captureEvent("svg_optimization_downloaded", { input_size_bytes: originalBytes, output_size_bytes: optimizedBytes });
     window.setTimeout(() => URL.revokeObjectURL(url), 0);
   }
 
@@ -360,7 +393,7 @@ export function SvgOptimizer() {
           <>
             <div className={styles.summaryBar}>
               <div>
-                <strong>{fileName}</strong>
+                <strong data-ph-mask>{fileName}</strong>
                 <span>
                   {formatBytes(originalBytes)} → {formatBytes(optimizedBytes)}
                 </span>
@@ -371,7 +404,7 @@ export function SvgOptimizer() {
               </div>
             </div>
 
-            {warning ? <div className={styles.warning}>{warning}</div> : null}
+            {warning ? <div className={styles.warning} role="status">{warning}</div> : null}
 
             <div className={styles.previewGrid}>
               <article className={styles.previewCard}>
@@ -411,6 +444,9 @@ export function SvgOptimizer() {
                     ? styles.failed
                     : ""
               }`}
+              role={verification.status === "failed" ? "alert" : "status"}
+              aria-live="polite"
+              aria-atomic="true"
             >
               {verification.status === "checking" ? (
                 <>
@@ -458,7 +494,7 @@ export function SvgOptimizer() {
           </>
         )}
 
-        {error ? <div className={styles.error}>{error}</div> : null}
+        {error ? <div className={styles.error} role="alert">{error}</div> : null}
       </div>
 
       <div className={styles.explainer}>

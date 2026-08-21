@@ -30,7 +30,7 @@ export async function SiteHeader() {
 
         <nav className="site-nav" aria-label="Primary navigation">
           <Link href="/#how-it-works">How it works</Link>
-          <Link href="/#formats">Formats</Link>
+          <Link href="/formats">Formats</Link>
           <Link href="/tools">Tools</Link>
           <Link href="/guides">Guides</Link>
           <Link href="/#faq">FAQ</Link>
@@ -38,7 +38,7 @@ export async function SiteHeader() {
           <Link href="/privacy">Privacy</Link>
 
           {user ? (
-            <Link className="site-auth-link" href="/account">
+            <Link className="site-auth-link" data-ph-mask href="/account">
               {displayName ?? "Account"}
             </Link>
           ) : (

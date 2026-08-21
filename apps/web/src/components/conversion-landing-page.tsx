@@ -6,7 +6,6 @@ import { FormatMark } from "@/components/format-mark";
 import { SiteHeader } from "@/components/site-header";
 import { getConversionContent } from "@/lib/conversion-content";
 import {
-  FORMAT_FAMILIES,
   FORMATS,
   getEnabledConversionPairs,
   isConversionPairEnabled,
@@ -43,6 +42,9 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
   const routeEnabled = pair ? isConversionPairEnabled(pair) : true;
   const conversionContent = pair ? getConversionContent(pair.slug) : null;
   const allEnabledPairs = getEnabledConversionPairs();
+  const liveFormatIds = Array.from(
+    new Set(allEnabledPairs.flatMap((candidate) => [candidate.source, candidate.target])),
+  );
   const relatedPairs = pair
     ? allEnabledPairs
         .filter((candidate) => candidate.slug !== pair.slug)
@@ -233,20 +235,19 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
           <div className="formats-heading">
             <h2 id="formats-title">Formats at a glance</h2>
             <p>
-              A visual map of the file types Convertix recognises, without
-              making static labels look like buttons.
+              Explore every format connected to a live Convertix route, then
+              see what it is best used for.
             </p>
           </div>
-          <div className="format-cloud" aria-label="Recognised file formats">
-            {FORMAT_FAMILIES.flatMap((family) =>
-              family.formats.map((formatId) => (
-                <div className="format-cloud-item" key={formatId}>
-                  <FormatMark format={formatId} />
-                  <span>{FORMATS[formatId].label}</span>
-                  <small>{FORMATS[formatId].name}</small>
-                </div>
-              )),
-            )}
+          <div className="format-cloud" aria-label="Formats with live conversion routes">
+            {liveFormatIds.map((formatId) => (
+              <Link className="format-cloud-item" href={`/formats/${formatId}`} key={formatId}>
+                <FormatMark format={formatId} />
+                <span>{FORMATS[formatId].label}</span>
+                <small>{FORMATS[formatId].name}</small>
+                <ArrowIcon />
+              </Link>
+            ))}
           </div>
         </section>
 
@@ -255,8 +256,8 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
             <span className="section-kicker">Useful beyond the converter</span>
             <h2 id="guides-promo-title">Learn which format actually fits the job.</h2>
             <p>
-              Convertix Guides gives the site an indexable knowledge layer with
-              practical format comparisons and conversion advice.
+              Practical comparisons explain what each format preserves, where
+              it works best, and what a conversion may change.
             </p>
           </div>
           <Link href="/guides" className="guides-promo-link">

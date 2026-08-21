@@ -24,7 +24,7 @@
   font-size: clamp(3.35rem, 7vw, 5.7rem);
   font-weight: 720;
   line-height: 0.95;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.04em;
 }
 
 .contact-intro > p:not(.auth-eyebrow) {
@@ -125,7 +125,7 @@
 }
 
 .contact-message-field textarea::placeholder {
-  color: #8a96aa;
+  color: var(--ink-500);
 }
 
 .contact-message-field textarea:focus {

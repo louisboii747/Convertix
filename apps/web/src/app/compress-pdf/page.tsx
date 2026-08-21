@@ -17,6 +17,11 @@ export const metadata: Metadata = {
     description:
       "Reduce PDF file size with adjustable compression levels and clear before-and-after size comparison.",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Compress PDF Online — Convertix",
+    description: "Reduce PDF file size with adjustable compression levels and clear before-and-after size comparison.",
+  },
 };
 
 export default function CompressPdfPage() {

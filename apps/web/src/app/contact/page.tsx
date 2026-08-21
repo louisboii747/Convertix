@@ -11,6 +11,18 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/contact",
   },
+  openGraph: {
+    type: "website",
+    url: "/contact",
+    title: "Contact Convertix",
+    description: "Contact Convertix for support, feedback, conversion requests, partnerships, or general questions.",
+    siteName: "Convertix",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact Convertix",
+    description: "Contact Convertix for support, feedback, conversion requests, partnerships, or general questions.",
+  },
 };
 
 export default function ContactPage() {

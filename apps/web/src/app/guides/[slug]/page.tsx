@@ -46,6 +46,12 @@ export default async function GuidePage({ params }: GuidePageProps) {
   if (!guide) notFound();
 
   const related = guide.related.map(getGuide).filter((item) => item !== undefined);
+  const updatedLabel = new Date(`${guide.updated}T00:00:00.000Z`).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
   const articleStructuredData = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -70,7 +76,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
             <span className="section-kicker">{guide.eyebrow}</span>
             <h1>{guide.title}</h1>
             <p>{guide.intro}</p>
-            <small>Updated 20 August 2026 · Convertix Guides</small>
+            <small>Updated {updatedLabel} · Convertix Guides</small>
           </header>
 
           <div className="guide-article-body">

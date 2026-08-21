@@ -15,8 +15,9 @@ import {
   FORMATS,
   getConversionPair,
   getEnabledConversionPairs,
+  getEnabledSourceFormats,
+  getEnabledTargets,
   getFormatFromFileName,
-  getKnownTargets,
   isConversionPairEnabled,
   type FormatId,
 } from "@/lib/formats";
@@ -43,8 +44,8 @@ import { FormatMark } from "@/components/format-mark";
 
 const FREE_FILE_LIMIT_MB = 100;
 const FREE_FILE_LIMIT_BYTES = FREE_FILE_LIMIT_MB * 1024 * 1024;
-const SUPPORTED_FORMAT_LABELS = Object.values(FORMATS)
-  .map((format) => format.label)
+const SUPPORTED_FORMAT_LABELS = getEnabledSourceFormats()
+  .map((formatId) => FORMATS[formatId].label)
   .join(", ");
 
 interface ConversionState {
@@ -110,6 +111,7 @@ interface ConverterProps { initialSource?: FormatId; initialTarget?: FormatId; }
 
 export function Converter({ initialSource, initialTarget }: ConverterProps) {
   const inputId = useId();
+  const targetMenuId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const filePickerRef = useRef<HTMLButtonElement>(null);
   const requestSequenceRef = useRef(0);
@@ -119,7 +121,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
 
   useEffect(() => () => activeRequestRef.current?.controller.abort(), []);
 
-  const knownTargets = state.source ? getKnownTargets(state.source) : [];
+  const knownTargets = state.source ? getEnabledTargets(state.source) : [];
   const pair = state.source && state.target ? getConversionPair(state.source, state.target) : null;
   const readiness = getSubmissionReadiness();
   const pairEnabled = pair ? isConversionPairEnabled(pair) : false;
@@ -157,11 +159,18 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
 
     const source = getFormatFromFileName(file.name);
     if (!source) {
+      captureEvent("file_rejected", { reason: "unrecognised_format", file_size_bytes: file.size });
       dispatch({ type: "invalid", message: "We don’t recognise that file type yet. Choose one of the supported formats below." });
       return;
     }
 
-    const targets = getKnownTargets(source);
+    const targets = getEnabledTargets(source);
+    if (targets.length === 0) {
+      captureEvent("file_rejected", { reason: "no_live_route", source_format: source, file_size_bytes: file.size, format_family: FORMATS[source].family });
+      dispatch({ type: "invalid", message: `Convertix doesn’t have a live conversion route starting with ${FORMATS[source].label} yet. Choose one of the supported input formats below.` });
+      return;
+    }
+
     const preferredTarget = initialTarget && targets.includes(initialTarget) ? initialTarget : (targets[0] ?? null);
     dispatch({ type: "select", file, source, target: preferredTarget });
     captureEvent("file_selected", { source_format: source, target_format: preferredTarget, file_size_bytes: file.size, format_family: FORMATS[source].family });
@@ -274,15 +283,15 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
             {state.target ? <FormatMark format={state.target} /> : <div className="format-symbol" data-accent="slate"><FileIcon /></div>}
             <div className="route-copy custom-target-field">
               <span>Convert to</span>
-              <button className="target-select-button" type="button" aria-haspopup="listbox" aria-expanded={targetMenuOpen} disabled={knownTargets.length === 0 || isBusy} onClick={() => setTargetMenuOpen((open) => !open)}>
+              <button className="target-select-button" type="button" aria-controls={targetMenuId} aria-expanded={targetMenuOpen} disabled={knownTargets.length === 0 || isBusy} onClick={() => setTargetMenuOpen((open) => !open)}>
                 <strong>{state.target ? FORMATS[state.target].label : "No route available"}</strong><ChevronIcon />
               </button>
               {targetMenuOpen ? (
-                <div className="target-select-menu" role="listbox" aria-label="Convert to format">
+                <div className="target-select-menu" id={targetMenuId} aria-label="Available output formats">
                   {knownTargets.map((target) => {
                     const candidate = getConversionPair(state.source!, target);
                     const enabled = candidate ? isConversionPairEnabled(candidate) : false;
-                    return <button key={target} type="button" role="option" aria-selected={state.target === target} disabled={!enabled} onClick={() => { dispatch({ type: "target", target }); setTargetMenuOpen(false); }}>
+                    return <button key={target} type="button" aria-pressed={state.target === target} disabled={!enabled} onClick={() => { captureEvent("conversion_target_changed", { source_format: state.source, target_format: target, format_family: FORMATS[state.source!].family }); dispatch({ type: "target", target }); setTargetMenuOpen(false); }}>
                       <FormatMark format={target} compact /><span>{FORMATS[target].label}</span>{!enabled ? <small>Coming soon</small> : state.target === target ? <CheckIcon /> : null}
                     </button>;
                   })}

@@ -5,7 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import { FORMATS, getEnabledConversionPairs } from "@/lib/formats";
 
 export const metadata: Metadata = {
-  title: "Online File Converters – Convertix",
+  title: "Online File Converters",
   description:
     "Browse and search every live Convertix conversion route for documents, spreadsheets, images, audio, and video.",
   alternates: {
@@ -18,6 +18,11 @@ export const metadata: Metadata = {
     description:
       "Browse and search every live Convertix conversion route for documents, spreadsheets, images, audio, and video.",
     siteName: "Convertix",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Online File Converters — Convertix",
+    description: "Browse and search every live Convertix conversion route for documents, images, audio, spreadsheets, and video.",
   },
 };
 

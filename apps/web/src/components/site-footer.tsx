@@ -7,7 +7,10 @@ export function SiteFooter() {
         <span>© {new Date().getFullYear()} Convertix</span>
 
         <nav className="site-footer-nav" aria-label="Footer navigation">
+          <Link href="/conversions">Conversions</Link>
+          <Link href="/formats">Formats</Link>
           <Link href="/tools">Tools</Link>
+          <Link href="/guides">Guides</Link>
           <Link href="/contact">Contact</Link>
           <Link href="/privacy">Privacy</Link>
         </nav>

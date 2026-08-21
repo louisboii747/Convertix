@@ -72,9 +72,9 @@ export default async function AccountPage() {
 
           <nav className="site-nav" aria-label="Primary navigation">
             <Link href="/#how-it-works">How it works</Link>
-            <Link href="/#formats">Formats</Link>
+            <Link href="/formats">Formats</Link>
             <Link href="/#faq">FAQ</Link>
-            <span className="account-nav-name">{displayName}</span>
+            <span className="account-nav-name" data-ph-mask>{displayName}</span>
           </nav>
         </div>
       </header>
@@ -82,7 +82,7 @@ export default async function AccountPage() {
       <section className="account-shell">
         <div className="account-heading">
           <p className="auth-eyebrow">Your account</p>
-          <h1>Hello {displayName}.</h1>
+          <h1 data-ph-mask>Hello {displayName}.</h1>
           <p>
             Manage your Convertix account and keep track of your conversions in
             one place.
@@ -102,20 +102,20 @@ export default async function AccountPage() {
               </div>
 
               <div>
-                <strong>{displayName}</strong>
-                <span>{user.email ?? "Email unavailable"}</span>
+                <strong data-ph-mask>{displayName}</strong>
+                <span data-ph-mask>{user.email ?? "Email unavailable"}</span>
               </div>
             </div>
 
             <dl className="account-details">
               <div>
                 <dt>Display name</dt>
-                <dd>{displayName}</dd>
+                <dd data-ph-mask>{displayName}</dd>
               </div>
 
               <div>
                 <dt>Email</dt>
-                <dd>{user.email ?? "Not available"}</dd>
+                <dd data-ph-mask>{user.email ?? "Not available"}</dd>
               </div>
 
               <div>
@@ -160,7 +160,7 @@ export default async function AccountPage() {
                       </div>
 
                       <div className="account-conversion-main">
-                        <strong>{conversion.original_filename}</strong>
+                        <strong data-ph-mask>{conversion.original_filename}</strong>
 
                         <div className="account-conversion-route">
                           <span>{conversion.source_format.toUpperCase()}</span>
