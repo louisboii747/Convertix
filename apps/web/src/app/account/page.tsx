@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { ConfirmLogoutButton } from "@/components/confirm-logout-button";
+import { SiteHeader } from "@/components/site-header";
 import { createClient } from "@/lib/supabase/server";
-
-import { logout } from "./actions";
 
 export default async function AccountPage() {
   const supabase = await createClient();
@@ -60,148 +60,111 @@ export default async function AccountPage() {
     : "Not available";
 
   return (
-    <main className="account-page" id="main-content">
-      <header className="site-header">
-        <div className="site-header-inner">
-          <Link className="brand" href="/" aria-label="Convertix home">
-            <span className="brand-mark" aria-hidden="true">
-              ×
-            </span>
-            <span>Convertix</span>
-          </Link>
+    <>
+      <SiteHeader />
+      <main className="account-page" id="main-content">
+        <section className="account-shell">
+          <div className="account-heading">
+            <h1 data-ph-mask>Hello, {displayName}</h1>
+            <p>View your profile and recent conversions.</p>
+          </div>
 
-          <nav className="site-nav" aria-label="Primary navigation">
-            <Link href="/#how-it-works">How it works</Link>
-            <Link href="/formats">Formats</Link>
-            <Link href="/#faq">FAQ</Link>
-            <span className="account-nav-name" data-ph-mask>{displayName}</span>
-          </nav>
-        </div>
-      </header>
-
-      <section className="account-shell">
-        <div className="account-heading">
-          <h1 data-ph-mask>Hello, {displayName}</h1>
-          <p>
-            View your profile and recent conversions.
-          </p>
-        </div>
-
-        <div className="account-grid">
-          <section className="account-panel">
-            <div className="account-panel-heading">
-              <span>Profile</span>
-              <span>Active account</span>
-            </div>
-
-            <div className="account-profile-lead">
-              <div className="account-avatar" aria-hidden="true">
-                {displayName.slice(0, 1).toUpperCase()}
+          <div className="account-grid">
+            <section className="account-panel">
+              <div className="account-panel-heading">
+                <span>Profile</span>
+                <span>Active account</span>
               </div>
 
-              <div>
-                <strong data-ph-mask>{displayName}</strong>
-                <span data-ph-mask>{user.email ?? "Email unavailable"}</span>
-              </div>
-            </div>
+              <div className="account-profile-lead">
+                <div className="account-avatar" aria-hidden="true">
+                  {displayName.slice(0, 1).toUpperCase()}
+                </div>
 
-            <dl className="account-details">
-              <div>
-                <dt>Display name</dt>
-                <dd data-ph-mask>{displayName}</dd>
-              </div>
-
-              <div>
-                <dt>Email</dt>
-                <dd data-ph-mask>{user.email ?? "Not available"}</dd>
+                <div>
+                  <strong data-ph-mask>{displayName}</strong>
+                  <span data-ph-mask>{user.email ?? "Email unavailable"}</span>
+                </div>
               </div>
 
-              <div>
-                <dt>Member since</dt>
-                <dd>{memberSince}</dd>
+              <dl className="account-details">
+                <div>
+                  <dt>Display name</dt>
+                  <dd data-ph-mask>{displayName}</dd>
+                </div>
+
+                <div>
+                  <dt>Email</dt>
+                  <dd data-ph-mask>{user.email ?? "Not available"}</dd>
+                </div>
+
+                <div>
+                  <dt>Member since</dt>
+                  <dd>{memberSince}</dd>
+                </div>
+              </dl>
+            </section>
+
+            <section className="account-panel">
+              <div className="account-panel-heading">
+                <span>Conversions</span>
+                <span>
+                  {conversions?.length ?? 0}{" "}
+                  {(conversions?.length ?? 0) === 1 ? "conversion" : "conversions"}
+                </span>
               </div>
-            </dl>
-          </section>
 
-          <section className="account-panel">
-            <div className="account-panel-heading">
-              <span>Conversions</span>
-              <span>
-                {conversions?.length ?? 0}{" "}
-                {(conversions?.length ?? 0) === 1
-                  ? "conversion"
-                  : "conversions"}
-              </span>
-            </div>
+              {conversions && conversions.length > 0 ? (
+                <div className="account-conversion-list">
+                  {conversions.map((conversion) => {
+                    const convertedAt = new Date(
+                      conversion.completed_at ?? conversion.created_at,
+                    ).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    });
 
-            {conversions && conversions.length > 0 ? (
-              <div className="account-conversion-list">
-                {conversions.map((conversion) => {
-                  const convertedAt = new Date(
-                    conversion.completed_at ?? conversion.created_at,
-                  ).toLocaleDateString("en-GB", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  });
+                    return (
+                      <div className="account-conversion-item" key={conversion.conversion_id}>
+                        <div className="account-conversion-icon" aria-hidden="true">
+                          {conversion.target_format.toUpperCase()}
+                        </div>
 
-                  return (
-                    <div
-                      className="account-conversion-item"
-                      key={conversion.conversion_id}
-                    >
-                      <div
-                        className="account-conversion-icon"
-                        aria-hidden="true"
-                      >
-                        {conversion.target_format.toUpperCase()}
-                      </div>
+                        <div className="account-conversion-main">
+                          <strong data-ph-mask>{conversion.original_filename}</strong>
+                          <div className="account-conversion-route">
+                            <span>{conversion.source_format.toUpperCase()}</span>
+                            <span aria-hidden="true">to</span>
+                            <span>{conversion.target_format.toUpperCase()}</span>
+                          </div>
+                        </div>
 
-                      <div className="account-conversion-main">
-                        <strong data-ph-mask>{conversion.original_filename}</strong>
-
-                        <div className="account-conversion-route">
-                          <span>{conversion.source_format.toUpperCase()}</span>
-                          <span aria-hidden="true">to</span>
-                          <span>{conversion.target_format.toUpperCase()}</span>
+                        <div className="account-conversion-meta">
+                          <span>{convertedAt}</span>
+                          <span className="account-conversion-status" data-status={conversion.status}>
+                            {conversion.status}
+                          </span>
                         </div>
                       </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="account-empty-state">
+                  <strong>No conversions yet.</strong>
+                  <span>Your completed conversions will appear here.</span>
+                </div>
+              )}
+            </section>
+          </div>
 
-                      <div className="account-conversion-meta">
-                        <span>{convertedAt}</span>
-
-                        <span
-                          className="account-conversion-status"
-                          data-status={conversion.status}
-                        >
-                          {conversion.status}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="account-empty-state">
-                <strong>No conversions yet.</strong>
-                <span>Your completed conversions will appear here.</span>
-              </div>
-            )}
-          </section>
-        </div>
-
-        <div className="account-actions">
-          <Link className="account-back-link" href="/">
-            Back to converter
-          </Link>
-
-          <form action={logout}>
-            <button className="account-logout" type="submit">
-              Log out
-            </button>
-          </form>
-        </div>
-      </section>
-    </main>
+          <div className="account-actions">
+            <Link className="account-back-link" href="/">Back to converter</Link>
+            <ConfirmLogoutButton />
+          </div>
+        </section>
+      </main>
+    </>
   );
 }
