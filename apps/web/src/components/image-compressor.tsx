@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -129,6 +130,11 @@ export function ImageCompressor() {
     [items],
   );
 
+  const completedInputSize = useMemo(
+    () => completedItems.reduce((total, item) => total + item.file.size, 0),
+    [completedItems],
+  );
+
   const totalOutputSize = useMemo(
     () =>
       completedItems.reduce(
@@ -154,9 +160,20 @@ export function ImageCompressor() {
 
   const hasResults = completedItems.length > 0 || failedItems.length > 0;
   const totalSaving =
-    totalInputSize > 0 && completedItems.length > 0
-      ? ((totalInputSize - totalOutputSize) / totalInputSize) * 100
+    completedInputSize > 0
+      ? ((completedInputSize - totalOutputSize) / completedInputSize) * 100
       : null;
+
+  useEffect(() => {
+    const objectUrls = objectUrlsRef.current;
+
+    return () => {
+      for (const url of objectUrls) {
+        URL.revokeObjectURL(url);
+      }
+      objectUrls.clear();
+    };
+  }, []);
 
   function registerObjectUrl(file: File) {
     const url = URL.createObjectURL(file);
@@ -237,6 +254,10 @@ export function ImageCompressor() {
     }
 
     if (accepted.length > 0) {
+      if (hasResults) {
+        resetResults();
+      }
+
       const nextItems = accepted.map(createBatchItem);
       setItems((currentItems) => [...currentItems, ...nextItems]);
 
@@ -422,7 +443,7 @@ export function ImageCompressor() {
       captureEvent("image_compression_batch_downloaded", {
         compression_level: level,
         file_count: completedItems.length,
-        total_input_size_bytes: totalInputSize,
+        total_input_size_bytes: completedInputSize,
         total_output_size_bytes: totalOutputSize,
       });
     } catch (zipError) {
@@ -681,11 +702,12 @@ export function ImageCompressor() {
               </div>
             ) : (
               <>
-                <div className={styles.resultSummary}>
-                  <div>
-                    <span>Original total</span>
-                    <strong>{formatBytes(totalInputSize)}</strong>
-                  </div>
+                {completedItems.length > 0 ? (
+                  <div className={styles.resultSummary}>
+                    <div>
+                      <span>Original total</span>
+                      <strong>{formatBytes(completedInputSize)}</strong>
+                    </div>
 
                   <span className={styles.resultArrow} aria-hidden="true">
                     to
@@ -713,19 +735,22 @@ export function ImageCompressor() {
                         ? "smaller"
                         : "no size reduction"}
                     </span>
+                    </div>
                   </div>
-                </div>
+                ) : null}
 
-                <div className={styles.success} role="status">
-                  <strong>
-                    {completedItems.length}{" "}
-                    {completedItems.length === 1 ? "image is" : "images are"} ready
-                  </strong>
-                  <span>
-                    Everything was processed locally. Download images individually
-                    or bundle the successful results into one ZIP.
-                  </span>
-                </div>
+                {completedItems.length > 0 ? (
+                  <div className={styles.success} role="status">
+                    <strong>
+                      {completedItems.length}{" "}
+                      {completedItems.length === 1 ? "image is" : "images are"} ready
+                    </strong>
+                    <span>
+                      Everything was processed locally. Download images individually
+                      or bundle the successful results into one ZIP.
+                    </span>
+                  </div>
+                ) : null}
 
                 {failedItems.length > 0 ? (
                   <div className={styles.warning} role="status">
