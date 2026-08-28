@@ -35,10 +35,33 @@ export default function PrivacyPage() {
             This policy explains what information Convertix processes, why it is
             used, and the choices available to you.
           </p>
-          <p className="legal-updated">Last updated: 19 August 2026</p>
+          <p className="legal-updated">Last updated: 28 August 2026</p>
         </header>
 
         <article className="legal-content">
+          <section>
+            <h2>What happens to your files?</h2>
+
+            <div>
+              <p>
+                Your file stays on your device until you choose to start a
+                conversion. Convertix then uploads it so the requested
+                conversion can be processed.
+              </p>
+
+              <p>
+                Uploaded and converted files may be stored temporarily within
+                Convertix&apos;s cloud infrastructure while the conversion and
+                download are provided.
+              </p>
+
+              <p>
+                File contents are not intentionally used for advertising or
+                product analytics.
+              </p>
+            </div>
+          </section>
+
           <section>
             <h2>Who operates Convertix</h2>
 

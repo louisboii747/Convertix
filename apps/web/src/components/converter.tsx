@@ -11,7 +11,6 @@ import {
   type DragEvent,
 } from "react";
 import {
-  ACCEPTED_FILE_EXTENSIONS,
   FORMATS,
   getConversionPair,
   getEnabledConversionPairs,
@@ -146,6 +145,14 @@ function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function getFileExtension(fileName: string): string | null {
+  const fileNameParts = fileName.toLowerCase().split(".");
+  if (fileNameParts.length < 2) return null;
+
+  const extension = fileNameParts.pop()?.trim();
+  return extension || null;
 }
 
 function getStatusContent(state: ConversionState) {
@@ -298,8 +305,15 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
 
     const source = getFormatFromFileName(file.name);
     if (!source) {
+      const attemptedExtension = getFileExtension(file.name);
+
+      captureEvent("unsupported_format_attempted", {
+        attempted_extension: attemptedExtension ?? "unknown",
+        file_size_bytes: file.size,
+      });
       captureEvent("file_rejected", {
         reason: "unrecognised_format",
+        attempted_extension: attemptedExtension ?? "unknown",
         file_size_bytes: file.size,
       });
       dispatch({
@@ -312,6 +326,11 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
 
     const targets = getEnabledTargets(source);
     if (targets.length === 0) {
+      captureEvent("unsupported_source_attempted", {
+        source_format: source,
+        file_size_bytes: file.size,
+        format_family: FORMATS[source].family,
+      });
       captureEvent("file_rejected", {
         reason: "no_live_route",
         source_format: source,
@@ -363,6 +382,12 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
       format_family: FORMATS[state.source].family,
     });
     dispatch({ type: "status", status: "uploading" });
+    captureEvent("upload_started", {
+      source_format: state.source,
+      target_format: state.target,
+      file_size_bytes: file.size,
+      format_family: FORMATS[state.source].family,
+    });
 
     try {
       const response = await createConversion(
@@ -483,7 +508,6 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
           className="sr-only"
           type="file"
           tabIndex={-1}
-          accept={ACCEPTED_FILE_EXTENSIONS}
           onChange={handleInputChange}
         />
         <div className="file-drop-icon" aria-hidden="true">
@@ -535,8 +559,8 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
         <div className="converter-prompt" role="status">
           <RouteIcon />
           <span>
-            Your file stays on this device until you select Convert file.
-            Maximum size: {FREE_FILE_LIMIT_MB} MB.
+            Your file stays on this device until you select Convert file. No
+            account is required. Maximum size: {FREE_FILE_LIMIT_MB} MB.
           </span>
         </div>
       ) : null}
