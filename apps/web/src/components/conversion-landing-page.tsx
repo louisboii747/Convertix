@@ -127,6 +127,62 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
           </div>
         </section>
 
+        {!pair ? (
+          <section
+            className="batch-feature-section"
+            aria-labelledby="batch-feature-title"
+          >
+            <div className="batch-feature-copy">
+              <span className="batch-feature-eyebrow">Browser tool</span>
+              <h2 id="batch-feature-title">Compress up to 30 images at once.</h2>
+              <p>
+                Batch-compress JPG, PNG, and WebP images without uploading them
+                to Convertix. Process the set on your device, then download each
+                result or package the successful files into one ZIP.
+              </p>
+              <div
+                className="batch-feature-badges"
+                aria-label="Batch image compressor features"
+              >
+                <span>Up to 30 images</span>
+                <span>Runs in your browser</span>
+                <span>Download all as ZIP</span>
+              </div>
+              <Link href="/compress-image" className="batch-feature-link">
+                Open batch image compressor <ArrowIcon />
+              </Link>
+            </div>
+
+            <div className="batch-feature-preview" aria-label="Batch workflow">
+              <strong>Batch workflow</strong>
+              <ol>
+                <li>
+                  <span aria-hidden="true">1</span>
+                  <div>
+                    <strong>Add your images</strong>
+                    <small>JPG, PNG, and WebP</small>
+                  </div>
+                </li>
+                <li>
+                  <span aria-hidden="true">2</span>
+                  <div>
+                    <strong>Choose compression</strong>
+                    <small>Light, Balanced, or Maximum</small>
+                  </div>
+                </li>
+                <li>
+                  <span aria-hidden="true">3</span>
+                  <div>
+                    <strong>Download the results</strong>
+                    <small>Individually or as one ZIP</small>
+                  </div>
+                </li>
+              </ol>
+              <p>Images stay on your device for this tool.</p>
+            </div>
+          </section>
+        ) : null}
+
         {relatedPairs.length > 0 ? (
           <section className="popular-section" aria-labelledby="popular-title">
             <div className="section-heading-row">

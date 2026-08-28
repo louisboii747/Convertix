@@ -23,7 +23,7 @@ const STATIC_SEARCH_ITEMS: SearchItem[] = [
   { label: "Formats", href: "/formats", description: "Browse supported file formats", keywords: "formats file types extensions" },
   { label: "Tools", href: "/tools", description: "Compression, merge and optimisation tools", keywords: "tools compress compression merge optimize optimiser optimizer" },
   { label: "Compress PDF", href: "/compress-pdf", description: "Reduce PDF file size", keywords: "pdf compress compression smaller" },
-  { label: "Compress image", href: "/compress-image", description: "Reduce image file size", keywords: "image jpg jpeg png webp compress compression" },
+  { label: "Batch Image Compressor", href: "/compress-image", description: "Compress up to 30 images and download them as a ZIP", keywords: "image images batch bulk multiple jpg jpeg png webp compress compression compressor zip download all" },
   { label: "Merge PDF", href: "/merge-pdf", description: "Combine PDF files", keywords: "pdf merge combine join" },
   { label: "Optimize SVG", href: "/optimize-svg", description: "Clean and optimise SVG files", keywords: "svg optimize optimise minify cleanup" },
   { label: "Guides", href: "/guides", description: "Learn about file formats", keywords: "guides help documentation formats" },

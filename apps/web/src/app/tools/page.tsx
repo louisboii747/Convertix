@@ -44,10 +44,10 @@ const tools = [
   },
   {
     href: "/compress-image",
-    title: "Compress Image",
+    title: "Batch Image Compressor",
     description:
-      "Shrink JPG, PNG, and WebP images directly in your browser and compare the original and compressed file sizes.",
-    meta: ["Runs in your browser", "JPG, PNG & WebP", "Free"],
+      "Compress up to 30 JPG, PNG, and WebP images at once in your browser, then download them individually or together as a ZIP.",
+    meta: ["Up to 30 images", "Runs in your browser", "ZIP download"],
   },
   {
     href: "/optimize-svg",
