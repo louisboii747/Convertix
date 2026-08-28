@@ -47,6 +47,32 @@ const SUPPORTED_FORMAT_LABELS = getEnabledSourceFormats()
   .map((formatId) => FORMATS[formatId].label)
   .join(", ");
 
+const UNSUPPORTED_TARGET_OPTIONS = [
+  { value: "pdf", label: "PDF" },
+  { value: "jpg", label: "JPG" },
+  { value: "png", label: "PNG" },
+  { value: "mp4", label: "MP4" },
+  { value: "other", label: "Other" },
+] as const;
+
+type UnsupportedTarget = (typeof UNSUPPORTED_TARGET_OPTIONS)[number]["value"];
+
+interface UnsupportedConversionRequest {
+  sourceKind: "extension" | "format";
+  sourceValue: string;
+  sourceLabel: string;
+  fileSizeBytes: number;
+  requestedTarget?: UnsupportedTarget;
+  requestStatus?: "recorded" | "consent_required";
+}
+
+interface ConversionTimingState {
+  status: ConversionStatus;
+  stageStartedAt: number;
+  startedAt: number;
+  durations: Partial<Record<ConversionStatus, number>>;
+}
+
 interface ConversionState {
   file: File | null;
   source: FormatId | null;
@@ -208,7 +234,10 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
     id: number;
     controller: AbortController;
   } | null>(null);
+  const conversionTimingRef = useRef<ConversionTimingState | null>(null);
   const [targetMenuOpen, setTargetMenuOpen] = useState(false);
+  const [unsupportedRequest, setUnsupportedRequest] =
+    useState<UnsupportedConversionRequest | null>(null);
   const [state, dispatch] = useReducer(
     reducer,
     createInitialState(initialSource ?? null, initialTarget ?? null),
@@ -275,12 +304,82 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
     requestSequenceRef.current += 1;
     activeRequestRef.current?.controller.abort();
     activeRequestRef.current = null;
+    conversionTimingRef.current = null;
+  }
+
+  function startConversionTiming(status: ConversionStatus) {
+    const now = performance.now();
+    conversionTimingRef.current = {
+      status,
+      stageStartedAt: now,
+      startedAt: now,
+      durations: {},
+    };
+  }
+
+  function transitionConversionTiming(status: ConversionStatus) {
+    const timing = conversionTimingRef.current;
+    if (!timing || timing.status === status) return;
+
+    const now = performance.now();
+    timing.durations[timing.status] =
+      (timing.durations[timing.status] ?? 0) + (now - timing.stageStartedAt);
+    timing.status = status;
+    timing.stageStartedAt = now;
+  }
+
+  function finishConversionTiming(): Record<string, number> {
+    const timing = conversionTimingRef.current;
+    if (!timing) return {};
+
+    const now = performance.now();
+    timing.durations[timing.status] =
+      (timing.durations[timing.status] ?? 0) + (now - timing.stageStartedAt);
+
+    const properties: Record<string, number> = {
+      conversion_duration_ms: Math.round(now - timing.startedAt),
+    };
+
+    for (const status of ["uploading", "queued", "starting", "converting"] as const) {
+      const duration = timing.durations[status];
+      if (duration !== undefined) {
+        properties[`${status}_duration_ms`] = Math.round(duration);
+      }
+    }
+
+    conversionTimingRef.current = null;
+    return properties;
+  }
+
+  function handleUnsupportedTargetRequest(target: UnsupportedTarget) {
+    if (!unsupportedRequest) return;
+
+    const captured = captureEvent("unsupported_conversion_requested", {
+      source_kind: unsupportedRequest.sourceKind,
+      source_extension:
+        unsupportedRequest.sourceKind === "extension"
+          ? unsupportedRequest.sourceValue
+          : undefined,
+      source_format:
+        unsupportedRequest.sourceKind === "format"
+          ? unsupportedRequest.sourceValue
+          : undefined,
+      target_format: target,
+      file_size_bytes: unsupportedRequest.fileSizeBytes,
+    });
+
+    setUnsupportedRequest({
+      ...unsupportedRequest,
+      requestedTarget: target,
+      requestStatus: captured ? "recorded" : "consent_required",
+    });
   }
 
   function selectFile(file: File | undefined) {
     if (!file) return;
     invalidateActiveRequest();
     setTargetMenuOpen(false);
+    setUnsupportedRequest(null);
 
     if (file.size === 0) {
       dispatch({
@@ -311,6 +410,14 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
         attempted_extension: attemptedExtension ?? "unknown",
         file_size_bytes: file.size,
       });
+      setUnsupportedRequest({
+        sourceKind: "extension",
+        sourceValue: attemptedExtension ?? "unknown",
+        sourceLabel: attemptedExtension
+          ? attemptedExtension.toUpperCase()
+          : "This file type",
+        fileSizeBytes: file.size,
+      });
       captureEvent("file_rejected", {
         reason: "unrecognised_format",
         attempted_extension: attemptedExtension ?? "unknown",
@@ -330,6 +437,12 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
         source_format: source,
         file_size_bytes: file.size,
         format_family: FORMATS[source].family,
+      });
+      setUnsupportedRequest({
+        sourceKind: "format",
+        sourceValue: source,
+        sourceLabel: FORMATS[source].label,
+        fileSizeBytes: file.size,
       });
       captureEvent("file_rejected", {
         reason: "no_live_route",
@@ -375,6 +488,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
     requestSequenceRef.current = requestId;
     const controller = new AbortController();
     activeRequestRef.current = { id: requestId, controller };
+    startConversionTiming("uploading");
     captureEvent("conversion_started", {
       source_format: state.source,
       target_format: state.target,
@@ -395,16 +509,20 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
         { source_format: state.source, target_format: state.target },
         controller.signal,
         (status) => {
-          if (requestSequenceRef.current === requestId)
+          if (requestSequenceRef.current === requestId) {
+            transitionConversionTiming(status);
             dispatch({ type: "status", status });
+          }
         },
       );
       if (requestSequenceRef.current !== requestId) return;
+      const timingProperties = finishConversionTiming();
       captureEvent("conversion_completed", {
         source_format: state.source,
         target_format: state.target,
         output_size_bytes: response.size,
         format_family: FORMATS[state.source].family,
+        ...timingProperties,
       });
       try {
         const historyResponse = await fetch("/api/conversion-history", {
@@ -430,14 +548,18 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
       if (
         requestSequenceRef.current !== requestId ||
         (error instanceof DOMException && error.name === "AbortError")
-      )
+      ) {
+        conversionTimingRef.current = null;
         return;
+      }
+      const timingProperties = finishConversionTiming();
       if (error instanceof ConversionApiError) {
         captureEvent("conversion_failed", {
           source_format: state.source,
           target_format: state.target,
           retryable: error.retryable,
           format_family: FORMATS[state.source].family,
+          ...timingProperties,
         });
         dispatch({
           type: "failed",
@@ -446,6 +568,14 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
         });
         return;
       }
+      captureEvent("conversion_failed", {
+        source_format: state.source,
+        target_format: state.target,
+        retryable: false,
+        error_type: "unexpected",
+        format_family: FORMATS[state.source].family,
+        ...timingProperties,
+      });
       captureException(error);
       dispatch({
         type: "failed",
@@ -835,6 +965,49 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
             <strong>Choose another file</strong>
             <span>{state.error}</span>
           </div>
+        </div>
+      ) : null}
+
+      {unsupportedRequest ? (
+        <div className="unsupported-conversion-request" aria-live="polite">
+          <div className="unsupported-request-copy">
+            <strong>
+              {unsupportedRequest.sourceLabel} isn&apos;t supported yet. What did
+              you want to convert it to?
+            </strong>
+            <span>
+              This format request helps decide which conversions Convertix should
+              add next.
+            </span>
+          </div>
+
+          {unsupportedRequest.requestedTarget ? (
+            <div className="unsupported-request-result">
+              {unsupportedRequest.requestStatus === "recorded"
+                ? `Thanks — ${unsupportedRequest.sourceLabel} → ${
+                    UNSUPPORTED_TARGET_OPTIONS.find(
+                      (option) =>
+                        option.value === unsupportedRequest.requestedTarget,
+                    )?.label ?? unsupportedRequest.requestedTarget.toUpperCase()
+                  } was recorded.`
+                : "Optional analytics must be enabled for Convertix to record format requests."}
+            </div>
+          ) : (
+            <div
+              className="unsupported-target-options"
+              aria-label="Requested output format"
+            >
+              {UNSUPPORTED_TARGET_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => handleUnsupportedTargetRequest(option.value)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       ) : null}
     </section>

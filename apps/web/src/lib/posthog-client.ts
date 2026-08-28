@@ -5,12 +5,13 @@ import { getAnalyticsConsent } from "@/lib/analytics-consent";
 export function captureEvent(
   event: string,
   properties?: Record<string, unknown>,
-) {
+): boolean {
   if (getAnalyticsConsent() !== "accepted") {
-    return;
+    return false;
   }
 
   posthog.capture(event, properties);
+  return true;
 }
 
 export function captureException(error: unknown) {
