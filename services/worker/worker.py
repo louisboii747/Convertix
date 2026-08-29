@@ -20,6 +20,49 @@ STORAGE_BUCKET = os.environ.get("STORAGE_BUCKET")
 
 shutdown_requested = False
 
+FAILURE_MARKER_NAME = "failure.json"
+
+
+def record_conversion_failure(s3, conversion_id: str, exc: Exception) -> None:
+    failure_key = f"conversions/{conversion_id}/{FAILURE_MARKER_NAME}"
+    payload = {
+        "status": "failed",
+        "error_type": type(exc).__name__,
+        "error": str(exc)[:1000],
+    }
+
+    try:
+        s3.put_object(
+            Bucket=STORAGE_BUCKET,
+            Key=failure_key,
+            Body=json.dumps(payload).encode("utf-8"),
+            ContentType="application/json",
+        )
+        print(
+            f"Recorded conversion failure: {conversion_id} -> {failure_key}",
+            file=sys.stderr,
+            flush=True,
+        )
+    except (BotoCoreError, ClientError) as marker_exc:
+        print(
+            f"Failed to record conversion failure for {conversion_id}: {marker_exc}",
+            file=sys.stderr,
+            flush=True,
+        )
+
+
+def clear_conversion_failure(s3, conversion_id: str) -> None:
+    failure_key = f"conversions/{conversion_id}/{FAILURE_MARKER_NAME}"
+
+    try:
+        s3.delete_object(Bucket=STORAGE_BUCKET, Key=failure_key)
+    except (BotoCoreError, ClientError) as marker_exc:
+        print(
+            f"Failed to clear conversion failure marker for {conversion_id}: {marker_exc}",
+            file=sys.stderr,
+            flush=True,
+        )
+
 
 def handle_shutdown(signum, frame) -> None:
     global shutdown_requested
@@ -941,6 +984,7 @@ def main() -> int:
 
         message = messages[0]
         message_id = message.get("MessageId", "unknown")
+        conversion_id = None
 
         try:
             body = json.loads(message["Body"])
@@ -982,6 +1026,8 @@ def main() -> int:
                 compression_level=compression_level,
             )
 
+            clear_conversion_failure(s3, conversion_id)
+
             sqs.delete_message(
                 QueueUrl=QUEUE_URL,
                 ReceiptHandle=message["ReceiptHandle"],
@@ -1014,6 +1060,9 @@ def main() -> int:
             ValueError,
             RuntimeError,
         ) as exc:
+            if conversion_id:
+                record_conversion_failure(s3, conversion_id, exc)
+
             print(
                 (
                     f"Conversion failed for SQS message "
@@ -1025,6 +1074,9 @@ def main() -> int:
             )
 
         except Exception as exc:  # noqa: BLE001
+            if conversion_id:
+                record_conversion_failure(s3, conversion_id, exc)
+
             print(
                 (
                     f"Unexpected error while processing SQS message "

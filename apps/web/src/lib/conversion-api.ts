@@ -45,7 +45,8 @@ interface QueueConversionResponse {
 
 interface ConversionStatusResponse {
   conversion_id: string;
-  status: "processing" | "completed";
+  status: "processing" | "completed" | "failed";
+  message?: string;
   output_key?: string;
   content_type?: string;
   size?: number;
@@ -331,6 +332,15 @@ export async function createConversion(
       }
 
       continue;
+    }
+
+    if (status.status === "failed") {
+      onStatus?.("failed");
+      throw new ConversionApiError(
+        status.message ??
+          "Convertix couldn’t convert this file. Check that the file is valid and try again.",
+        false,
+      );
     }
 
     if (status.status === "completed") {
