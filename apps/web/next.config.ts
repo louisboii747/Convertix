@@ -39,6 +39,9 @@ const connectSources = [
   supabaseWebSocketOrigin,
   postHogOrigin,
   "https://vitals.vercel-insights.com",
+  // Presigned uploads are sent directly from the browser to the regional S3 endpoint.
+  "https://s3.eu-west-2.amazonaws.com",
+  "https://*.s3.eu-west-2.amazonaws.com",
 ].filter((source): source is string => Boolean(source));
 
 const scriptSources = ["'self'", "'unsafe-inline'"];
