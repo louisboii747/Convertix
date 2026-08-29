@@ -282,13 +282,29 @@ def lambda_handler(event, context):
                 MaxKeys=2,
             )
 
+            contents = objects.get("Contents", [])
             matching_objects = [
                 item
-                for item in objects.get("Contents", [])
+                for item in contents
                 if item["Key"].startswith(f"{output_prefix}output.")
             ]
+            failure_key = f"{output_prefix}failure.json"
+            has_failure = any(item["Key"] == failure_key for item in contents)
 
             if not matching_objects:
+                if has_failure:
+                    return response(
+                        200,
+                        {
+                            "conversion_id": conversion_id,
+                            "status": "failed",
+                            "message": (
+                                "Convertix couldn’t convert this file. "
+                                "Check that the file is valid and try again."
+                            ),
+                        },
+                    )
+
                 return response(
                     200,
                     {
