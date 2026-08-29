@@ -220,14 +220,14 @@ export async function createConversion(
     }
 
     throw new ConversionApiError(
-      "We couldn’t upload your file. Check your connection and try again.",
+      "We couldn’t upload your file. The browser may have blocked the upload or the connection was interrupted. Try again.",
       true,
     );
   }
 
   if (!s3Response.ok) {
     throw new ConversionApiError(
-      "The upload didn’t complete. Try again.",
+      "The upload reached storage but didn’t complete successfully. Try again.",
       true,
     );
   }
