@@ -67,11 +67,19 @@ export type SubmissionReadiness =
 
 export class ConversionApiError extends Error {
   readonly retryable: boolean;
+  readonly status?: number;
+  readonly code?: string;
 
-  constructor(message: string, retryable = false) {
+  constructor(
+    message: string,
+    retryable = false,
+    detail: { status?: number; code?: string } = {},
+  ) {
     super(message);
     this.name = "ConversionApiError";
     this.retryable = retryable;
+    this.status = detail.status;
+    this.code = detail.code;
   }
 }
 
@@ -95,12 +103,29 @@ export function getSubmissionReadiness(): SubmissionReadiness {
   };
 }
 
-function parseApiError(
+async function parseApiError(
   response: Response,
   fallback: string,
-): ConversionApiError {
+): Promise<ConversionApiError> {
   const retryable = response.status >= 500 || response.status === 429;
-  return new ConversionApiError(fallback, retryable);
+
+  let code: string | undefined;
+
+  try {
+    const body = (await response.json()) as { error?: unknown };
+
+    if (typeof body?.error === "string") {
+      code = body.error;
+    }
+  } catch {
+    // The body was empty or not JSON. The HTTP status alone must describe
+    // the failure.
+  }
+
+  return new ConversionApiError(fallback, retryable, {
+    status: response.status,
+    code,
+  });
 }
 
 function wait(ms: number, signal?: AbortSignal): Promise<void> {
