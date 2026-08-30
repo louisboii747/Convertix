@@ -441,8 +441,19 @@ def lambda_handler(event, context):
         target_format = str(body.get("target_format", "")).lower().strip()
         compression_level = str(body.get("compression_level", "")).lower().strip()
         input_key = str(body.get("input_key", "")).strip()
+        raw_input_keys = body.get("input_keys")
+        input_keys = (
+            [str(value).strip() for value in raw_input_keys]
+            if isinstance(raw_input_keys, list)
+            else []
+        )
 
         is_pdf_compression = source_format == "pdf" and target_format == "pdf"
+        is_image_pdf_batch = (
+            source_format in {"jpg", "jpeg", "png"}
+            and target_format == "pdf"
+            and bool(input_keys)
+        )
 
         if is_pdf_compression:
             allowed_compression_levels = {
@@ -519,7 +530,24 @@ def lambda_handler(event, context):
                 },
             )
 
-        if not input_key:
+        if is_image_pdf_batch:
+            if len(input_keys) > 20:
+                return response(
+                    400,
+                    {
+                        "error": "too_many_input_files",
+                        "limit": 20,
+                    },
+                )
+
+            if any(not key for key in input_keys):
+                return response(
+                    400,
+                    {
+                        "error": "invalid_input_key",
+                    },
+                )
+        elif not input_key:
             return response(
                 400,
                 {
@@ -527,7 +555,9 @@ def lambda_handler(event, context):
                 },
             )
 
-        if not input_key.startswith("uploads/"):
+        candidate_input_keys = input_keys if is_image_pdf_batch else [input_key]
+
+        if any(not key.startswith("uploads/") for key in candidate_input_keys):
             return response(
                 400,
                 {
@@ -545,9 +575,12 @@ def lambda_handler(event, context):
         if source_format == "jpeg":
             expected_extensions.add("jpg")
 
-        if not any(
-            input_key.lower().endswith(f".{extension}")
-            for extension in expected_extensions
+        if any(
+            not any(
+                key.lower().endswith(f".{extension}")
+                for extension in expected_extensions
+            )
+            for key in candidate_input_keys
         ):
             return response(
                 400,
@@ -573,8 +606,12 @@ def lambda_handler(event, context):
             "conversion_id": conversion_id,
             "source_format": source_format,
             "target_format": target_format,
-            "input_key": input_key,
         }
+
+        if is_image_pdf_batch:
+            job["input_keys"] = input_keys
+        else:
+            job["input_key"] = input_key
 
         if is_pdf_compression:
             job["compression_level"] = compression_level
@@ -608,9 +645,13 @@ def lambda_handler(event, context):
             "conversion_id": conversion_id,
             "source_format": source_format,
             "target_format": target_format,
-            "input_key": input_key,
             "status": "queued",
         }
+
+        if is_image_pdf_batch:
+            response_body["input_keys"] = input_keys
+        else:
+            response_body["input_key"] = input_key
 
         if is_pdf_compression:
             response_body["compression_level"] = compression_level
