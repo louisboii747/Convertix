@@ -164,8 +164,10 @@ export const CONVERSION_PAIRS: readonly ConversionPair[] = [
   { slug: "xlsx-to-pdf", source: "xlsx", target: "pdf", popular: true },
   { slug: "png-to-jpg", source: "png", target: "jpg", popular: true },
   { slug: "png-to-webp", source: "png", target: "webp", popular: true },
+  { slug: "png-to-pdf", source: "png", target: "pdf", popular: true },
   { slug: "jpg-to-png", source: "jpg", target: "png", popular: true },
   { slug: "jpg-to-webp", source: "jpg", target: "webp", popular: false },
+  { slug: "jpg-to-pdf", source: "jpg", target: "pdf", popular: true },
   { slug: "webp-to-png", source: "webp", target: "png", popular: true },
   { slug: "webp-to-jpg", source: "webp", target: "jpg", popular: false },
   { slug: "heic-to-jpg", source: "heic", target: "jpg", popular: true },
@@ -353,6 +355,8 @@ export function getEnabledConversionPairs(): readonly ConversionPair[] {
 const SEARCH_FRIENDLY_PAIR_LABELS: Partial<Record<string, string>> = {
   "docx-to-pdf": "Word to PDF",
   "xlsx-to-pdf": "Excel to PDF",
+  "jpg-to-pdf": "JPG to PDF",
+  "png-to-pdf": "PNG to PDF",
 };
 
 export function getConversionPairLabel(pair: ConversionPair): string {
