@@ -69,6 +69,32 @@ const SEARCH_INTENT_METADATA: Partial<
       "jpeg to png online",
     ],
   },
+  "jpg-to-pdf": {
+    title: "JPG to PDF Converter | Convert JPEG to PDF Online",
+    description:
+      "Convert JPG and JPEG images to PDF online with Convertix. Fit the full image onto a clean PDF page without cropping.",
+    keywords: [
+      "jpg to pdf",
+      "jpeg to pdf",
+      "convert jpg to pdf",
+      "image to pdf",
+      "jpg to pdf converter",
+      "jpeg to pdf online",
+    ],
+  },
+  "png-to-pdf": {
+    title: "PNG to PDF Converter | Convert PNG Images to PDF Online",
+    description:
+      "Convert PNG images to PDF online with Convertix. Fit the complete image onto a clean PDF page while preserving its aspect ratio.",
+    keywords: [
+      "png to pdf",
+      "convert png to pdf",
+      "image to pdf",
+      "png to pdf converter",
+      "png image to pdf",
+      "png to pdf online",
+    ],
+  },
   "svg-to-png": {
     title: "SVG to PNG Converter | Convert SVG Images Online",
     description:
