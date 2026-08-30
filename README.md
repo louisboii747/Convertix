@@ -16,7 +16,7 @@ The core experience is straightforward: upload a file, choose a supported target
 
 Convertix now has a working end-to-end conversion pipeline running on AWS in `eu-west-2`.
 
-The current production path supports **DOCX → PDF** conversions through the web application. Files are uploaded directly to Amazon S3 using short-lived presigned URLs, conversion jobs are submitted through the API, queued in Amazon SQS, processed by an autoscaling ECS/Fargate worker, and returned through a temporary presigned download URL.
+The production path now supports document, image, audio, and video conversions through the web application. Recent image support includes **HEIC / HEIF → JPG, PNG, or WebP**, with content-based HEIF detection so iPhone photos are handled by their actual image format rather than only their filename. Files are uploaded directly to Amazon S3 using short-lived presigned URLs, conversion jobs are submitted through the API, queued in Amazon SQS, processed by an autoscaling ECS/Fargate worker, and returned through a temporary presigned download URL.
 
 The full flow has been tested end to end:
 
@@ -144,9 +144,7 @@ Convertix already models several format families in the application, including:
 - MP4
 - WebM
 
-Not every possible pair is enabled yet. The currently verified live conversion route is:
-
-- **DOCX → PDF**
+Not every possible pair is enabled yet. Live routes include document conversion, common raster image conversion, SVG rasterisation, MP3/WAV audio conversion, MP4/WebM video conversion, and **HEIC / HEIF → JPG, PNG, or WebP**.
 
 Keeping the UI aware of backend capabilities means unsupported routes can remain disabled until the corresponding worker implementation is ready.
 
@@ -166,7 +164,7 @@ The project is intentionally kept as a monorepo so application code and infrastr
 
 ### Product launch process
 
-Meaningful public converters, tools, and user-facing features should be followed through the [feature launch checklist](docs/feature-launch-checklist.md) so engineering, search discovery, distribution, and measurement are treated as separate parts of shipping.
+Meaningful public converters, tools, and user-facing features should be followed through the [feature launch checklist](docs/feature-launch-checklist.md) so engineering, search discovery, distribution, and measurement are treated as separate parts of shipping. Launch-specific assets and measurement notes live under [`docs/launches/`](docs/launches/).
 
 ## Infrastructure behaviour
 
@@ -189,9 +187,9 @@ The next major stage is expanding the working conversion engine rather than repl
 Planned work includes:
 
 - More document conversions
-- Image conversion support
-- Audio conversion support
-- Video conversion support
+- Broader image conversion coverage
+- Broader audio conversion coverage
+- Broader video conversion coverage
 - Faster worker startup and conversion times
 - Richer progress reporting
 - Improved failure states and retry handling
