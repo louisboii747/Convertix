@@ -1049,8 +1049,9 @@ def process_conversion(
     conversion_id: str,
     source_format: str,
     target_format: str,
-    input_key: str,
+    input_key: str | None,
     compression_level: str | None = None,
+    input_keys: list[str] | None = None,
 ) -> str:
     source_format = source_format.lower()
     target_format = target_format.lower()
@@ -1086,10 +1087,18 @@ def process_conversion(
         )
 
     if source_format in IMAGE_INPUT_FORMATS and target_format == "pdf":
+        image_input_keys = input_keys or ([input_key] if input_key else [])
+
+        if not image_input_keys:
+            raise ValueError("Image to PDF conversion requires at least one input")
+
+        if len(image_input_keys) > 20:
+            raise ValueError("Image to PDF conversion supports up to 20 inputs")
+
         return convert_images_to_pdf(
             s3=s3,
             conversion_id=conversion_id,
-            inputs=[(source_format, input_key)],
+            inputs=[(source_format, key) for key in image_input_keys],
         )
 
     if (
@@ -1220,15 +1229,18 @@ def main() -> int:
             source_format = body.get("source_format")
             target_format = body.get("target_format")
             input_key = body.get("input_key")
+            input_keys = body.get("input_keys")
 
             required_fields = {
                 "conversion_id": conversion_id,
                 "source_format": source_format,
                 "target_format": target_format,
-                "input_key": input_key,
             }
 
             missing = [name for name, value in required_fields.items() if not value]
+
+            if not input_key and not input_keys:
+                missing.append("input_key or input_keys")
 
             if missing:
                 raise ValueError(f"Missing required job fields: {', '.join(missing)}")
@@ -1250,6 +1262,7 @@ def main() -> int:
                 target_format=target_format,
                 input_key=input_key,
                 compression_level=compression_level,
+                input_keys=input_keys,
             )
 
             clear_conversion_failure(s3, conversion_id)
