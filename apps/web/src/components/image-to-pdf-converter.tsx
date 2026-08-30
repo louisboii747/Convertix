@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   useEffect,
   useMemo,
@@ -61,6 +62,7 @@ export function ImageToPdfConverter({
 }: ImageToPdfConverterProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const activeControllerRef = useRef<AbortController | null>(null);
+  const objectUrlsRef = useRef(new Set<string>());
 
   const [items, setItems] = useState<ImageItem[]>([]);
   const [status, setStatus] = useState<ConversionStatus>("idle");
@@ -79,25 +81,26 @@ export function ImageToPdfConverter({
   );
 
   useEffect(() => {
+    const objectUrls = objectUrlsRef.current;
+
     return () => {
       activeControllerRef.current?.abort();
+      for (const url of objectUrls) {
+        URL.revokeObjectURL(url);
+      }
+      objectUrls.clear();
     };
   }, []);
 
-  useEffect(() => {
-    return () => {
-      for (const item of items) {
-        URL.revokeObjectURL(item.previewUrl);
-      }
-    };
-  }, [items]);
+  function createPreviewUrl(file: File) {
+    const url = URL.createObjectURL(file);
+    objectUrlsRef.current.add(url);
+    return url;
+  }
 
-  function clearResult() {
-    setDownloadUrl(null);
-    setOutputSize(null);
-    setUploadedCount(0);
-    setStatus(items.length > 0 ? "ready" : "idle");
-    setError(null);
+  function revokePreviewUrl(url: string) {
+    URL.revokeObjectURL(url);
+    objectUrlsRef.current.delete(url);
   }
 
   function addFiles(files: File[]) {
@@ -144,7 +147,7 @@ export function ImageToPdfConverter({
       const nextItems = accepted.map((file) => ({
         id: crypto.randomUUID(),
         file,
-        previewUrl: URL.createObjectURL(file),
+        previewUrl: createPreviewUrl(file),
       }));
 
       setItems((current) => [...current, ...nextItems]);
@@ -180,7 +183,7 @@ export function ImageToPdfConverter({
 
     setItems((current) => {
       const item = current.find((candidate) => candidate.id === id);
-      if (item) URL.revokeObjectURL(item.previewUrl);
+      if (item) revokePreviewUrl(item.previewUrl);
       const next = current.filter((candidate) => candidate.id !== id);
       setStatus(next.length > 0 ? "ready" : "idle");
       return next;
@@ -218,7 +221,7 @@ export function ImageToPdfConverter({
     if (busy) return;
 
     for (const item of items) {
-      URL.revokeObjectURL(item.previewUrl);
+      revokePreviewUrl(item.previewUrl);
     }
 
     setItems([]);
@@ -425,10 +428,13 @@ export function ImageToPdfConverter({
                   {index + 1}
                 </div>
 
-                <img
+                <Image
                   className={styles.preview}
                   src={item.previewUrl}
                   alt=""
+                  width={54}
+                  height={54}
+                  unoptimized
                 />
 
                 <div className={styles.details}>
