@@ -221,6 +221,67 @@ export const CONVERSION_CONTENT: Readonly<Record<string, ConversionContent>> = {
       },
     ],
   },
+  "jpg-to-pdf": {
+    intro:
+      "Converting a JPG to PDF places the full image onto a clean document page, which is useful for sharing, printing, uploading, or keeping an image in a document-friendly format.",
+    highlights: [
+      {
+        heading: "Why convert JPG to PDF?",
+        body: "PDF is often easier to submit, print, archive, or share when a workflow expects a document rather than a standalone image file.",
+      },
+      {
+        heading: "Will the image be cropped?",
+        body: "Convertix fits the complete image onto the PDF page while preserving its aspect ratio, so the source image is not intentionally cropped to fill the page.",
+      },
+      {
+        heading: "Can the image be resized?",
+        body: "Large images can be resampled to fit within the PDF page. The source proportions are preserved, but the PDF representation may not keep the image at its original pixel dimensions.",
+      },
+    ],
+    faq: [
+      {
+        question: "Does JPG to PDF improve image quality?",
+        answer:
+          "No. The PDF contains a representation of the source image, so conversion cannot restore detail that is not present in the JPG.",
+      },
+      {
+        question: "What page size does Convertix use?",
+        answer:
+          "Convertix uses a clean A4-proportioned page and automatically chooses portrait or landscape orientation to suit the image.",
+      },
+    ],
+  },
+  "png-to-pdf": {
+    intro:
+      "Converting a PNG to PDF places the image on a document page while preserving the full image proportions, making it convenient for printing, submissions, and document-based sharing.",
+    highlights: [
+      {
+        heading: "Why convert PNG to PDF?",
+        body: "PDF is useful when a website, school, workplace, printer, or archive expects a document instead of an image file.",
+      },
+      {
+        heading: "What happens to transparency?",
+        body: "The PDF page is opaque, so transparent PNG areas are composited onto a white page rather than remaining transparent.",
+      },
+      {
+        heading: "Will the PNG be cropped?",
+        body: "No intentional crop is applied. Convertix fits the image inside the page margins and keeps its original aspect ratio.",
+      },
+    ],
+    faq: [
+      {
+        question: "Can a transparent PNG stay transparent in PDF?",
+        answer:
+          "Not in the current Convertix output. Transparent areas are placed against the white PDF page.",
+      },
+      {
+        question: "Does PNG to PDF change the image proportions?",
+        answer:
+          "No. The image is scaled proportionally to fit the PDF page, so its aspect ratio is preserved.",
+      },
+    ],
+  },
+
   "jpg-to-webp": {
     intro:
       "WebP is designed for efficient web delivery and can be a practical replacement for JPG when you want a modern image format with flexible compression options.",
