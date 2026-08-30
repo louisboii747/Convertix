@@ -98,14 +98,18 @@ def process_conversion(
     conversion_id: str,
     source_format: str,
     target_format: str,
-    input_key: str,
+    input_key: str | None,
     compression_level: str | None = None,
+    input_keys: list[str] | None = None,
 ) -> str:
     if (
         source_format.lower() == "pdf"
         and target_format.lower() == "pdf"
         and compression_level == "merge"
     ):
+        if not input_key:
+            raise ValueError("PDF merge requires a packed input_key")
+
         return merge_pdf(
             s3=s3,
             conversion_id=conversion_id,
@@ -119,6 +123,7 @@ def process_conversion(
         target_format=target_format,
         input_key=input_key,
         compression_level=compression_level,
+        input_keys=input_keys,
     )
 
 
