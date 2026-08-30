@@ -172,6 +172,52 @@ def test_existing_png_to_jpeg_conversion_still_works(monkeypatch):
         assert output_image.mode == "RGB"
 
 
+@pytest.mark.parametrize(
+    ("source_format", "image_format", "mode"),
+    [
+        ("jpg", "JPEG", "RGB"),
+        ("png", "PNG", "RGBA"),
+    ],
+)
+def test_jpg_and_png_convert_to_pdf(
+    monkeypatch,
+    source_format,
+    image_format,
+    mode,
+):
+    s3 = FakeS3(make_image_bytes(image_format, mode=mode))
+    monkeypatch.setattr(worker, "STORAGE_BUCKET", "convertix-test")
+
+    output_key = worker.process_conversion(
+        s3=s3,
+        conversion_id="conversion-pdf",
+        source_format=source_format,
+        target_format="pdf",
+        input_key=f"uploads/test/input.{source_format}",
+    )
+
+    assert output_key.endswith("output.pdf")
+    assert s3.uploaded_bytes is not None
+    assert s3.uploaded_bytes.startswith(b"%PDF")
+    assert s3.upload_args["extra_args"]["ContentType"] == "application/pdf"
+
+
+def test_image_pdf_page_preserves_aspect_ratio_without_cropping():
+    image = Image.new("RGBA", (1200, 600), (20, 80, 160, 96))
+    page = worker.render_image_pdf_page(image)
+
+    try:
+        assert page.mode == "RGB"
+        assert page.size == (
+            worker.PDF_PAGE_LONG_EDGE,
+            worker.PDF_PAGE_SHORT_EDGE,
+        )
+        assert page.getpixel((0, 0)) == (255, 255, 255)
+    finally:
+        page.close()
+        image.close()
+
+
 def test_exif_orientation_is_applied_before_conversion(monkeypatch):
     _, s3 = convert_bytes(
         monkeypatch,
