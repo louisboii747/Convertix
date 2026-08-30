@@ -43,8 +43,10 @@ class FakeS3:
         self.input_bytes = input_bytes
         self.uploaded_bytes = None
         self.upload_args = None
+        self.downloaded_keys = []
 
     def download_file(self, bucket, key, filename):
+        self.downloaded_keys.append(key)
         Path(filename).write_bytes(self.input_bytes)
 
     def upload_file(self, filename, bucket, key, ExtraArgs=None):
@@ -216,6 +218,50 @@ def test_image_pdf_page_preserves_aspect_ratio_without_cropping():
     finally:
         page.close()
         image.close()
+
+
+def test_multiple_images_are_consumed_in_pdf_page_order(monkeypatch):
+    s3 = FakeS3(make_image_bytes("JPEG", mode="RGB"))
+    monkeypatch.setattr(worker, "STORAGE_BUCKET", "convertix-test")
+
+    output_key = worker.process_conversion(
+        s3=s3,
+        conversion_id="conversion-batch-pdf",
+        source_format="jpg",
+        target_format="pdf",
+        input_key=None,
+        input_keys=[
+            "uploads/one/input.jpg",
+            "uploads/two/input.jpg",
+            "uploads/three/input.jpg",
+        ],
+    )
+
+    assert output_key.endswith("output.pdf")
+    assert s3.uploaded_bytes is not None
+    assert s3.uploaded_bytes.startswith(b"%PDF")
+    assert s3.downloaded_keys == [
+        "uploads/one/input.jpg",
+        "uploads/two/input.jpg",
+        "uploads/three/input.jpg",
+    ]
+
+
+def test_image_pdf_rejects_more_than_twenty_inputs(monkeypatch):
+    s3 = FakeS3(make_image_bytes("JPEG", mode="RGB"))
+    monkeypatch.setattr(worker, "STORAGE_BUCKET", "convertix-test")
+
+    with pytest.raises(ValueError, match="up to 20 inputs"):
+        worker.process_conversion(
+            s3=s3,
+            conversion_id="conversion-too-large-batch",
+            source_format="jpg",
+            target_format="pdf",
+            input_key=None,
+            input_keys=[f"uploads/{index}/input.jpg" for index in range(21)],
+        )
+
+    assert s3.downloaded_keys == []
 
 
 def test_exif_orientation_is_applied_before_conversion(monkeypatch):
