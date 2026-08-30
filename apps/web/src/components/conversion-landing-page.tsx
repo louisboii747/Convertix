@@ -36,6 +36,8 @@ const SEARCH_INTENT_HEADINGS: Partial<Record<string, string>> = {
   "xlsx-to-pdf": "Excel to PDF Converter",
   "png-to-jpg": "PNG to JPG Converter",
   "jpg-to-png": "JPG to PNG Converter",
+  "jpg-to-pdf": "JPG to PDF Converter",
+  "png-to-pdf": "PNG to PDF Converter",
   "svg-to-png": "SVG to PNG Converter",
   "mp3-to-wav": "MP3 to WAV Converter",
   "wav-to-mp3": "WAV to MP3 Converter",
