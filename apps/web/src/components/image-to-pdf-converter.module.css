@@ -273,53 +273,26 @@
   gap: 3px;
 }
 
-.success strong {
+.success > div > strong {
   color: #05603a;
   font-size: 0.9rem;
 }
 
-.success span {
+.success > div > span {
   color: #347a5b;
   font-size: 0.78rem;
 }
 
-.success a,
-.primaryButton {
-  display: inline-flex;
+.primaryFlowButton,
+.downloadFlowButton {
   min-height: 46px;
-  align-items: center;
-  justify-content: center;
-  padding: 0 17px;
-  border: 0;
-  border-radius: 11px;
-  background: var(--cobalt);
-  color: #fff;
-  box-shadow: var(--shadow-button);
-  font: inherit;
   font-size: 0.88rem;
   font-weight: 800;
-  cursor: pointer;
-  transition:
-    background 160ms var(--ease-out),
-    transform 160ms var(--ease-out);
 }
 
-.success a:hover,
-.success a:focus-visible,
-.primaryButton:hover:not(:disabled),
-.primaryButton:focus-visible:not(:disabled) {
-  background: var(--cobalt-dark);
-  transform: translateY(-1px);
-}
-
-.primaryButton {
+.primaryFlowButton {
   width: calc(100% - 44px);
   margin: 16px 22px 0;
-}
-
-.primaryButton:disabled {
-  opacity: 0.58;
-  cursor: default;
 }
 
 .privacyNote {
@@ -386,11 +359,11 @@
     flex-direction: column;
   }
 
-  .success a {
+  .downloadFlowButton {
     width: 100%;
   }
 
-  .primaryButton {
+  .primaryFlowButton {
     width: calc(100% - 32px);
     margin-right: 16px;
     margin-left: 16px;
@@ -404,8 +377,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .dropZone,
-  .success a,
-  .primaryButton {
+  .downloadFlowButton,
+  .primaryFlowButton {
     transition: none;
   }
 

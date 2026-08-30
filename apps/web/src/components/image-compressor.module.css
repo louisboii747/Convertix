@@ -442,6 +442,11 @@
   margin-top: 18px;
 }
 
+.flowButton {
+  min-height: 46px;
+  font-weight: 800;
+}
+
 .primaryButton,
 .secondaryButton {
   display: inline-flex;
@@ -604,7 +609,7 @@
     flex-direction: column-reverse;
   }
 
-  .primaryButton,
+  .flowButton,
   .secondaryButton {
     width: 100%;
   }
@@ -614,7 +619,7 @@
   .dropZone,
   .preset,
   .progressTrack span,
-  .primaryButton {
+  .flowButton {
     transition: none;
   }
 }

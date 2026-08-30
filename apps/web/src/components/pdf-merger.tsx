@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from "r
 import { ConversionApiError, type ConversionStatus } from "@/lib/conversion-api";
 import { createPdfMerge } from "@/lib/pdf-merge-api";
 import { captureEvent, captureException } from "@/lib/posthog-client";
+import { FlowButton } from "@/components/ui/flow-button";
 
 import styles from "./pdf-merger.module.css";
 
@@ -274,9 +275,15 @@ export function PdfMerger() {
 
             <div className={styles.actions}>
               {!downloadUrl ? (
-                <button className={styles.primaryButton} type="button" disabled={busy || files.length < 2} onClick={() => void merge()}>
-                  {busy ? "Merging…" : "Merge PDFs"}
-                </button>
+                <FlowButton
+                  className={styles.flowButton}
+                  type="button"
+                  disabled={busy || files.length < 2}
+                  onClick={() => void merge()}
+                  variant="primary"
+                  shape="rounded"
+                  text={busy ? "Merging…" : "Merge PDFs"}
+                />
               ) : (
                 <>
                   <button className={styles.secondaryButton} type="button" onClick={() => {
@@ -286,13 +293,14 @@ export function PdfMerger() {
                   }}>
                     Merge different PDFs
                   </button>
-                  <a
-                    className={styles.primaryButton}
+                  <FlowButton
+                    className={styles.flowButton}
                     href={downloadUrl}
+                    variant="success"
+                    shape="rounded"
+                    text="Download merged PDF"
                     onClick={() => captureEvent("pdf_merge_downloaded", { file_count: files.length, output_size_bytes: outputSize })}
-                  >
-                    Download merged PDF
-                  </a>
+                  />
                 </>
               )}
             </div>

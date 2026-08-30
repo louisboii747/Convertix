@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { PasswordField } from "@/components/password-field";
 import { SiteHeader } from "@/components/site-header";
+import { FlowButton } from "@/components/ui/flow-button";
 
 import { login, loginWithGoogle } from "./actions";
 
@@ -107,7 +108,13 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
                 />
               </div>
 
-              <button className="auth-submit" type="submit"><span>Log in</span></button>
+              <FlowButton
+                className="mt-1 w-full min-h-[54px]"
+                type="submit"
+                variant="dark"
+                shape="rounded"
+                text="Log in"
+              />
             </form>
 
             <div className="auth-card-footer">

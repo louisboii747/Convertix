@@ -214,6 +214,11 @@
   margin-top: 16px;
 }
 
+.flowButton {
+  min-height: 46px;
+  font-weight: 800;
+}
+
 .primaryButton,
 .secondaryButton {
   min-height: 46px;
@@ -298,7 +303,7 @@
     text-align: left;
   }
 
-  .primaryButton,
+  .flowButton,
   .secondaryButton {
     width: 100%;
   }

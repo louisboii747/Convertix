@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { ArrowIcon } from "@/components/icons";
 import { SiteHeader } from "@/components/site-header";
+import { FlowButton } from "@/components/ui/flow-button";
 import { GUIDES } from "@/lib/guides";
 
 export const metadata: Metadata = {
@@ -44,7 +45,12 @@ export default function GuidesPage() {
 
         <section className="guides-promo" aria-labelledby="guide-tools-title">
           <div><h2 id="guide-tools-title">Already know what you need?</h2><p>Open the full list of available converters.</p></div>
-          <Link href="/conversions" className="guides-promo-link">Find a converter <ArrowIcon /></Link>
+          <FlowButton
+            href="/conversions"
+            variant="dark"
+            shape="rounded"
+            text="Find a converter"
+          />
         </section>
       </main>
     </>

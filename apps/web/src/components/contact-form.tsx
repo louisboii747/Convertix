@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 
+import { FlowButton } from "@/components/ui/flow-button";
+
 type FormStatus = "idle" | "sending" | "success" | "error";
 
 export function ContactForm() {
@@ -132,9 +134,13 @@ export function ContactForm() {
           </div>
         ) : null}
 
-        <button className="auth-submit" type="submit" disabled={status === "sending"}>
-          <span>{status === "sending" ? "Sending…" : "Send message"}</span>
-        </button>
+        <FlowButton
+          className="mt-1 w-full"
+          type="submit"
+          text={status === "sending" ? "Sending…" : "Send message"}
+          disabled={status === "sending"}
+          aria-busy={status === "sending"}
+        />
 
         <p className="contact-privacy-note">
           Your details are used only to respond to your message. See the{" "}

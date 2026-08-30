@@ -17,6 +17,7 @@ import {
   type ImagePdfSourceFormat,
 } from "@/lib/conversion-api";
 import { captureEvent, captureException } from "@/lib/posthog-client";
+import { FlowButton } from "@/components/ui/flow-button";
 import styles from "./image-to-pdf-converter.module.css";
 
 const MAX_FILES = 20;
@@ -506,9 +507,13 @@ export function ImageToPdfConverter({
                 </span>
               </div>
 
-              <a
+              <FlowButton
+                className={styles.downloadFlowButton}
                 href={downloadUrl}
                 download="convertix-images.pdf"
+                variant="success"
+                shape="rounded"
+                text="Download PDF"
                 onClick={() =>
                   captureEvent("file_downloaded", {
                     source_format: sourceFormat,
@@ -517,19 +522,18 @@ export function ImageToPdfConverter({
                     batch_file_count: items.length,
                   })
                 }
-              >
-                Download PDF
-              </a>
+              />
             </div>
           ) : (
-            <button
-              className={styles.primaryButton}
+            <FlowButton
+              className={styles.primaryFlowButton}
               type="button"
               disabled={busy || items.length === 0}
               onClick={createPdf}
-            >
-              {busy ? "Creating PDF…" : "Create PDF"}
-            </button>
+              variant="primary"
+              shape="rounded"
+              text={busy ? "Creating PDF…" : "Create PDF"}
+            />
           )}
         </>
       )}

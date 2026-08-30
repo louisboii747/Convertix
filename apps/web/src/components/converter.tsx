@@ -41,6 +41,7 @@ import {
   UploadIcon,
 } from "@/components/icons";
 import { FormatMark } from "@/components/format-mark";
+import { FlowButton } from "@/components/ui/flow-button";
 
 const FREE_FILE_LIMIT_MB = 100;
 const FREE_FILE_LIMIT_BYTES = FREE_FILE_LIMIT_MB * 1024 * 1024;
@@ -792,10 +793,14 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
           </div>
 
           {state.status === "completed" && state.downloadUrl ? (
-            <a
-              className="convert-button is-download"
+            <FlowButton
+              className="w-full"
               href={state.downloadUrl}
               download
+              variant="success"
+              shape="rounded"
+              size="lg"
+              text="Download converted file"
               onClick={() =>
                 captureEvent("file_downloaded", {
                   source_format: state.source,
@@ -803,21 +808,18 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
                   format_family: FORMATS[state.source!].family,
                 })
               }
-            >
-              <CheckIcon />
-              <span>Download converted file</span>
-              <ArrowIcon className="convert-arrow" />
-            </a>
+            />
           ) : (
-            <button
-              className="convert-button"
+            <FlowButton
+              className="w-full"
               type="button"
               disabled={!canSubmit}
               onClick={submitConversion}
-            >
-              <RouteIcon />
-              <span>
-                {!pairEnabled
+              variant="primary"
+              shape="rounded"
+              size="lg"
+              text={
+                !pairEnabled
                   ? "Conversion unavailable"
                   : !readiness.ready
                     ? "Conversion service unavailable"
@@ -829,14 +831,9 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
                           ? "Preparing your file"
                           : state.status === "converting"
                             ? "Converting your file"
-                            : "Convert file"}
-              </span>
-              {!isBusy ? (
-                <ArrowIcon className="convert-arrow" />
-              ) : (
-                <span aria-hidden="true" />
-              )}
-            </button>
+                            : "Convert file"
+              }
+            />
           )}
 
           {state.status === "completed" && state.downloadUrl && state.target ? (
@@ -908,16 +905,16 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
           ) : null}
 
           {state.status === "completed" ? (
-            <button
-              className="convert-another-button"
+            <FlowButton
+              className="justify-self-center"
               type="button"
+              size="sm"
+              text="Convert another file"
               onClick={() => {
                 trackSuccessAction("convert_another", "converter_reset");
                 reset();
               }}
-            >
-              Convert another file
-            </button>
+            />
           ) : null}
           <div
             className={`conversion-status ${statusTone}`}
@@ -952,13 +949,13 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
               <span />
             </span>
             {state.status === "failed" && state.retryable ? (
-              <button
-                className="status-action"
+              <FlowButton
                 type="button"
+                size="sm"
+                shape="rounded"
+                text="Try again"
                 onClick={submitConversion}
-              >
-                Try again <RefreshIcon />
-              </button>
+              />
             ) : null}
           </div>
         </div>

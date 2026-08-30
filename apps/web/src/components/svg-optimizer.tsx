@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { optimize } from "svgo/browser";
 import { captureEvent, captureException } from "@/lib/posthog-client";
+import { FlowButton } from "@/components/ui/flow-button";
 import styles from "./svg-optimizer.module.css";
 
 type VerificationState =
@@ -474,14 +475,15 @@ export function SvgOptimizer() {
               >
                 Choose another SVG
               </button>
-              <button
-                className={styles.primaryButton}
+              <FlowButton
+                className={styles.flowButton}
                 type="button"
                 disabled={verification.status !== "verified"}
                 onClick={downloadOptimized}
-              >
-                Download optimized SVG
-              </button>
+                variant="success"
+                shape="rounded"
+                text="Download optimized SVG"
+              />
             </div>
           </>
         )}

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { signup } from "@/app/login/actions";
 import { PasswordField } from "@/components/password-field";
 import { SiteHeader } from "@/components/site-header";
+import { FlowButton } from "@/components/ui/flow-button";
 
 type SignupPageProps = {
   searchParams: Promise<{
@@ -97,7 +98,13 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
                   />
                 </div>
 
-                <button className="auth-submit" type="submit"><span>Create account</span></button>
+                <FlowButton
+                  className="mt-1 w-full min-h-[54px]"
+                  type="submit"
+                  variant="dark"
+                  shape="rounded"
+                  text="Create account"
+                />
               </form>
             )}
 

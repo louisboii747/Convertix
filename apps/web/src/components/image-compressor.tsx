@@ -12,6 +12,7 @@ import imageCompression from "browser-image-compression";
 import UZIP from "uzip";
 
 import { captureEvent, captureException } from "@/lib/posthog-client";
+import { FlowButton } from "@/components/ui/flow-button";
 import styles from "./image-compressor.module.css";
 
 const MAX_FILE_SIZE = 25 * 1024 * 1024;
@@ -687,18 +688,19 @@ export function ImageCompressor() {
                   Add more images
                 </button>
 
-                <button
-                  className={styles.primaryButton}
+                <FlowButton
+                  className={styles.flowButton}
                   type="button"
                   disabled={busy || items.length === 0}
                   onClick={() => void compressImages()}
-                >
-                  {busy
+                  variant="primary"
+                  shape="rounded"
+                  text={busy
                     ? "Compressing…"
                     : `Compress ${items.length} ${
                         items.length === 1 ? "image" : "images"
                       }`}
-                </button>
+                />
               </div>
             ) : (
               <>
@@ -770,14 +772,15 @@ export function ImageCompressor() {
                     Try another level
                   </button>
 
-                  <button
-                    className={styles.primaryButton}
+                  <FlowButton
+                    className={styles.flowButton}
                     type="button"
                     disabled={zipping || completedItems.length === 0}
                     onClick={() => void downloadAllAsZip()}
-                  >
-                    {zipping ? "Creating ZIP…" : "Download all as ZIP"}
-                  </button>
+                    variant="success"
+                    shape="rounded"
+                    text={zipping ? "Creating ZIP…" : "Download all as ZIP"}
+                  />
                 </div>
               </>
             )}

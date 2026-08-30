@@ -9,6 +9,7 @@ import {
   type PdfCompressionLevel,
 } from "@/lib/conversion-api";
 import { captureEvent, captureException } from "@/lib/posthog-client";
+import { FlowButton } from "@/components/ui/flow-button";
 
 import styles from "./pdf-compressor.module.css";
 
@@ -322,14 +323,15 @@ export function PdfCompressor() {
                     Choose another PDF
                   </button>
 
-                  <button
-                    className={styles.primaryButton}
+                  <FlowButton
+                    className={styles.flowButton}
                     type="button"
                     disabled={busy}
                     onClick={() => void compress()}
-                  >
-                    {busy ? "Compressing…" : "Compress PDF"}
-                  </button>
+                    variant="primary"
+                    shape="rounded"
+                    text={busy ? "Compressing…" : "Compress PDF"}
+                  />
                 </div>
               </>
             ) : (
@@ -392,9 +394,14 @@ export function PdfCompressor() {
                     Try another level
                   </button>
 
-                  <a className={styles.primaryButton} href={downloadUrl} onClick={() => captureEvent("pdf_compression_downloaded", { compression_level: compressionLevel, input_size_bytes: file.size, output_size_bytes: compressedSize })}>
-                    Download compressed PDF
-                  </a>
+                  <FlowButton
+                    className={styles.flowButton}
+                    href={downloadUrl}
+                    variant="success"
+                    shape="rounded"
+                    text="Download compressed PDF"
+                    onClick={() => captureEvent("pdf_compression_downloaded", { compression_level: compressionLevel, input_size_bytes: file.size, output_size_bytes: compressedSize })}
+                  />
                 </div>
               </>
             )}

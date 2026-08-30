@@ -4,6 +4,8 @@ import { ImageToPdfConverter } from "@/components/image-to-pdf-converter";
 import { ArrowIcon, RouteIcon } from "@/components/icons";
 import { FormatMark } from "@/components/format-mark";
 import { SiteHeader } from "@/components/site-header";
+import { FlowButton } from "@/components/ui/flow-button";
+import { TypingAnimation } from "@/components/ui/typing-animation";
 import { GUIDES } from "@/lib/guides";
 import { getConversionContent } from "@/lib/conversion-content";
 import {
@@ -91,8 +93,8 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
   const target = pair ? FORMATS[pair.target] : null;
   const isImagePdfPair = Boolean(
     pair &&
-      pair.target === "pdf" &&
-      (pair.source === "jpg" || pair.source === "png"),
+    pair.target === "pdf" &&
+    (pair.source === "jpg" || pair.source === "png"),
   );
   const pageTitle = pair
     ? (SEARCH_INTENT_HEADINGS[pair.slug] ??
@@ -138,7 +140,35 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
       <main id="main-content">
         <section className="hero-section" aria-labelledby="page-title">
           <div className="hero-copy hero-copy-benefit">
-            <h1 id="page-title">{pageTitle}</h1>
+            {pair ? (
+              <h1 id="page-title">{pageTitle}</h1>
+            ) : (
+              <h1 id="page-title">
+                <span className="sr-only">
+                  Convert files online without the fuss.
+                </span>
+                <span aria-hidden="true" className="grid">
+                  <TypingAnimation
+                    words={[
+                      "Convert files online",
+                      "Compress PDFs online",
+                      "Optimize images online",
+                      "Convert files online",
+                    ]}
+                    typeSpeed={45}
+                    deleteSpeed={25}
+                    pauseDelay={1100}
+                    loop={false}
+                    startOnView={false}
+                    showCursor={true}
+                    blinkCursor={true}
+                    cursorStyle="line"
+                    reducedMotionText="Convert files online"
+                  />
+                  <span>without the fuss.</span>
+                </span>
+              </h1>
+            )}
             <p>{pageDescription}</p>
           </div>
           {isImagePdfPair && pair ? (
@@ -152,7 +182,9 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
           <div className="hero-notes" aria-label="Conversion basics">
             <span>No account needed</span>
             <span>
-              {isImagePdfPair ? "Up to 20 images · 100 MB total" : "100 MB file limit"}
+              {isImagePdfPair
+                ? "Up to 20 images · 100 MB total"
+                : "100 MB file limit"}
             </span>
             <span>
               {isImagePdfPair
@@ -185,9 +217,13 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
                 <span>Runs in your browser</span>
                 <span>Download all as ZIP</span>
               </div>
-              <Link href="/compress-image" className="batch-feature-link">
-                Open batch image compressor <ArrowIcon />
-              </Link>
+              <FlowButton
+                className="mt-6"
+                href="/compress-image"
+                variant="primary"
+                shape="rounded"
+                text="Open batch image compressor"
+              />
             </div>
 
             <div className="batch-feature-preview" aria-label="Batch workflow">
@@ -388,9 +424,12 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
               and what may change during conversion.
             </p>
           </div>
-          <Link href="/guides" className="guides-promo-link">
-            Read the guides <ArrowIcon />
-          </Link>
+          <FlowButton
+            href="/guides"
+            variant="dark"
+            shape="rounded"
+            text="Read the guides"
+          />
         </section>
 
         <section className="faq-section" id="faq" aria-labelledby="faq-title">
