@@ -479,6 +479,11 @@ def convert_txt_document(
 IMAGE_INPUT_FORMATS = {"jpg", "jpeg", "png", "webp", "heic", "heif"}
 IMAGE_TARGET_FORMATS = {"jpg", "jpeg", "png", "webp"}
 
+PDF_PAGE_SHORT_EDGE = 1240
+PDF_PAGE_LONG_EDGE = 1754
+PDF_PAGE_MARGIN = 80
+PDF_PAGE_RESOLUTION = 150.0
+
 
 def normalize_decoded_image_format(image_format: str | None) -> str | None:
     return {
@@ -506,6 +511,138 @@ def image_has_alpha(image: Image.Image) -> bool:
     return "A" in image.getbands() or (
         image.mode == "P" and "transparency" in image.info
     )
+
+
+def render_image_pdf_page(image: Image.Image) -> Image.Image:
+    landscape = image.width > image.height
+    page_size = (
+        (PDF_PAGE_LONG_EDGE, PDF_PAGE_SHORT_EDGE)
+        if landscape
+        else (PDF_PAGE_SHORT_EDGE, PDF_PAGE_LONG_EDGE)
+    )
+    max_size = (
+        page_size[0] - (PDF_PAGE_MARGIN * 2),
+        page_size[1] - (PDF_PAGE_MARGIN * 2),
+    )
+
+    rendered = image.convert("RGBA" if image_has_alpha(image) else "RGB")
+    rendered.thumbnail(max_size, Image.Resampling.LANCZOS)
+
+    page = Image.new("RGB", page_size, "white")
+    offset = (
+        (page_size[0] - rendered.width) // 2,
+        (page_size[1] - rendered.height) // 2,
+    )
+
+    if rendered.mode == "RGBA":
+        page.paste(rendered, offset, rendered)
+    else:
+        page.paste(rendered, offset)
+
+    rendered.close()
+    return page
+
+
+def convert_images_to_pdf(
+    s3,
+    conversion_id: str,
+    inputs: list[tuple[str, str]],
+) -> str:
+    if not inputs:
+        raise ValueError("At least one image is required for PDF conversion")
+
+    output_key = f"conversions/{conversion_id}/output.pdf"
+
+    with tempfile.TemporaryDirectory(prefix="convertix-") as temp_dir:
+        temp_path = Path(temp_dir)
+        output_path = temp_path / "output.pdf"
+        pages: list[Image.Image] = []
+
+        try:
+            for index, (source_format, input_key) in enumerate(inputs):
+                source_format = source_format.lower()
+
+                if source_format not in IMAGE_INPUT_FORMATS:
+                    raise ValueError(
+                        f"Unsupported image source format for PDF: {source_format}"
+                    )
+
+                input_path = temp_path / f"input-{index}.{source_format}"
+
+                print(
+                    f"Downloading s3://{STORAGE_BUCKET}/{input_key}",
+                    flush=True,
+                )
+
+                s3.download_file(
+                    STORAGE_BUCKET,
+                    input_key,
+                    str(input_path),
+                )
+
+                try:
+                    with Image.open(input_path) as opened_image:
+                        detected_format = normalize_decoded_image_format(
+                            opened_image.format
+                        )
+
+                        if detected_format not in IMAGE_INPUT_FORMATS:
+                            raise ValueError(
+                                "Unsupported decoded image format: "
+                                f"{opened_image.format or 'unknown'}"
+                            )
+
+                        opened_image.load()
+                        image = ImageOps.exif_transpose(opened_image)
+
+                except (
+                    EOFError,
+                    OSError,
+                    RuntimeError,
+                    SyntaxError,
+                    UnidentifiedImageError,
+                    ValueError,
+                ) as exc:
+                    raise ValueError(
+                        f"Invalid or unsupported {source_format.upper()} image data"
+                    ) from exc
+
+                try:
+                    pages.append(render_image_pdf_page(image))
+                finally:
+                    image.close()
+
+            first_page, *remaining_pages = pages
+            first_page.save(
+                output_path,
+                format="PDF",
+                save_all=True,
+                append_images=remaining_pages,
+                resolution=PDF_PAGE_RESOLUTION,
+            )
+
+            if not output_path.exists() or not output_path.read_bytes().startswith(b"%PDF"):
+                raise RuntimeError("Image to PDF conversion did not create a valid PDF")
+
+            s3.upload_file(
+                str(output_path),
+                STORAGE_BUCKET,
+                output_key,
+                ExtraArgs={
+                    "ContentType": "application/pdf",
+                },
+            )
+
+            print(
+                f"Uploaded image PDF: {output_key}",
+                flush=True,
+            )
+
+        finally:
+            for page in pages:
+                page.close()
+
+    return output_key
 
 
 def convert_image(
@@ -946,6 +1083,13 @@ def process_conversion(
             conversion_id=conversion_id,
             target_format=target_format,
             input_key=input_key,
+        )
+
+    if source_format in IMAGE_INPUT_FORMATS and target_format == "pdf":
+        return convert_images_to_pdf(
+            s3=s3,
+            conversion_id=conversion_id,
+            inputs=[(source_format, input_key)],
         )
 
     if (
