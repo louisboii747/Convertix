@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Converter } from "@/components/converter";
+import { ImageToPdfConverter } from "@/components/image-to-pdf-converter";
 import { ArrowIcon, RouteIcon } from "@/components/icons";
 import { FormatMark } from "@/components/format-mark";
 import { SiteHeader } from "@/components/site-header";
@@ -36,6 +37,8 @@ const SEARCH_INTENT_HEADINGS: Partial<Record<string, string>> = {
   "xlsx-to-pdf": "Excel to PDF Converter",
   "png-to-jpg": "PNG to JPG Converter",
   "jpg-to-png": "JPG to PNG Converter",
+  "jpg-to-pdf": "JPG to PDF Converter",
+  "png-to-pdf": "PNG to PDF Converter",
   "svg-to-png": "SVG to PNG Converter",
   "mp3-to-wav": "MP3 to WAV Converter",
   "wav-to-mp3": "WAV to MP3 Converter",
@@ -86,6 +89,11 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
 
   const source = pair ? FORMATS[pair.source] : null;
   const target = pair ? FORMATS[pair.target] : null;
+  const isImagePdfPair = Boolean(
+    pair &&
+      pair.target === "pdf" &&
+      (pair.source === "jpg" || pair.source === "png"),
+  );
   const pageTitle = pair
     ? (SEARCH_INTENT_HEADINGS[pair.slug] ??
       `Convert ${getConversionPairLabel(pair)}`)
@@ -93,7 +101,9 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
 
   const pageDescription = pair
     ? routeEnabled
-      ? `Choose a ${source?.label} file and download a ${target?.label} when the conversion finishes.`
+      ? isImagePdfPair
+        ? `Choose one or more ${source?.label} images, set their page order, and download one PDF.`
+        : `Choose a ${source?.label} file and download a ${target?.label} when the conversion finishes.`
       : `Convertix recognises ${source?.label} to ${target?.label}, but cannot process it yet.`
     : "Choose a file and Convertix will show the formats it can convert to.";
 
@@ -102,7 +112,9 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
         {
           question: `How do I convert ${source?.label} to ${target?.label}?`,
           answer: routeEnabled
-            ? `Choose a ${source?.label} file, select ${target?.label}, then start the conversion. Convertix will show a download button when the file is ready.`
+            ? isImagePdfPair
+              ? `Choose up to 20 ${source?.label} images, arrange them in the order you want, then choose Create PDF. Each image becomes one PDF page.`
+              : `Choose a ${source?.label} file, select ${target?.label}, then start the conversion. Convertix will show a download button when the file is ready.`
             : `Convertix recognises ${source?.label} to ${target?.label}, but cannot process it yet.`,
         },
         ...(conversionContent?.faq ?? []),
@@ -129,14 +141,24 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
             <h1 id="page-title">{pageTitle}</h1>
             <p>{pageDescription}</p>
           </div>
-          <Converter
-            initialSource={pair?.source}
-            initialTarget={pair?.target}
-          />
+          {isImagePdfPair && pair ? (
+            <ImageToPdfConverter sourceFormat={pair.source as "jpg" | "png"} />
+          ) : (
+            <Converter
+              initialSource={pair?.source}
+              initialTarget={pair?.target}
+            />
+          )}
           <div className="hero-notes" aria-label="Conversion basics">
             <span>No account needed</span>
-            <span>100 MB file limit</span>
-            <span>Your file uploads only when you start</span>
+            <span>
+              {isImagePdfPair ? "Up to 20 images · 100 MB total" : "100 MB file limit"}
+            </span>
+            <span>
+              {isImagePdfPair
+                ? "Images upload only when you create the PDF"
+                : "Your file uploads only when you start"}
+            </span>
           </div>
         </section>
 

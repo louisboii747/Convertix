@@ -41,7 +41,8 @@ interface QueueConversionResponse {
   conversion_id: string;
   source_format: FormatId;
   target_format: FormatId;
-  input_key: string;
+  input_key?: string;
+  input_keys?: string[];
   status: "queued";
 }
 
@@ -370,6 +371,244 @@ export async function createConversion(
 
   throw new ConversionApiError(
     "This conversion has taken longer than 15 minutes. Try again.",
+    true,
+  );
+}
+
+
+export type ImagePdfSourceFormat = "jpg" | "png";
+
+export async function createImagePdfConversion(
+  files: readonly File[],
+  sourceFormat: ImagePdfSourceFormat,
+  signal?: AbortSignal,
+  onStatus?: (status: ConversionStatus) => void,
+  onUploadProgress?: (uploaded: number, total: number) => void,
+): Promise<CreateConversionResponse> {
+  const readiness = getSubmissionReadiness();
+
+  if (!readiness.ready) {
+    throw new ConversionApiError(readiness.message);
+  }
+
+  if (files.length === 0) {
+    throw new ConversionApiError("Choose at least one image to convert.");
+  }
+
+  if (files.length > 20) {
+    throw new ConversionApiError("You can combine up to 20 images in one PDF.");
+  }
+
+  const pair = getConversionPair(sourceFormat, "pdf");
+
+  if (!pair || !isConversionPairEnabled(pair)) {
+    throw new ConversionApiError(
+      "Convertix can’t run that image to PDF conversion yet.",
+    );
+  }
+
+  onStatus?.("uploading");
+
+  const inputKeys: string[] = [];
+
+  for (let index = 0; index < files.length; index += 1) {
+    const file = files[index];
+    const browserContentType = file.type || "application/octet-stream";
+
+    let uploadResponse: Response;
+
+    try {
+      uploadResponse = await fetch(`${apiBaseUrl}/uploads`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          filename: getCanonicalFileName(file.name, sourceFormat),
+          content_type: browserContentType,
+        }),
+        signal,
+      });
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        throw error;
+      }
+
+      throw new ConversionApiError(
+        "We couldn’t prepare one of the image uploads. Check your connection and try again.",
+        true,
+      );
+    }
+
+    if (!uploadResponse.ok) {
+      throw await parseApiError(
+        uploadResponse,
+        "Convertix couldn’t prepare one of the image uploads. Try again.",
+      );
+    }
+
+    const upload = (await uploadResponse.json()) as Partial<CreateUploadResponse>;
+
+    if (!upload.upload_url || !upload.object_key) {
+      throw new ConversionApiError(
+        "Convertix couldn’t prepare one of the image uploads. Try again.",
+        true,
+      );
+    }
+
+    let s3Response: Response;
+
+    try {
+      s3Response = await fetch(upload.upload_url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": upload.content_type || browserContentType,
+        },
+        body: file,
+        signal,
+      });
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        throw error;
+      }
+
+      throw new ConversionApiError(
+        "An image upload was interrupted. Check your connection and try again.",
+        true,
+      );
+    }
+
+    if (!s3Response.ok) {
+      throw new ConversionApiError(
+        "An image reached storage but did not finish uploading. Try again.",
+        true,
+      );
+    }
+
+    inputKeys.push(upload.object_key);
+    onUploadProgress?.(index + 1, files.length);
+  }
+
+  let queueResponse: Response;
+
+  try {
+    queueResponse = await fetch(`${apiBaseUrl}/conversions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        source_format: sourceFormat,
+        target_format: "pdf",
+        input_keys: inputKeys,
+      }),
+      signal,
+    });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw error;
+    }
+
+    throw new ConversionApiError(
+      "We couldn’t start the PDF conversion. Try again.",
+      true,
+    );
+  }
+
+  if (!queueResponse.ok) {
+    throw await parseApiError(
+      queueResponse,
+      "Convertix couldn’t start the PDF conversion. Try again.",
+    );
+  }
+
+  const queued =
+    (await queueResponse.json()) as Partial<QueueConversionResponse>;
+
+  if (!queued.conversion_id) {
+    throw new ConversionApiError(
+      "Convertix couldn’t start the PDF conversion. Try again.",
+      true,
+    );
+  }
+
+  onStatus?.("queued");
+
+  const startedAt = Date.now();
+  const timeoutMs = 15 * 60 * 1000;
+
+  while (Date.now() - startedAt < timeoutMs) {
+    await wait(3000, signal);
+
+    let statusResponse: Response;
+
+    try {
+      statusResponse = await fetch(
+        `${apiBaseUrl}/conversions/${queued.conversion_id}`,
+        {
+          method: "GET",
+          signal,
+          cache: "no-store",
+        },
+      );
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        throw error;
+      }
+      continue;
+    }
+
+    if (!statusResponse.ok) {
+      if (statusResponse.status >= 500 || statusResponse.status === 429) {
+        continue;
+      }
+
+      throw await parseApiError(
+        statusResponse,
+        "Convertix lost track of the PDF conversion. Try again.",
+      );
+    }
+
+    const status =
+      (await statusResponse.json()) as Partial<ConversionStatusResponse>;
+
+    if (status.status === "processing") {
+      onStatus?.(Date.now() - startedAt < 60_000 ? "starting" : "converting");
+      continue;
+    }
+
+    if (status.status === "failed") {
+      onStatus?.("failed");
+      throw new ConversionApiError(
+        status.message ??
+          "Convertix couldn’t create this PDF. Check the images and try again.",
+        false,
+      );
+    }
+
+    if (status.status === "completed") {
+      if (!status.download_url) {
+        throw new ConversionApiError(
+          "Your PDF was created, but the download link is missing. Try again.",
+          true,
+        );
+      }
+
+      onStatus?.("completed");
+
+      return {
+        conversion_id: queued.conversion_id,
+        status: "completed",
+        download_url: status.download_url,
+        output_key: status.output_key,
+        content_type: status.content_type,
+        size: status.size,
+      };
+    }
+  }
+
+  throw new ConversionApiError(
+    "This PDF conversion has taken longer than 15 minutes. Try again.",
     true,
   );
 }
