@@ -6,11 +6,6 @@
   <img src="https://buildlist.io/badge.svg" alt="Featured on Buildlist" style="height:40px;width:auto;" />
 </a>
 
-
-
-
-
-
 https://convertix.uk
 
 **Convertix** is a cloud-backed file conversion platform focused on making file conversion fast, simple, and reliable without exposing users to the infrastructure doing the work.
@@ -168,6 +163,10 @@ infrastructure/    Terraform and cloud infrastructure
 ```
 
 The project is intentionally kept as a monorepo so application code and infrastructure changes can be developed together without splitting Convertix into disconnected repositories.
+
+### Product launch process
+
+Meaningful public converters, tools, and user-facing features should be followed through the [feature launch checklist](docs/feature-launch-checklist.md) so engineering, search discovery, distribution, and measurement are treated as separate parts of shipping.
 
 ## Infrastructure behaviour
 
