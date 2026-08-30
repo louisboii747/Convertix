@@ -14,7 +14,9 @@ export function generateStaticParams() {
   return GUIDES.map((guide) => ({ slug: guide.slug }));
 }
 
-export async function generateMetadata({ params }: GuidePageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: GuidePageProps): Promise<Metadata> {
   const { slug } = await params;
   const guide = getGuide(slug);
   if (!guide) return {};
@@ -45,8 +47,12 @@ export default async function GuidePage({ params }: GuidePageProps) {
   const guide = getGuide(slug);
   if (!guide) notFound();
 
-  const related = guide.related.map(getGuide).filter((item) => item !== undefined);
-  const updatedLabel = new Date(`${guide.updated}T00:00:00.000Z`).toLocaleDateString("en-GB", {
+  const related = guide.related
+    .map(getGuide)
+    .filter((item) => item !== undefined);
+  const updatedLabel = new Date(
+    `${guide.updated}T00:00:00.000Z`,
+  ).toLocaleDateString("en-GB", {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -60,8 +66,16 @@ export default async function GuidePage({ params }: GuidePageProps) {
     datePublished: guide.updated,
     dateModified: guide.updated,
     mainEntityOfPage: `https://convertix.uk/guides/${guide.slug}`,
-    author: { "@type": "Organization", name: "Convertix", url: "https://convertix.uk" },
-    publisher: { "@type": "Organization", name: "Convertix", url: "https://convertix.uk" },
+    author: {
+      "@type": "Organization",
+      name: "Convertix",
+      url: "https://convertix.uk",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Convertix",
+      url: "https://convertix.uk",
+    },
   };
 
   return (
@@ -70,7 +84,9 @@ export default async function GuidePage({ params }: GuidePageProps) {
       <main id="main-content" className="guide-article-page">
         <article className="guide-article">
           <nav className="guide-breadcrumb" aria-label="Breadcrumb">
-            <Link href="/guides">Guides</Link><span aria-hidden="true">/</span><span>{guide.eyebrow}</span>
+            <Link href="/guides">Guides</Link>
+            <span aria-hidden="true">/</span>
+            <span>{guide.eyebrow}</span>
           </nav>
           <header className="guide-article-header">
             <h1>{guide.title}</h1>
@@ -82,23 +98,80 @@ export default async function GuidePage({ params }: GuidePageProps) {
             {guide.sections.map((section) => (
               <section key={section.heading}>
                 <h2>{section.heading}</h2>
-                {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-                {section.bullets ? <ul>{section.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul> : null}
+                {section.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+                {section.bullets ? (
+                  <ul>
+                    {section.bullets.map((bullet) => (
+                      <li key={bullet}>{bullet}</li>
+                    ))}
+                  </ul>
+                ) : null}
               </section>
             ))}
           </div>
 
-          <aside className="guide-route-cta" aria-label="Related Convertix tools">
-            <div><h2>Convert a file</h2><p>Open a converter related to this guide.</p></div>
+          <aside
+            className="guide-route-cta"
+            aria-label="Related Convertix tools"
+          >
+            <div>
+              <h2>Convert a file</h2>
+              <p>Open a converter related to this guide.</p>
+            </div>
             <div className="guide-route-links">
-              {guide.routes.map((route) => <Link href={route.href} key={route.href}>{route.label}<ArrowIcon /></Link>)}
+              {guide.routes.map((route) => (
+                <Link href={route.href} key={route.href}>
+                  {route.label}
+                  <ArrowIcon />
+                </Link>
+              ))}
             </div>
           </aside>
 
-          {related.length ? <section className="guide-related" aria-labelledby="related-guides-title"><h2 id="related-guides-title">More format guides</h2><div className="guide-related-links">{related.map((item) => <Link href={`/guides/${item.slug}`} key={item.slug}><strong>{item.title}</strong><ArrowIcon /></Link>)}</div></section> : null}
+          {guide.resources?.length ? (
+            <section
+              className="guide-related"
+              aria-labelledby="guide-resources-title"
+            >
+              <h2 id="guide-resources-title">Related resources</h2>
+
+              <div className="guide-related-links">
+                {guide.resources.map((resource) => (
+                  <Link href={resource.href} key={resource.href}>
+                    <strong>{resource.label}</strong>
+                    <ArrowIcon />
+                  </Link>
+                ))}
+              </div>
+            </section>
+          ) : null}
+          {related.length ? (
+            <section
+              className="guide-related"
+              aria-labelledby="related-guides-title"
+            >
+              <h2 id="related-guides-title">More format guides</h2>
+
+              <div className="guide-related-links">
+                {related.map((item) => (
+                  <Link href={`/guides/${item.slug}`} key={item.slug}>
+                    <strong>{item.title}</strong>
+                    <ArrowIcon />
+                  </Link>
+                ))}
+              </div>
+            </section>
+          ) : null}
         </article>
       </main>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleStructuredData) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(articleStructuredData),
+        }}
+      />
     </>
   );
 }
