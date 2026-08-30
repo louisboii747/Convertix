@@ -12,11 +12,12 @@ import {
 } from "react";
 import {
   FORMATS,
+  ACCEPTED_FILE_EXTENSIONS,
   getConversionPair,
   getEnabledConversionPairs,
   getEnabledSourceFormats,
   getEnabledTargets,
-  getFormatFromFileName,
+  getFormatFromFile,
   isConversionPairEnabled,
   type FormatId,
 } from "@/lib/formats";
@@ -230,6 +231,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
   const filePickerRef = useRef<HTMLButtonElement>(null);
   const conversionRouteRef = useRef<HTMLDivElement>(null);
   const requestSequenceRef = useRef(0);
+  const fileSelectionSequenceRef = useRef(0);
   const activeRequestRef = useRef<{
     id: number;
     controller: AbortController;
@@ -375,8 +377,10 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
     });
   }
 
-  function selectFile(file: File | undefined) {
+  async function selectFile(file: File | undefined) {
     if (!file) return;
+    const selectionId = fileSelectionSequenceRef.current + 1;
+    fileSelectionSequenceRef.current = selectionId;
     invalidateActiveRequest();
     setTargetMenuOpen(false);
     setUnsupportedRequest(null);
@@ -402,7 +406,8 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
       return;
     }
 
-    const source = getFormatFromFileName(file.name);
+    const source = await getFormatFromFile(file);
+    if (fileSelectionSequenceRef.current !== selectionId) return;
     if (!source) {
       const attemptedExtension = getFileExtension(file.name);
 
@@ -471,14 +476,14 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
   }
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
-    selectFile(event.target.files?.[0]);
+    void selectFile(event.target.files?.[0]);
     event.target.value = "";
   }
 
   function handleDrop(event: DragEvent<HTMLDivElement>) {
     event.preventDefault();
     dispatch({ type: "drag", active: false });
-    selectFile(event.dataTransfer.files?.[0]);
+    void selectFile(event.dataTransfer.files?.[0]);
   }
 
   async function submitConversion() {
@@ -637,6 +642,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
           id={inputId}
           className="sr-only"
           type="file"
+          accept={ACCEPTED_FILE_EXTENSIONS}
           tabIndex={-1}
           onChange={handleInputChange}
         />

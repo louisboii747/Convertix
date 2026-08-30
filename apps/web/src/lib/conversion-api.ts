@@ -1,4 +1,5 @@
 import {
+  getCanonicalFileName,
   getConversionPair,
   isConversionPairEnabled,
   type FormatId,
@@ -32,6 +33,7 @@ interface CreateUploadResponse {
   upload_id: string;
   object_key: string;
   upload_url: string;
+  content_type: string;
   expires_in: number;
 }
 
@@ -159,7 +161,7 @@ export async function createConversion(
     }
   }
 
-  const contentType = file.type || "application/octet-stream";
+  const browserContentType = file.type || "application/octet-stream";
 
   onStatus?.("uploading");
 
@@ -172,8 +174,8 @@ export async function createConversion(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        filename: file.name,
-        content_type: contentType,
+        filename: getCanonicalFileName(file.name, request.source_format),
+        content_type: browserContentType,
       }),
       signal,
     });
@@ -204,13 +206,15 @@ export async function createConversion(
     );
   }
 
+  const uploadContentType = upload.content_type || browserContentType;
+
   let s3Response: Response;
 
   try {
     s3Response = await fetch(upload.upload_url, {
       method: "PUT",
       headers: {
-        "Content-Type": contentType,
+        "Content-Type": uploadContentType,
       },
       body: file,
       signal,

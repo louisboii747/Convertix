@@ -55,6 +55,22 @@ export const FORMATS = {
     extensions: ["webp"],
     accent: "violet",
   },
+  heic: {
+    id: "heic",
+    label: "HEIC",
+    name: "HEIC image",
+    family: "images",
+    extensions: ["heic"],
+    accent: "violet",
+  },
+  heif: {
+    id: "heif",
+    label: "HEIF",
+    name: "HEIF image",
+    family: "images",
+    extensions: ["heif"],
+    accent: "violet",
+  },
   svg: {
     id: "svg",
     label: "SVG",
@@ -152,6 +168,12 @@ export const CONVERSION_PAIRS: readonly ConversionPair[] = [
   { slug: "jpg-to-webp", source: "jpg", target: "webp", popular: false },
   { slug: "webp-to-png", source: "webp", target: "png", popular: true },
   { slug: "webp-to-jpg", source: "webp", target: "jpg", popular: false },
+  { slug: "heic-to-jpg", source: "heic", target: "jpg", popular: true },
+  { slug: "heic-to-png", source: "heic", target: "png", popular: true },
+  { slug: "heic-to-webp", source: "heic", target: "webp", popular: false },
+  { slug: "heif-to-jpg", source: "heif", target: "jpg", popular: false },
+  { slug: "heif-to-png", source: "heif", target: "png", popular: false },
+  { slug: "heif-to-webp", source: "heif", target: "webp", popular: false },
   { slug: "svg-to-png", source: "svg", target: "png", popular: true },
   { slug: "svg-to-jpg", source: "svg", target: "jpg", popular: true },
   { slug: "svg-to-webp", source: "svg", target: "webp", popular: true },
@@ -171,7 +193,11 @@ export const FORMAT_FAMILIES: readonly {
     label: "Documents",
     formats: ["pdf", "docx", "doc", "txt"],
   },
-  { id: "images", label: "Images", formats: ["jpg", "png", "webp", "svg"] },
+  {
+    id: "images",
+    label: "Images",
+    formats: ["jpg", "png", "webp", "heic", "heif", "svg"],
+  },
   { id: "audio", label: "Audio", formats: ["mp3", "wav"] },
   {
     id: "spreadsheets",
@@ -193,6 +219,83 @@ export function getFormatFromFileName(fileName: string): FormatId | null {
     format.extensions.some((candidate) => candidate === extension),
   );
   return match?.id ?? null;
+}
+
+export function getCanonicalFileName(
+  fileName: string,
+  format: FormatId,
+): string {
+  const extension = FORMATS[format].extensions[0];
+  const lastDot = fileName.lastIndexOf(".");
+  const stem = lastDot > 0 ? fileName.slice(0, lastDot) : fileName;
+  return `${stem || "upload"}.${extension}`;
+}
+
+const HEIC_BRANDS = new Set([
+  "heic",
+  "heix",
+  "heim",
+  "heis",
+  "hevm",
+  "hevs",
+  "hevc",
+  "hevx",
+]);
+const HEIF_BRANDS = new Set(["mif1", "msf1"]);
+
+function readAscii(bytes: Uint8Array, offset: number, length: number): string {
+  return String.fromCharCode(...bytes.subarray(offset, offset + length));
+}
+
+export function getHeifFormatFromBytes(
+  bytes: Uint8Array,
+): "heic" | "heif" | null {
+  const view = new DataView(
+    bytes.buffer,
+    bytes.byteOffset,
+    bytes.byteLength,
+  );
+  let boxOffset = 0;
+
+  while (boxOffset + 12 <= bytes.byteLength) {
+    const boxSize = view.getUint32(boxOffset);
+    const boxType = readAscii(bytes, boxOffset + 4, 4);
+
+    if (boxType === "ftyp") {
+      const boxEnd = Math.min(
+        boxSize || bytes.byteLength - boxOffset,
+        bytes.byteLength - boxOffset,
+      );
+      if (boxEnd < 16) return null;
+      const brands = [readAscii(bytes, boxOffset + 8, 4)];
+
+      for (let offset = 16; offset + 4 <= boxEnd; offset += 4) {
+        brands.push(readAscii(bytes, boxOffset + offset, 4));
+      }
+
+      if (brands.some((brand) => HEIC_BRANDS.has(brand))) return "heic";
+      if (brands.some((brand) => HEIF_BRANDS.has(brand))) return "heif";
+      return null;
+    }
+
+    if (boxSize < 8 || boxOffset + boxSize > bytes.byteLength) return null;
+    boxOffset += boxSize;
+  }
+
+  return null;
+}
+
+export async function getFormatFromFile(file: File): Promise<FormatId | null> {
+  try {
+    const header = new Uint8Array(await file.slice(0, 128).arrayBuffer());
+    const heifFormat = getHeifFormatFromBytes(header);
+    if (heifFormat) return heifFormat;
+  } catch {
+    // Filename detection remains a safe fallback if the browser cannot read
+    // the small header slice for any reason.
+  }
+
+  return getFormatFromFileName(file.name);
 }
 
 export function getConversionPair(

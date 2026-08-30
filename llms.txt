@@ -24,6 +24,7 @@ Images:
 - JPG / JPEG
 - PNG
 - WebP
+- HEIC / HEIF (input)
 
 Audio:
 - MP3

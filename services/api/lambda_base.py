@@ -40,6 +40,8 @@ SUPPORTED_FORMATS = {
     "jpg",
     "jpeg",
     "webp",
+    "heic",
+    "heif",
     "svg",
     "mp3",
     "wav",
@@ -64,6 +66,14 @@ SUPPORTED_CONVERSIONS = {
     ("webp", "png"),
     ("webp", "jpg"),
     ("webp", "jpeg"),
+    ("heic", "jpg"),
+    ("heic", "jpeg"),
+    ("heic", "png"),
+    ("heic", "webp"),
+    ("heif", "jpg"),
+    ("heif", "jpeg"),
+    ("heif", "png"),
+    ("heif", "webp"),
     ("svg", "png"),
     ("svg", "jpg"),
     ("svg", "jpeg"),
@@ -84,12 +94,33 @@ UPLOAD_FORMATS = {
     "jpg",
     "jpeg",
     "webp",
+    "heic",
+    "heif",
     "svg",
     "txt",
     "mp3",
     "wav",
     "mp4",
     "webm",
+}
+
+
+UPLOAD_CONTENT_TYPES = {
+    "pdf": "application/pdf",
+    "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "png": "image/png",
+    "jpg": "image/jpeg",
+    "jpeg": "image/jpeg",
+    "webp": "image/webp",
+    "heic": "image/heic",
+    "heif": "image/heif",
+    "svg": "image/svg+xml",
+    "txt": "text/plain",
+    "mp3": "audio/mpeg",
+    "wav": "audio/wav",
+    "mp4": "video/mp4",
+    "webm": "video/webm",
 }
 
 
@@ -145,7 +176,7 @@ def lambda_handler(event, context):
 
         filename = str(body.get("filename", "")).strip()
 
-        content_type = str(
+        browser_content_type = str(
             body.get(
                 "content_type",
                 "application/octet-stream",
@@ -180,6 +211,11 @@ def lambda_handler(event, context):
                     "format": source_format,
                 },
             )
+
+        content_type = UPLOAD_CONTENT_TYPES.get(
+            source_format,
+            browser_content_type or "application/octet-stream",
+        )
 
         if not STORAGE_BUCKET:
             logger.error("STORAGE_BUCKET environment variable is not configured")
@@ -231,6 +267,7 @@ def lambda_handler(event, context):
                 "upload_id": upload_id,
                 "object_key": object_key,
                 "upload_url": upload_url,
+                "content_type": content_type,
                 "expires_in": 900,
             },
         )

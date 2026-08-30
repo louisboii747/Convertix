@@ -12,7 +12,10 @@ from botocore.exceptions import (  # pyright: ignore[reportMissingImports]
     BotoCoreError,
     ClientError,
 )
-from PIL import Image
+from PIL import Image, ImageOps, UnidentifiedImageError
+from pillow_heif import register_heif_opener
+
+register_heif_opener(thumbnails=False)
 
 QUEUE_URL = os.environ.get("QUEUE_URL")
 AWS_REGION = os.environ.get("AWS_REGION", "eu-west-2")
@@ -473,6 +476,38 @@ def convert_txt_document(
     return output_key
 
 
+IMAGE_INPUT_FORMATS = {"jpg", "jpeg", "png", "webp", "heic", "heif"}
+IMAGE_TARGET_FORMATS = {"jpg", "jpeg", "png", "webp"}
+
+
+def normalize_decoded_image_format(image_format: str | None) -> str | None:
+    return {
+        "JPEG": "jpg",
+        "PNG": "png",
+        "WEBP": "webp",
+        "HEIF": "heif",
+    }.get((image_format or "").upper())
+
+
+def image_save_metadata(image: Image.Image, target_format: str) -> dict:
+    metadata_keys = ["exif", "icc_profile"]
+
+    if target_format == "webp":
+        metadata_keys.append("xmp")
+
+    return {
+        key: image.info[key]
+        for key in metadata_keys
+        if image.info.get(key) is not None
+    }
+
+
+def image_has_alpha(image: Image.Image) -> bool:
+    return "A" in image.getbands() or (
+        image.mode == "P" and "transparency" in image.info
+    )
+
+
 def convert_image(
     s3,
     conversion_id: str,
@@ -480,7 +515,7 @@ def convert_image(
     target_format: str,
     input_key: str,
 ) -> str:
-    format_aliases = {
+    output_format_aliases = {
         "jpg": "JPEG",
         "jpeg": "JPEG",
         "png": "PNG",
@@ -501,10 +536,10 @@ def convert_image(
         "webp": "webp",
     }
 
-    if source_format not in format_aliases:
+    if source_format not in IMAGE_INPUT_FORMATS:
         raise ValueError(f"Unsupported image source format: {source_format}")
 
-    if target_format not in format_aliases:
+    if target_format not in IMAGE_TARGET_FORMATS:
         raise ValueError(f"Unsupported image target format: {target_format}")
 
     output_extension = output_extensions[target_format]
@@ -532,33 +567,82 @@ def convert_image(
             flush=True,
         )
 
-        with Image.open(input_path) as image:
-            image.load()
+        try:
+            with Image.open(input_path) as opened_image:
+                detected_format = normalize_decoded_image_format(
+                    opened_image.format
+                )
+
+                if detected_format not in IMAGE_INPUT_FORMATS:
+                    raise ValueError(
+                        "Unsupported decoded image format: "
+                        f"{opened_image.format or 'unknown'}"
+                    )
+
+                opened_image.load()
+                image = ImageOps.exif_transpose(opened_image)
+
+        except (
+            EOFError,
+            OSError,
+            RuntimeError,
+            SyntaxError,
+            UnidentifiedImageError,
+            ValueError,
+        ) as exc:
+            raise ValueError(
+                f"Invalid or unsupported {source_format.upper()} image data"
+            ) from exc
+
+        print(
+            "Decoded image content as "
+            f"{detected_format.upper()} (declared source: {source_format})",
+            flush=True,
+        )
+
+        try:
+            save_metadata = image_save_metadata(image, target_format)
 
             if target_format in {"jpg", "jpeg"}:
-                if image.mode in {"RGBA", "LA"} or (
-                    image.mode == "P" and "transparency" in image.info
-                ):
+                if image_has_alpha(image):
+                    rgba_image = image.convert("RGBA")
                     background = Image.new("RGB", image.size, "white")
-
-                    if image.mode != "RGBA":
-                        image = image.convert("RGBA")
-
-                    background.paste(image, mask=image.getchannel("A"))
+                    background.paste(rgba_image, mask=rgba_image.getchannel("A"))
+                    rgba_image.close()
+                    image.close()
                     image = background
 
                 elif image.mode != "RGB":
-                    image = image.convert("RGB")
+                    converted_image = image.convert("RGB")
+                    image.close()
+                    image = converted_image
+
+            elif target_format == "webp" and image.mode not in {"RGB", "RGBA"}:
+                converted_image = image.convert(
+                    "RGBA" if image_has_alpha(image) else "RGB"
+                )
+                image.close()
+                image = converted_image
 
             image.save(
                 output_path,
-                format=format_aliases[target_format],
+                format=output_format_aliases[target_format],
+                **save_metadata,
             )
+
+        finally:
+            image.close()
 
         if not output_path.exists():
             raise RuntimeError(
                 f"Image conversion reported success but {output_path} was not created"
             )
+
+        try:
+            with Image.open(output_path) as output_image:
+                output_image.verify()
+        except (OSError, SyntaxError, UnidentifiedImageError) as exc:
+            raise RuntimeError("Converted image output is invalid") from exc
 
         s3.upload_file(
             str(output_path),
@@ -864,11 +948,9 @@ def process_conversion(
             input_key=input_key,
         )
 
-    image_formats = {"png", "jpg", "jpeg", "webp"}
-
     if (
-        source_format in image_formats
-        and target_format in image_formats
+        source_format in IMAGE_INPUT_FORMATS
+        and target_format in IMAGE_TARGET_FORMATS
         and source_format != target_format
     ):
         return convert_image(

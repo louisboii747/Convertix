@@ -58,6 +58,20 @@ export const FORMAT_CONTENT: Partial<Record<FormatId, FormatContent>> = {
     strengths: ["Efficient compression", "Transparency support", "Lossy and lossless modes"],
     considerations: ["Some older or specialist software may prefer PNG or JPG", "Smaller output is not guaranteed for every image", "Quality depends on encoder settings"],
   },
+  heic: {
+    summary: "HEIC is an efficient image container commonly used by iPhones and other Apple devices for photographs.",
+    description: "HEIC usually stores images encoded with HEVC, often at smaller sizes than JPEG while retaining useful camera metadata and image quality.",
+    useCases: ["iPhone and iPad photos", "Efficient photo storage", "Modern camera workflows"],
+    strengths: ["Efficient photographic compression", "Can retain EXIF metadata", "Supports transparency and high bit-depth imagery"],
+    considerations: ["Some apps still require JPG or PNG", "Orientation metadata must be handled during conversion", "Compatibility varies outside newer devices and software"],
+  },
+  heif: {
+    summary: "HEIF is a modern container format for efficiently storing high-quality images and image sequences.",
+    description: "HEIF can hold images encoded with HEVC and related metadata. HEIC is a commonly encountered HEIF-based form used by Apple devices.",
+    useCases: ["Modern phone photography", "Efficient image archives", "Images with metadata or transparency"],
+    strengths: ["Efficient storage", "Flexible image container", "Supports metadata and alpha channels"],
+    considerations: ["Older software may not open it", "Decoder support is required", "JPG, PNG or WebP may be easier to share"],
+  },
   svg: {
     summary: "SVG is a vector graphics format that describes shapes, paths and text rather than storing a fixed grid of pixels.",
     description: "SVG is especially useful for logos, icons and diagrams that need to stay sharp at different sizes. It can also contain markup and styling that should be handled carefully when SVG files come from untrusted sources.",

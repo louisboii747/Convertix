@@ -137,6 +137,7 @@ Convertix already models several format families in the application, including:
 - JPG / JPEG
 - PNG
 - WebP
+- HEIC / HEIF input to JPG, PNG, or WebP
 
 ### Audio
 
