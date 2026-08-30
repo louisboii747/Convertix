@@ -418,7 +418,7 @@ export async function createImagePdfConversion(
     let uploadResponse: Response;
 
     try {
-      uploadResponse = await fetch(\`\${apiBaseUrl}/uploads\`, {
+      uploadResponse = await fetch(`${apiBaseUrl}/uploads`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -492,7 +492,7 @@ export async function createImagePdfConversion(
   let queueResponse: Response;
 
   try {
-    queueResponse = await fetch(\`\${apiBaseUrl}/conversions\`, {
+    queueResponse = await fetch(`${apiBaseUrl}/conversions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -544,7 +544,7 @@ export async function createImagePdfConversion(
 
     try {
       statusResponse = await fetch(
-        \`\${apiBaseUrl}/conversions/\${queued.conversion_id}\`,
+        `${apiBaseUrl}/conversions/${queued.conversion_id}`,
         {
           method: "GET",
           signal,
