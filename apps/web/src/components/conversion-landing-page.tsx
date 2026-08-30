@@ -3,6 +3,7 @@ import { Converter } from "@/components/converter";
 import { ArrowIcon, RouteIcon } from "@/components/icons";
 import { FormatMark } from "@/components/format-mark";
 import { SiteHeader } from "@/components/site-header";
+import { GUIDES } from "@/lib/guides";
 import { getConversionContent } from "@/lib/conversion-content";
 import {
   FORMATS,
@@ -50,6 +51,17 @@ interface ConversionLandingPageProps {
 export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
   const routeEnabled = pair ? isConversionPairEnabled(pair) : true;
   const conversionContent = pair ? getConversionContent(pair.slug) : null;
+  const relatedGuides =
+    pair?.source === "heic"
+      ? GUIDES.filter((guide) =>
+          [
+            "heic-vs-jpg",
+            "open-heic-on-windows",
+            "why-iphone-uses-heic",
+            "heic-vs-png",
+          ].includes(guide.slug),
+        )
+      : [];
   const allEnabledPairs = getEnabledConversionPairs();
   const liveFormatIds = Array.from(
     new Set(
@@ -75,7 +87,8 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
   const source = pair ? FORMATS[pair.source] : null;
   const target = pair ? FORMATS[pair.target] : null;
   const pageTitle = pair
-    ? SEARCH_INTENT_HEADINGS[pair.slug] ?? `Convert ${getConversionPairLabel(pair)}`
+    ? (SEARCH_INTENT_HEADINGS[pair.slug] ??
+      `Convert ${getConversionPairLabel(pair)}`)
     : "Convert files online without the fuss.";
 
   const pageDescription = pair
@@ -134,7 +147,9 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
           >
             <div className="batch-feature-copy">
               <span className="batch-feature-eyebrow">Browser tool</span>
-              <h2 id="batch-feature-title">Compress up to 30 images at once.</h2>
+              <h2 id="batch-feature-title">
+                Compress up to 30 images at once.
+              </h2>
               <p>
                 Batch-compress JPG, PNG, and WebP images without uploading them
                 to Convertix. Process the set on your device, then download each
@@ -229,7 +244,9 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
             <li>
               <span aria-hidden="true">1</span>
               <div>
-                <strong>{pair ? `Choose a ${source?.label} file` : "Choose a file"}</strong>
+                <strong>
+                  {pair ? `Choose a ${source?.label} file` : "Choose a file"}
+                </strong>
                 <p>
                   {pair
                     ? `Pick a ${source?.label} file from your device or drop it into the converter.`
@@ -254,7 +271,9 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
               <span aria-hidden="true">3</span>
               <div>
                 <strong>
-                  {pair ? `Download the ${target?.label}` : "Download the result"}
+                  {pair
+                    ? `Download the ${target?.label}`
+                    : "Download the result"}
                 </strong>
                 <p>
                   {pair
@@ -318,6 +337,26 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
             ))}
           </div>
         </section>
+
+        {relatedGuides.length > 0 ? (
+          <section className="guides-promo" aria-labelledby="heic-guides-title">
+            <div>
+              <h2 id="heic-guides-title">Learn more about HEIC photos</h2>
+              <p>
+                Understand iPhone HEIC files, compatibility, and which image
+                format to choose.
+              </p>
+            </div>
+
+            <div className="guide-route-links">
+              {relatedGuides.map((guide) => (
+                <Link href={`/guides/${guide.slug}`} key={guide.slug}>
+                  {guide.title} <ArrowIcon />
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         <section className="guides-promo" aria-labelledby="guides-promo-title">
           <div>
