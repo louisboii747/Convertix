@@ -311,6 +311,216 @@ export const CONVERSION_CONTENT: Readonly<Record<string, ConversionContent>> = {
       },
     ],
   },
+  "heic-to-jpg": {
+    intro:
+      "HEIC is commonly used by iPhones because it can store high-quality photos efficiently. Converting HEIC to JPG trades HEIC-specific features for a format that is accepted by a very wide range of websites, apps, and devices.",
+    highlights: [
+      {
+        heading: "Why convert HEIC to JPG?",
+        body: "JPG is a practical choice when an upload form, editor, older device, or sharing workflow does not accept HEIC files.",
+      },
+      {
+        heading: "What happens to transparency and metadata?",
+        body: "JPEG cannot store transparency, so transparent pixels must become opaque. Convertix carries compatible EXIF and colour-profile data where the JPG format and encoder support it, but metadata can vary between formats and software.",
+      },
+      {
+        heading: "Will image quality change?",
+        body: "It can. HEIC and JPEG both commonly use lossy compression, so converting the decoded image to JPG introduces a new JPEG encoding step and cannot restore detail already absent from the source.",
+      },
+    ],
+    faq: [
+      {
+        question: "Why do iPhones save photos as HEIC?",
+        answer:
+          "Apple devices commonly use HEIC because it can store photos efficiently while retaining good visual quality, helping reduce storage compared with older image workflows.",
+      },
+      {
+        question: "Is JPG more compatible than HEIC?",
+        answer:
+          "Yes. HEIC support has improved, but JPG still works with a broader range of websites, older devices, editors, and upload systems.",
+      },
+      {
+        question: "Does HEIC to JPG keep photo orientation?",
+        answer:
+          "Convertix applies the image's EXIF orientation before saving the JPG so the visible orientation is carried into the converted pixels.",
+      },
+    ],
+  },
+  "heic-to-png": {
+    intro:
+      "Converting HEIC to PNG is useful when you need a broadly supported lossless output format or an image workflow that benefits from transparency support rather than JPEG-style compression.",
+    highlights: [
+      {
+        heading: "Why convert HEIC to PNG?",
+        body: "PNG is widely accepted by editors, design tools, browsers, and upload workflows, and it avoids adding another lossy compression step when the converted image is saved.",
+      },
+      {
+        heading: "Can PNG preserve transparency?",
+        body: "PNG supports an alpha channel, so transparency present in the decoded HEIC image can be represented in the PNG output.",
+      },
+      {
+        heading: "Will the PNG be larger?",
+        body: "Often, especially for photographs. PNG uses lossless compression, so a photographic PNG can be much larger than an efficiently encoded HEIC file.",
+      },
+    ],
+    faq: [
+      {
+        question: "Does converting HEIC to PNG improve image quality?",
+        answer:
+          "No. PNG avoids a new lossy encoding step, but it cannot recreate detail that was already discarded when the HEIC image was created.",
+      },
+      {
+        question: "Should I use PNG or JPG for an iPhone photo?",
+        answer:
+          "JPG is usually better for photographs when file size and compatibility matter. PNG is more useful when lossless output or transparency support matters more than size.",
+      },
+      {
+        question: "Can HEIC metadata be kept in PNG?",
+        answer:
+          "Some compatible metadata, including EXIF and colour-profile information, can be carried by Convertix, but metadata support differs between formats and applications.",
+      },
+    ],
+  },
+  "heic-to-webp": {
+    intro:
+      "HEIC and WebP are both modern image formats designed for efficient storage. Converting HEIC to WebP can be useful when an iPhone photo needs a web-friendly format with modern compression and transparency support.",
+    highlights: [
+      {
+        heading: "Why convert HEIC to WebP?",
+        body: "WebP is widely supported by modern browsers and can be convenient for websites, web apps, and content pipelines that do not accept HEIC uploads.",
+      },
+      {
+        heading: "Can WebP keep transparency?",
+        body: "Yes. WebP supports transparency, so alpha information present in the decoded HEIC image can be represented in the output.",
+      },
+      {
+        heading: "What happens to metadata?",
+        body: "Convertix passes compatible EXIF, ICC colour-profile, and XMP metadata to WebP when that information is present and supported by the encoder.",
+      },
+    ],
+    faq: [
+      {
+        question: "Is WebP better than JPG for HEIC photos?",
+        answer:
+          "WebP can offer modern compression and transparency support, while JPG is still the safer choice when maximum compatibility with older software matters.",
+      },
+      {
+        question: "Will HEIC to WebP change quality?",
+        answer:
+          "It can. The image is decoded and encoded again as WebP, so visual quality and file size depend on the source image and the WebP encoding.",
+      },
+      {
+        question: "When should I keep the original HEIC?",
+        answer:
+          "Keep the original when your devices and software already support HEIC and you want to preserve the source file rather than introduce another conversion.",
+      },
+    ],
+  },
+  "heif-to-jpg": {
+    intro:
+      "HEIF is a family of high-efficiency image containers; HEIC is a common HEVC-based form used by Apple devices. Converting a compatible HEIF image to JPG can make it easier to use in software that expects conventional JPEG files.",
+    highlights: [
+      {
+        heading: "Why convert HEIF to JPG?",
+        body: "JPG has extremely broad compatibility across browsers, editors, messaging apps, document tools, and upload forms that may not recognise HEIF.",
+      },
+      {
+        heading: "What happens to transparency?",
+        body: "JPEG does not support transparency. If the decoded HEIF image contains alpha information, Convertix flattens transparent areas onto an opaque white background for JPG output.",
+      },
+      {
+        heading: "What about orientation and metadata?",
+        body: "Convertix applies EXIF orientation before saving and carries compatible EXIF and ICC colour-profile data where supported, although metadata behaviour can differ between formats and applications.",
+      },
+    ],
+    faq: [
+      {
+        question: "Are HEIF and HEIC the same thing?",
+        answer:
+          "Not exactly. HEIF is a broader image-container standard, while HEIC commonly refers to HEIF images encoded with HEVC and is widely associated with Apple devices.",
+      },
+      {
+        question: "Does HEIF to JPG reduce quality?",
+        answer:
+          "It can. JPEG normally uses lossy compression, so re-encoding the decoded HEIF image can discard some additional detail.",
+      },
+      {
+        question: "Why use JPG instead of HEIF?",
+        answer:
+          "Use JPG when compatibility is the priority. Keep HEIF when your workflow supports it and you prefer the original high-efficiency file.",
+      },
+    ],
+  },
+  "heif-to-png": {
+    intro:
+      "Converting HEIF to PNG creates a conventional lossless raster image that is useful for editing, compatibility, and workflows that need transparency support.",
+    highlights: [
+      {
+        heading: "Why convert HEIF to PNG?",
+        body: "PNG is broadly supported and useful when a tool cannot open HEIF or when you want a lossless output for further editing.",
+      },
+      {
+        heading: "Can PNG keep transparency?",
+        body: "Yes. PNG supports transparency, so alpha information available in the decoded HEIF image can be represented in the output.",
+      },
+      {
+        heading: "What is the file-size trade-off?",
+        body: "PNG can be significantly larger than HEIF for photographic content because it uses lossless compression rather than the high-efficiency coding commonly used by HEIF images.",
+      },
+    ],
+    faq: [
+      {
+        question: "Does HEIF to PNG restore lost detail?",
+        answer:
+          "No. Saving as PNG prevents a new lossy PNG encoding step, but it cannot reconstruct image information that is not present in the decoded HEIF source.",
+      },
+      {
+        question: "Is PNG better than JPG for HEIF conversion?",
+        answer:
+          "PNG is preferable for lossless output or transparency. JPG is usually more space-efficient for photographs and has very broad compatibility.",
+      },
+      {
+        question: "Will HEIF orientation be preserved?",
+        answer:
+          "Convertix applies EXIF orientation before writing the PNG so the output pixels reflect the intended visible orientation.",
+      },
+    ],
+  },
+  "heif-to-webp": {
+    intro:
+      "Converting HEIF to WebP moves a high-efficiency image into a modern format built for web delivery, with support for compact files and optional transparency.",
+    highlights: [
+      {
+        heading: "Why convert HEIF to WebP?",
+        body: "WebP is a useful target for websites and browser-based workflows that support modern image formats but do not accept HEIF files.",
+      },
+      {
+        heading: "Can WebP preserve alpha information?",
+        body: "Yes. WebP supports transparency, so alpha information present in the decoded HEIF image can be retained in the converted image.",
+      },
+      {
+        heading: "Can metadata carry across?",
+        body: "Convertix passes compatible EXIF, ICC colour-profile, and XMP metadata to WebP when present and supported, but applications may interpret or strip metadata differently.",
+      },
+    ],
+    faq: [
+      {
+        question: "Is HEIF to WebP lossless?",
+        answer:
+          "Not necessarily. WebP supports both lossy and lossless modes, and conversion settings determine how the output is encoded.",
+      },
+      {
+        question: "Why choose WebP instead of JPG?",
+        answer:
+          "WebP is useful for modern web workflows and supports transparency. JPG remains preferable when compatibility with older software is more important.",
+      },
+      {
+        question: "Should I delete the original HEIF after converting?",
+        answer:
+          "Keep the original if it matters to you. A converted file is a new representation and may differ in compression, metadata, or format-specific features.",
+      },
+    ],
+  },
   "svg-to-png": {
     intro:
       "SVG stores vector shapes that can scale without becoming pixelated. PNG is a raster image, so converting SVG to PNG creates a fixed-resolution bitmap.",
