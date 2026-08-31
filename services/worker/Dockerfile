@@ -24,6 +24,9 @@ COPY merge_worker.py .
 RUN useradd --create-home convertix \
     && chown -R convertix:convertix /app
 
+ARG BUILD_REVISION=unknown
+LABEL org.opencontainers.image.revision=$BUILD_REVISION
+
 USER convertix
 
 CMD ["python", "merge_worker.py"]

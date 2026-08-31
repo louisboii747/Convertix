@@ -2,8 +2,8 @@ import Link from "next/link";
 import { Converter } from "@/components/converter";
 import { ImageToPdfConverter } from "@/components/image-to-pdf-converter";
 import { ArrowIcon, RouteIcon } from "@/components/icons";
-import { FormatMark } from "@/components/format-mark";
 import { SiteHeader } from "@/components/site-header";
+import { SupportedFormats } from "@/components/supported-formats";
 import { FlowButton } from "@/components/ui/flow-button";
 import { TypingAnimation } from "@/components/ui/typing-animation";
 import { GUIDES } from "@/lib/guides";
@@ -374,26 +374,11 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
           <div className="formats-heading">
             <h2 id="formats-title">Supported formats</h2>
             <p>
-              Open a format guide to see what the file type is used for and
-              which conversions are available.
+              Choose a format to see what it is used for and which live
+              conversions are available.
             </p>
           </div>
-          <div
-            className="format-cloud"
-            aria-label="Formats with available conversions"
-          >
-            {liveFormatIds.map((formatId) => (
-              <Link
-                className="format-cloud-item"
-                href={`/formats/${formatId}`}
-                key={formatId}
-              >
-                <FormatMark format={formatId} />
-                <span>{FORMATS[formatId].label}</span>
-                <small>{FORMATS[formatId].name}</small>
-              </Link>
-            ))}
-          </div>
+          <SupportedFormats formatIds={liveFormatIds} />
         </section>
 
         {relatedGuides.length > 0 ? (

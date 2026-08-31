@@ -110,8 +110,9 @@ def process_conversion(
     conversion_id: str,
     source_format: str,
     target_format: str,
-    input_key: str,
+    input_key: str | None,
     compression_level: str | None = None,
+    input_keys: list[str] | None = None,
 ) -> str:
     source_format = source_format.lower()
     target_format = target_format.lower()
@@ -122,6 +123,9 @@ def process_conversion(
         "jpeg",
         "webp",
     }:
+        if not input_key:
+            raise ValueError("SVG conversion requires an input_key")
+
         return convert_svg(
             s3=s3,
             conversion_id=conversion_id,
@@ -136,6 +140,7 @@ def process_conversion(
         target_format=target_format,
         input_key=input_key,
         compression_level=compression_level,
+        input_keys=input_keys,
     )
 
 
