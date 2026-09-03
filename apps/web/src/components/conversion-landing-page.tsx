@@ -56,17 +56,21 @@ interface ConversionLandingPageProps {
 export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
   const routeEnabled = pair ? isConversionPairEnabled(pair) : true;
   const conversionContent = pair ? getConversionContent(pair.slug) : null;
-  const relatedGuides =
-    pair?.source === "heic"
-      ? GUIDES.filter((guide) =>
-          [
-            "heic-vs-jpg",
-            "open-heic-on-windows",
-            "why-iphone-uses-heic",
-            "heic-vs-png",
-          ].includes(guide.slug),
-        )
-      : [];
+  const relatedGuideSlugs = pair
+    ? pair.source === "heic"
+      ? [
+          "heic-vs-jpg",
+          "open-heic-on-windows",
+          "why-iphone-uses-heic",
+          "heic-vs-png",
+        ]
+      : pair.slug === "mp3-to-wav" || pair.slug === "wav-to-mp3"
+        ? ["mp3-vs-wav"]
+        : []
+    : [];
+  const relatedGuides = GUIDES.filter((guide) =>
+    relatedGuideSlugs.includes(guide.slug),
+  );
   const allEnabledPairs = getEnabledConversionPairs();
   const liveFormatIds = Array.from(
     new Set(
@@ -382,12 +386,20 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
         </section>
 
         {relatedGuides.length > 0 ? (
-          <section className="guides-promo" aria-labelledby="heic-guides-title">
+          <section
+            className="guides-promo"
+            aria-labelledby="conversion-guides-title"
+          >
             <div>
-              <h2 id="heic-guides-title">Learn more about HEIC photos</h2>
+              <h2 id="conversion-guides-title">
+                {pair?.source === "heic"
+                  ? "Learn more about HEIC photos"
+                  : "Learn more about MP3 and WAV"}
+              </h2>
               <p>
-                Understand iPhone HEIC files, compatibility, and which image
-                format to choose.
+                {pair?.source === "heic"
+                  ? "Understand iPhone HEIC files, compatibility, and which image format to choose."
+                  : "Compare MP3 and WAV for editing, production, playback, file size, and audio quality."}
               </p>
             </div>
 
