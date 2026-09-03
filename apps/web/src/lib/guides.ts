@@ -524,6 +524,7 @@ export const GUIDES: Guide[] = [
     ],
     routes: [
       { label: "Convert SVG to PNG", href: "/svg-to-png" },
+      { label: "Convert SVG to WebP", href: "/svg-to-webp" },
       { label: "Optimise an SVG", href: "/optimize-svg" },
     ],
     related: ["png-jpg-or-webp", "file-conversion-explained"],
