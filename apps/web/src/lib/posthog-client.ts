@@ -14,10 +14,13 @@ export function captureEvent(
   return true;
 }
 
-export function captureException(error: unknown) {
+export function captureException(
+  error: unknown,
+  properties?: Record<string, unknown>,
+) {
   if (getAnalyticsConsent() !== "accepted") {
     return;
   }
 
-  posthog.captureException(error);
+  posthog.captureException(error, properties);
 }

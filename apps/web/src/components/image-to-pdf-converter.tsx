@@ -341,7 +341,15 @@ export function ImageToPdfConverter({
         batch_file_count: files.length,
       });
 
-      captureException(conversionError);
+      captureException(
+        conversionError,
+        conversionError instanceof ConversionApiError
+          ? {
+              api_status: conversionError.status,
+              api_error_code: conversionError.code,
+            }
+          : undefined,
+      );
       setError(message);
       setStatus("failed");
     } finally {
