@@ -109,9 +109,9 @@ const SEARCH_INTENT_METADATA: Partial<
     ],
   },
   "mp3-to-wav": {
-    title: "MP3 to WAV Converter | Convert Audio Online",
+    title: "MP3 to WAV Converter | Free Online Audio Converter",
     description:
-      "Convert MP3 audio files to WAV online with Convertix. Create WAV files for editing, compatibility, and audio workflows.",
+      "Convert MP3 to WAV online with Convertix. No account required. Upload an MP3 file up to 100 MB and download the converted WAV when it is ready.",
     keywords: [
       "mp3 to wav",
       "convert mp3 to wav",
