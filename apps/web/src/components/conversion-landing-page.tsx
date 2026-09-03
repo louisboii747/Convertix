@@ -112,7 +112,9 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
     ? routeEnabled
       ? isImagePdfPair
         ? `Choose one or more ${source?.label} images, set their page order, and download one PDF.`
-        : `Choose a ${source?.label} file and download a ${target?.label} when the conversion finishes.`
+        : pair.slug === "txt-to-docx"
+          ? "Turn a plain-text TXT file into an editable Word DOCX document, then download the result when conversion finishes."
+          : `Choose a ${source?.label} file and download a ${target?.label} when the conversion finishes.`
       : `Convertix recognises ${source?.label} to ${target?.label}, but cannot process it yet.`
     : "Choose a file and Convertix will show the formats it can convert to.";
 
@@ -369,6 +371,29 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
                   <p>{highlight.body}</p>
                 </article>
               ))}
+            </div>
+          </section>
+        ) : null}
+
+        {pair?.slug === "txt-to-docx" ? (
+          <section
+            className="guides-promo"
+            aria-labelledby="txt-docx-format-title"
+          >
+            <div>
+              <h2 id="txt-docx-format-title">TXT and Word DOCX files</h2>
+              <p>
+                Learn what plain-text TXT files contain and how DOCX adds editable
+                Word document structure and formatting.
+              </p>
+            </div>
+            <div className="guide-route-links">
+              <Link href="/formats/txt">
+                About TXT files <ArrowIcon />
+              </Link>
+              <Link href="/formats/docx">
+                About DOCX files <ArrowIcon />
+              </Link>
             </div>
           </section>
         ) : null}
