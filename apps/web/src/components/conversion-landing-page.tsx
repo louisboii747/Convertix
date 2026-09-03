@@ -42,6 +42,7 @@ const SEARCH_INTENT_HEADINGS: Partial<Record<string, string>> = {
   "jpg-to-pdf": "JPG to PDF Converter",
   "png-to-pdf": "PNG to PDF Converter",
   "svg-to-png": "SVG to PNG Converter",
+  "svg-to-webp": "SVG to WebP Converter",
   "mp3-to-wav": "MP3 to WAV Converter",
   "wav-to-mp3": "WAV to MP3 Converter",
   "txt-to-docx": "TXT to DOCX Converter",
@@ -66,7 +67,9 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
         ]
       : pair.slug === "mp3-to-wav" || pair.slug === "wav-to-mp3"
         ? ["mp3-vs-wav"]
-        : []
+        : pair.slug === "svg-to-webp"
+          ? ["svg-vs-png"]
+          : []
     : [];
   const relatedGuides = GUIDES.filter((guide) =>
     relatedGuideSlugs.includes(guide.slug),
@@ -394,12 +397,16 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
               <h2 id="conversion-guides-title">
                 {pair?.source === "heic"
                   ? "Learn more about HEIC photos"
-                  : "Learn more about MP3 and WAV"}
+                  : pair?.slug === "svg-to-webp"
+                    ? "Learn more about SVG and raster images"
+                    : "Learn more about MP3 and WAV"}
               </h2>
               <p>
                 {pair?.source === "heic"
                   ? "Understand iPhone HEIC files, compatibility, and which image format to choose."
-                  : "Compare MP3 and WAV for editing, production, playback, file size, and audio quality."}
+                  : pair?.slug === "svg-to-webp"
+                    ? "Compare vector SVG graphics with raster formats and decide when conversion is the right choice."
+                    : "Compare MP3 and WAV for editing, production, playback, file size, and audio quality."}
               </p>
             </div>
 
@@ -410,6 +417,27 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
                 </Link>
               ))}
             </div>
+          </section>
+        ) : null}
+
+        {pair?.slug === "svg-to-webp" ? (
+          <section
+            className="guides-promo"
+            aria-labelledby="svg-keep-vector-title"
+          >
+            <div>
+              <h2 id="svg-keep-vector-title">Keeping the file as SVG?</h2>
+              <p>
+                If you only need a smaller vector file, optimize the SVG instead
+                of rasterizing it to WebP.
+              </p>
+            </div>
+            <FlowButton
+              href="/optimize-svg"
+              variant="dark"
+              shape="rounded"
+              text="Optimize SVG instead"
+            />
           </section>
         ) : null}
 
