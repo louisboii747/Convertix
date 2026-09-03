@@ -148,14 +148,16 @@ const SEARCH_INTENT_METADATA: Partial<
     ],
   },
   "txt-to-docx": {
-    title: "Convert TXT to DOCX Online | Text File to Word",
+    title: "TXT to DOCX Converter | Convert Text Files to Word Online",
     description:
-      "Convert a TXT file to an editable Word DOCX document online. Choose a plain-text file and download the converted DOCX.",
+      "Convert TXT to DOCX online with Convertix. Turn a plain-text file into an editable Word document with no account required.",
     keywords: [
       "txt to docx",
-      "text file to word",
+      "txt to docx converter",
+      "txt to word converter",
+      "text to docx",
       "convert txt to word",
-      "notepad to word",
+      "text file to word",
       "txt to docx online",
     ],
   },
