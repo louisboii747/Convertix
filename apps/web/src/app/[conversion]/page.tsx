@@ -108,6 +108,19 @@ const SEARCH_INTENT_METADATA: Partial<
       "svg to png online",
     ],
   },
+  "svg-to-webp": {
+    title: "SVG to WebP Converter | Convert SVG Images Online",
+    description:
+      "Convert SVG to WebP online with Convertix. No account required. Turn vector graphics into fixed-resolution WebP images for websites, apps, and sharing.",
+    keywords: [
+      "svg to webp",
+      "convert svg to webp",
+      "svg to webp converter",
+      "vector to webp",
+      "svg image to webp",
+      "svg to webp online",
+    ],
+  },
   "mp3-to-wav": {
     title: "MP3 to WAV Converter | Free Online Audio Converter",
     description:
