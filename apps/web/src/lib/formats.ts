@@ -357,6 +357,7 @@ const SEARCH_FRIENDLY_PAIR_LABELS: Partial<Record<string, string>> = {
   "xlsx-to-pdf": "Excel to PDF",
   "jpg-to-pdf": "JPG to PDF",
   "png-to-pdf": "PNG to PDF",
+  "txt-to-docx": "TXT to DOCX Converter",
   "svg-to-webp": "SVG to WebP Converter",
   "mp3-to-wav": "MP3 to WAV Converter",
   "wav-to-mp3": "WAV to MP3 Converter",
