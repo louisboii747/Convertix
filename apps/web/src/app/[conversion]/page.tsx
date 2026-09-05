@@ -31,16 +31,17 @@ const SEARCH_INTENT_METADATA: Partial<
     ],
   },
   "xlsx-to-pdf": {
-    title: "Excel to PDF Converter | Convert XLSX to PDF Online",
+    title: "XLSX to PDF Converter | Convert Excel to PDF Online",
     description:
-      "Convert Excel spreadsheets to PDF online with Convertix. Turn XLSX files into fixed, easy-to-share PDF documents for viewing, printing, and sharing.",
+      "Convert XLSX to PDF online with Convertix. Upload an Excel workbook and download a fixed-layout PDF for sharing, printing, or submitting. No account required.",
     keywords: [
-      "excel to pdf",
       "xlsx to pdf",
-      "convert excel to pdf",
-      "excel to pdf converter",
-      "spreadsheet to pdf",
+      "xlsx to pdf converter",
       "convert xlsx to pdf",
+      "xlsx to pdf online",
+      "excel to pdf",
+      "convert excel to pdf",
+      "excel spreadsheet to pdf",
     ],
   },
   "png-to-jpg": {
