@@ -354,7 +354,7 @@ export function getEnabledConversionPairs(): readonly ConversionPair[] {
 
 const SEARCH_FRIENDLY_PAIR_LABELS: Partial<Record<string, string>> = {
   "docx-to-pdf": "Word to PDF",
-  "xlsx-to-pdf": "Excel to PDF",
+  "xlsx-to-pdf": "XLSX to PDF",
   "jpg-to-pdf": "JPG to PDF",
   "png-to-pdf": "PNG to PDF",
   "txt-to-docx": "TXT to DOCX Converter",
