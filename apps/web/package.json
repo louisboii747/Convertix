@@ -9,7 +9,10 @@
     "format": "prettier --write .",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "npm run lint && npm run typecheck && npm run test:auth && npm run test:formats",
+    "test": "npm run lint && npm run typecheck && npm run test:auth && npm run test:formats && npm run test:account",
+    "test:account": "node --test src/lib/account.test.mts",
+    "test:account:db": "node --env-file=.env.local --test src/lib/account-integration.test.mts",
+    "test:account:browser": "node --env-file=.env.local --test src/lib/account-browser.test.mts",
     "test:auth": "node --test src/lib/header-auth.test.mjs",
     "test:formats": "node --test src/lib/formats.test.mts"
   },
@@ -37,6 +40,7 @@
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.0",
+    "playwright-core": "1.62.1",
     "prettier": "^3.6.2",
     "tailwindcss": "^4",
     "typescript": "^5"

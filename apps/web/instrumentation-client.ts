@@ -2,8 +2,10 @@ import posthog from "posthog-js";
 
 import {
   getAnalyticsConsent,
+  syncAnalyticsConsentCookie,
   type AnalyticsConsent,
 } from "@/lib/analytics-consent";
+import { protectAnalyticsEvent } from "@/lib/analytics-privacy";
 
 const token = process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN;
 const host = process.env.NEXT_PUBLIC_POSTHOG_HOST;
@@ -21,16 +23,32 @@ function initPostHog() {
     defaults: "2026-01-30",
     capture_exceptions: true,
     debug: process.env.NODE_ENV === "development",
+    session_recording: {
+      blockSelector: "[data-ph-private]",
+      maskTextSelector: "[data-ph-mask]",
+      maskAllInputs: true,
+    },
+    before_send: (event) => {
+      if (!event || getAnalyticsConsent() !== "accepted") return null;
+      return protectAnalyticsEvent(event, window.location.pathname);
+    },
   });
 
   initialized = true;
 }
 
 function applyConsent(consent: AnalyticsConsent | null) {
+  syncAnalyticsConsentCookie(consent);
   if (consent === "accepted") {
     initPostHog();
+    if (initialized) posthog.opt_in_capturing({ captureEventName: false });
+  } else if (initialized) {
+    posthog.opt_out_capturing();
   }
 }
+
+// Keep server-side consent aligned even when analytics is not configured.
+syncAnalyticsConsentCookie(getAnalyticsConsent());
 
 if (!token) {
   if (process.env.NODE_ENV !== "production") {

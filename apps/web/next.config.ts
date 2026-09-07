@@ -100,6 +100,12 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Next 16 logs Server Function arguments in development. History searches
+  // can contain filenames; authentication callbacks contain one-time codes.
+  logging: {
+    serverFunctions: false,
+    incomingRequests: { ignore: [/\/auth\/callback/] },
+  },
   reactCompiler: true,
   async headers() {
     return [

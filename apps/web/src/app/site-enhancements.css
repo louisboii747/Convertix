@@ -89,8 +89,7 @@
 }
 
 /* Site search */
-.site-search-backdrop,
-.confirm-modal-backdrop {
+.site-search-backdrop {
   position: fixed;
   inset: 0;
   z-index: 120;
@@ -374,85 +373,6 @@
   stroke-linejoin: round;
 }
 
-/* Confirmation modal */
-.confirm-modal-backdrop {
-  place-items: center;
-  padding-top: 20px;
-}
-
-.confirm-modal {
-  width: min(100%, 430px);
-  padding: 24px;
-  border: 1px solid var(--line-strong);
-  border-radius: 18px;
-  background: var(--surface);
-  box-shadow: 0 30px 80px -30px rgba(8, 20, 48, 0.65);
-}
-
-.confirm-modal-eyebrow {
-  color: var(--cobalt-dark);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.confirm-modal h2 {
-  margin: 6px 0 6px;
-  color: var(--ink-950);
-  font-family: var(--font-display), sans-serif;
-  font-size: 24px;
-  letter-spacing: -0.025em;
-}
-
-.confirm-modal p {
-  margin: 0;
-  color: var(--ink-650);
-}
-
-.confirm-modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 9px;
-  margin-top: 24px;
-}
-
-.confirm-modal-actions form {
-  margin: 0;
-}
-
-.confirm-modal-cancel,
-.confirm-modal-confirm {
-  min-height: 42px;
-  padding: 0 15px;
-  border-radius: 10px;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.confirm-modal-cancel {
-  border: 1px solid var(--line-strong);
-  background: var(--surface);
-  color: var(--ink-800);
-}
-
-.confirm-modal-confirm {
-  border: 1px solid var(--cobalt);
-  background: var(--cobalt);
-  color: white;
-}
-
-.confirm-modal-cancel:hover,
-.confirm-modal-cancel:focus-visible {
-  background: var(--slate-soft);
-}
-
-.confirm-modal-confirm:hover,
-.confirm-modal-confirm:focus-visible {
-  background: var(--cobalt-dark);
-}
-
 /* Dark mode */
 html[data-theme="dark"] {
   color-scheme: dark;
@@ -502,7 +422,6 @@ html[data-theme="dark"] :is(
   .faq-list details,
   .auth-card,
   .contact-card,
-  .account-panel,
   .legal-content,
   .guide-route-cta,
   .guide-related-links a,
@@ -514,8 +433,7 @@ html[data-theme="dark"] :is(
 
 html[data-theme="dark"] :is(
   .file-drop,
-  .site-search-input-shell,
-  .account-empty-state
+  .site-search-input-shell
 ) {
   border-color: var(--line-strong) !important;
   background-color: var(--canvas) !important;
@@ -523,8 +441,7 @@ html[data-theme="dark"] :is(
 
 html[data-theme="dark"] :is(
   .file-picker-button,
-  .status-action,
-  .confirm-modal-cancel
+  .status-action
 ) {
   border-color: var(--line-strong);
   background: var(--surface);
@@ -648,7 +565,6 @@ html[data-theme="dark"] ::selection {
   article,
   section,
   .converter-shell,
-  .account-panel,
   .auth-card,
   .contact-card {
     break-inside: avoid;

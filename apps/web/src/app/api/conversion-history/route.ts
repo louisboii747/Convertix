@@ -1,63 +1,53 @@
 import { NextResponse } from "next/server";
-
 import { createClient } from "@/lib/supabase/server";
+import { isSameOriginRequest, parseHistoryWrite } from "@/lib/account";
+
+const privateHeaders = { "Cache-Control": "private, no-store", Vary: "Cookie" };
+const respond = (body: object, status = 200) =>
+  NextResponse.json(body, { status, headers: privateHeaders });
 
 export async function POST(request: Request) {
+  if (!isSameOriginRequest(request))
+    return respond({ error: "invalid_origin" }, 403);
   const supabase = await createClient();
-
   const {
     data: { user },
     error: userError,
   } = await supabase.auth.getUser();
+  // History is best-effort. Anonymous/basic conversion has no account requirement.
+  if (userError || !user || user.is_anonymous) return respond({ saved: false });
 
-  // Anonymous conversions are still allowed.
-  // They simply aren't added to account history.
-  if (userError || !user) {
-    return NextResponse.json({ saved: false }, { status: 200 });
-  }
-
-  const body = (await request.json()) as {
-    conversion_id?: string;
-    original_filename?: string;
-    source_format?: string;
-    target_format?: string;
-    input_size?: number;
-    output_size?: number;
-    output_key?: string;
-  };
-
-  if (
-    !body.conversion_id ||
-    !body.original_filename ||
-    !body.source_format ||
-    !body.target_format
-  ) {
-    return NextResponse.json({ error: "missing_fields" }, { status: 400 });
+  let record: ReturnType<typeof parseHistoryWrite>;
+  try {
+    const reader = request.body?.getReader();
+    if (!reader) return respond({ error: "invalid_history_record" }, 400);
+    const decoder = new TextDecoder();
+    let text = "";
+    let bytes = 0;
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      bytes += value.byteLength;
+      if (bytes > 16384) {
+        await reader.cancel();
+        return respond({ error: "body_too_large" }, 413);
+      }
+      text += decoder.decode(value, { stream: true });
+    }
+    record = parseHistoryWrite(JSON.parse(text + decoder.decode()));
+  } catch {
+    return respond({ error: "invalid_history_record" }, 400);
   }
 
   const { error } = await supabase.from("conversion_history").upsert(
     {
+      ...record,
       user_id: user.id,
-      conversion_id: body.conversion_id,
-      original_filename: body.original_filename,
-      source_format: body.source_format,
-      target_format: body.target_format,
       status: "completed",
-      input_size: body.input_size ?? null,
-      output_size: body.output_size ?? null,
-      output_key: body.output_key ?? null,
       completed_at: new Date().toISOString(),
     },
-    {
-      onConflict: "conversion_id",
-    },
+    { onConflict: "conversion_id" },
   );
-
-  if (error) {
-    console.error("Failed to save conversion history:", error);
-
-    return NextResponse.json({ error: "history_save_failed" }, { status: 500 });
-  }
-
-  return NextResponse.json({ saved: true });
+  if (error) return respond({ error: "history_save_failed" }, 500);
+  return respond({ saved: true });
 }

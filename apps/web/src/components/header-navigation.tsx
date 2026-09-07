@@ -23,7 +23,8 @@ async function fetchAuthSummary(signal?: AbortSignal): Promise<AuthSummary> {
     const summary: unknown = await response.json();
     return parseAuthSummary(summary);
   } catch (error) {
-    if (error instanceof DOMException && error.name === "AbortError") throw error;
+    if (error instanceof DOMException && error.name === "AbortError")
+      throw error;
     return signedOutSummary;
   }
 }
@@ -36,13 +37,19 @@ export function HeaderNavigation() {
     void fetchAuthSummary(controller.signal).then(setAuthSummary, () => {});
 
     const refreshAfterHistoryRestore = (event: PageTransitionEvent) => {
-      if (event.persisted) void fetchAuthSummary().then(setAuthSummary, () => {});
+      if (event.persisted)
+        void fetchAuthSummary().then(setAuthSummary, () => {});
+    };
+    const refreshAccount = () => {
+      void fetchAuthSummary(controller.signal).then(setAuthSummary, () => {});
     };
 
     window.addEventListener("pageshow", refreshAfterHistoryRestore);
+    window.addEventListener("convertix:account-updated", refreshAccount);
     return () => {
       controller.abort();
       window.removeEventListener("pageshow", refreshAfterHistoryRestore);
+      window.removeEventListener("convertix:account-updated", refreshAccount);
     };
   }, []);
 
@@ -60,7 +67,9 @@ export function HeaderNavigation() {
         <Link href="/#faq">FAQ</Link>
         <Link href="/contact">Contact</Link>
         <Link href="/privacy">Privacy</Link>
-        <Link className="site-auth-link" data-ph-mask href={accountHref}>{accountLabel}</Link>
+        <Link className="site-auth-link" data-ph-mask href={accountHref}>
+          {accountLabel}
+        </Link>
       </nav>
       <HeaderUtilities />
       <MobileNav accountHref={accountHref} accountLabel={accountLabel} />

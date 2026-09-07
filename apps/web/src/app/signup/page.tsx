@@ -18,7 +18,11 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
   return (
     <>
       <SiteHeader />
-      <main className="auth-page" id="main-content">
+      <main
+        className="auth-page ph-no-capture ph-mask"
+        id="main-content"
+        data-ph-private
+      >
         <section className="auth-shell">
           <div className="auth-intro">
             <h1>Create a Convertix account</h1>
@@ -29,34 +33,47 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
           </div>
 
           <div className="auth-card">
+            {error === "invalid_display_name" && (
+              <div className="auth-alert" role="alert">
+                Enter a display name between 1 and 80 characters.
+              </div>
+            )}
             {error === "missing_fields" && (
-              <div className="auth-alert" role="alert">Please complete all fields.</div>
+              <div className="auth-alert" role="alert">
+                Please complete all fields.
+              </div>
             )}
 
             {error === "password_too_short" && (
-              <div className="auth-alert" role="alert">Your password must be at least 8 characters long.</div>
+              <div className="auth-alert" role="alert">
+                Your password must be at least 8 characters long.
+              </div>
             )}
 
             {error === "signup_failed" && (
-              <div className="auth-alert" role="alert">We couldn&apos;t create your account. Please try again.</div>
+              <div className="auth-alert" role="alert">
+                We couldn&apos;t create your account. Please try again.
+              </div>
             )}
 
             {error === "email_rate_limit" && (
               <div className="auth-alert" role="alert">
-                Too many confirmation emails have been sent recently. Please wait
-                a little while and try again.
+                Too many confirmation emails have been sent recently. Please
+                wait a little while and try again.
               </div>
             )}
 
             {success === "check_email" && (
               <div className="auth-success" role="status">
-                If this email can be used to create an account, we&apos;ve sent a
-                confirmation link. Already registered? Log in instead.
+                If this email can be used to create an account, we&apos;ve sent
+                a confirmation link. Already registered? Log in instead.
               </div>
             )}
 
             {success === "check_email" && (
-              <Link className="auth-back" href="/login">Go to login</Link>
+              <Link className="auth-back" href="/login">
+                Go to login
+              </Link>
             )}
 
             {!success && (
@@ -110,9 +127,13 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
 
             <div className="auth-card-footer">
               {!success && (
-                <Link className="auth-back" href="/login">Already have an account? Log in</Link>
+                <Link className="auth-back" href="/login">
+                  Already have an account? Log in
+                </Link>
               )}
-              <Link className="auth-back" href="/">Back to Convertix</Link>
+              <Link className="auth-back" href="/">
+                Back to Convertix
+              </Link>
             </div>
           </div>
         </section>

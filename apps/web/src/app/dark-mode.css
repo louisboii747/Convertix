@@ -15,8 +15,7 @@ html[data-theme="dark"] :is(
   .format-tags span,
   .target-select-menu,
   .guide-card,
-  .guide-related-links a,
-  .account-logout
+  .guide-related-links a
 ) {
   border-color: var(--line);
   background: var(--surface);
@@ -43,12 +42,8 @@ html[data-theme="dark"] .mobile-nav-panel {
 }
 
 /* These page wrappers were pinned to the light canvas. */
-html[data-theme="dark"] :is(.auth-page, .account-page) {
+html[data-theme="dark"] .auth-page {
   background: var(--canvas);
-}
-
-html[data-theme="dark"] .account-panel-muted {
-  background: var(--canvas-blue) !important;
 }
 
 /* --ink-950 becomes a light text token in dark mode. Components that used it

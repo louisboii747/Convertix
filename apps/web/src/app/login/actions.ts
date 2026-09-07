@@ -3,7 +3,8 @@
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
-import { getPostHogClient } from "@/lib/posthog-server";
+import { captureServerEvent } from "@/lib/posthog-server";
+import { validateDisplayName } from "@/lib/account";
 
 export async function login(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
@@ -22,7 +23,6 @@ export async function login(formData: FormData) {
 
   if (error) {
     console.error("Supabase login error:", {
-      message: error.message,
       code: error.code,
       status: error.status,
     });
@@ -31,18 +31,10 @@ export async function login(formData: FormData) {
   }
 
   if (data.user) {
-    const posthog = getPostHogClient();
-    posthog.identify({
-      distinctId: data.user.id,
+    await captureServerEvent(data.user.id, "user_logged_in", {
+      provider:
+        data.user.app_metadata?.provider === "google" ? "google" : "email",
     });
-    posthog.capture({
-      distinctId: data.user.id,
-      event: "user_logged_in",
-      properties: {
-        provider: data.user.app_metadata?.provider ?? "email",
-      },
-    });
-    await posthog.flush();
   }
 
   redirect("/account");
@@ -62,7 +54,7 @@ export async function loginWithGoogle() {
   });
 
   if (error || !data.url) {
-    console.error("Supabase Google OAuth error:", error);
+    console.error("Supabase Google OAuth failed", { code: error?.code });
     redirect("/login?error=oauth_failed");
   }
 
@@ -76,6 +68,12 @@ export async function signup(formData: FormData) {
 
   if (!email || !password || !displayName) {
     redirect("/signup?error=missing_fields");
+  }
+
+  try {
+    validateDisplayName(displayName);
+  } catch {
+    redirect("/signup?error=invalid_display_name");
   }
 
   if (password.length < 8) {
@@ -94,13 +92,12 @@ export async function signup(formData: FormData) {
       data: {
         display_name: displayName,
       },
-      emailRedirectTo: `${siteUrl}/login?verified=true`,
+      emailRedirectTo: `${siteUrl}/auth/callback?flow=signup`,
     },
   });
 
   if (error) {
     console.error("Supabase signup error:", {
-      message: error.message,
       code: error.code,
       status: error.status,
     });
@@ -113,18 +110,9 @@ export async function signup(formData: FormData) {
   }
 
   if (data.user) {
-    const posthog = getPostHogClient();
-    posthog.identify({
-      distinctId: data.user.id,
+    await captureServerEvent(data.user.id, "signup_submitted", {
+      has_session: Boolean(data.session),
     });
-    posthog.capture({
-      distinctId: data.user.id,
-      event: "signup_submitted",
-      properties: {
-        has_session: Boolean(data.session),
-      },
-    });
-    await posthog.flush();
   }
 
   if (data.session) {

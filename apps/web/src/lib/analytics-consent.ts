@@ -7,7 +7,12 @@ export function getAnalyticsConsent(): AnalyticsConsent | null {
     return null;
   }
 
-  const value = window.localStorage.getItem(ANALYTICS_CONSENT_KEY);
+  let value: string | null;
+  try {
+    value = window.localStorage.getItem(ANALYTICS_CONSENT_KEY);
+  } catch {
+    return null;
+  }
 
   if (value === "accepted" || value === "rejected") {
     return value;
@@ -17,11 +22,21 @@ export function getAnalyticsConsent(): AnalyticsConsent | null {
 }
 
 export function setAnalyticsConsent(consent: AnalyticsConsent) {
-  window.localStorage.setItem(ANALYTICS_CONSENT_KEY, consent);
+  try {
+    window.localStorage.setItem(ANALYTICS_CONSENT_KEY, consent);
+  } catch {
+    /* Storage can be unavailable. */
+  }
+  syncAnalyticsConsentCookie(consent);
 
   window.dispatchEvent(
     new CustomEvent("convertix:analytics-consent", {
       detail: consent,
     }),
   );
+}
+
+export function syncAnalyticsConsentCookie(consent: AnalyticsConsent | null) {
+  if (typeof document === "undefined") return;
+  document.cookie = `${ANALYTICS_CONSENT_KEY}=${consent ?? ""}; Path=/; Max-Age=${consent ? 31536000 : 0}; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
 }
