@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { getAnalyticsConsent } from "@/lib/analytics-consent";
@@ -13,6 +14,20 @@ const UTM_KEYS = [
   "utm_term",
   "utm_content",
 ] as const;
+
+const SITE_MOTION_SELECTOR = [
+  "main > section",
+  "main > article",
+  "main > div > section",
+  "main article",
+  "main section > a",
+  ".process-list > li",
+  ".popular-links > a",
+  ".format-cloud-item",
+  ".faq-list > details",
+  ".guides-promo",
+  ".site-footer",
+].join(",");
 
 function ScrollProgress() {
   const [progress, setProgress] = useState(0);
@@ -45,6 +60,64 @@ function ScrollProgress() {
       <span style={{ transform: `scaleX(${progress})` }} />
     </div>
   );
+}
+
+function SiteMotion() {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let frame = window.requestAnimationFrame(() => {
+      const candidates = Array.from(
+        new Set(document.querySelectorAll<HTMLElement>(SITE_MOTION_SELECTOR)),
+      ).filter((element) => {
+        if (element.closest(".converter-shell")) return false;
+        if (element.closest('[role="dialog"]')) return false;
+        if (element.closest("[data-no-site-motion]")) return false;
+        return true;
+      });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            const element = entry.target as HTMLElement;
+            if (!element.dataset.siteMotionSeen) {
+              const siblingIndex = Array.from(
+                element.parentElement?.children ?? [],
+              ).indexOf(element);
+              const delay = Math.min(Math.max(siblingIndex, 0) % 4, 3) * 38;
+              element.style.setProperty("--site-motion-delay", `${delay}ms`);
+              element.dataset.siteMotionSeen = "true";
+              element.classList.add("site-motion-enter");
+            }
+            observer.unobserve(element);
+          }
+        },
+        { threshold: 0.06, rootMargin: "0px 0px -5% 0px" },
+      );
+
+      for (const element of candidates) {
+        if (!element.dataset.siteMotionSeen) observer.observe(element);
+      }
+
+      const cleanup = () => observer.disconnect();
+      (window as Window & { __convertixMotionCleanup?: () => void }).__convertixMotionCleanup?.();
+      (window as Window & { __convertixMotionCleanup?: () => void }).__convertixMotionCleanup = cleanup;
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      const motionWindow = window as Window & {
+        __convertixMotionCleanup?: () => void;
+      };
+      motionWindow.__convertixMotionCleanup?.();
+      motionWindow.__convertixMotionCleanup = undefined;
+    };
+  }, [pathname]);
+
+  return null;
 }
 
 function UtmTracker() {
@@ -112,6 +185,7 @@ export function SiteEnhancements() {
   return (
     <>
       <ScrollProgress />
+      <SiteMotion />
       <UtmTracker />
       <FloatingContact />
     </>
