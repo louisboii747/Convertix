@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import { getAnalyticsConsent } from "@/lib/analytics-consent";
 import { captureEvent } from "@/lib/posthog-client";
@@ -29,35 +29,53 @@ const SITE_MOTION_SELECTOR = [
   ".site-footer",
 ].join(",");
 
+const MOBILE_SITE_MOTION_SELECTOR = [
+  "main > section",
+  "main > article",
+  "main > div > section",
+  ".guides-promo",
+  ".site-footer",
+].join(",");
+
 function ScrollProgress() {
-  const [progress, setProgress] = useState(0);
+  const progressRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     let frame = 0;
 
-    const update = () => {
-      window.cancelAnimationFrame(frame);
-      frame = window.requestAnimationFrame(() => {
-        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-        const next = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
-        setProgress(next);
-      });
+    const updateProgress = () => {
+      frame = 0;
+      const progressBar = progressRef.current;
+      if (!progressBar) return;
+
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const progress =
+        scrollable > 0
+          ? Math.min(1, Math.max(0, window.scrollY / scrollable))
+          : 0;
+
+      progressBar.style.transform = `scaleX(${progress})`;
     };
 
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
+    const scheduleUpdate = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(updateProgress);
+    };
+
+    scheduleUpdate();
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
 
     return () => {
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
     };
   }, []);
 
   return (
     <div className="scroll-progress" aria-hidden="true">
-      <span style={{ transform: `scaleX(${progress})` }} />
+      <span ref={progressRef} style={{ transform: "scaleX(0)" }} />
     </div>
   );
 }
@@ -68,9 +86,17 @@ function SiteMotion() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    let frame = window.requestAnimationFrame(() => {
+    const compactMotion = window.matchMedia(
+      "(max-width: 760px), (pointer: coarse)",
+    ).matches;
+
+    const selector = compactMotion
+      ? MOBILE_SITE_MOTION_SELECTOR
+      : SITE_MOTION_SELECTOR;
+
+    const frame = window.requestAnimationFrame(() => {
       const candidates = Array.from(
-        new Set(document.querySelectorAll<HTMLElement>(SITE_MOTION_SELECTOR)),
+        new Set(document.querySelectorAll<HTMLElement>(selector)),
       ).filter((element) => {
         if (element.closest(".converter-shell")) return false;
         if (element.closest('[role="dialog"]')) return false;
@@ -83,19 +109,28 @@ function SiteMotion() {
           for (const entry of entries) {
             if (!entry.isIntersecting) continue;
             const element = entry.target as HTMLElement;
+
             if (!element.dataset.siteMotionSeen) {
-              const siblingIndex = Array.from(
-                element.parentElement?.children ?? [],
-              ).indexOf(element);
-              const delay = Math.min(Math.max(siblingIndex, 0) % 4, 3) * 38;
-              element.style.setProperty("--site-motion-delay", `${delay}ms`);
+              if (!compactMotion) {
+                const siblingIndex = Array.from(
+                  element.parentElement?.children ?? [],
+                ).indexOf(element);
+                const delay = Math.min(Math.max(siblingIndex, 0) % 4, 3) * 38;
+                element.style.setProperty("--site-motion-delay", `${delay}ms`);
+              } else {
+                element.style.removeProperty("--site-motion-delay");
+              }
+
               element.dataset.siteMotionSeen = "true";
               element.classList.add("site-motion-enter");
             }
+
             observer.unobserve(element);
           }
         },
-        { threshold: 0.06, rootMargin: "0px 0px -5% 0px" },
+        compactMotion
+          ? { threshold: 0.01, rootMargin: "0px 0px 12% 0px" }
+          : { threshold: 0.06, rootMargin: "0px 0px -5% 0px" },
       );
 
       for (const element of candidates) {
@@ -103,8 +138,12 @@ function SiteMotion() {
       }
 
       const cleanup = () => observer.disconnect();
-      (window as Window & { __convertixMotionCleanup?: () => void }).__convertixMotionCleanup?.();
-      (window as Window & { __convertixMotionCleanup?: () => void }).__convertixMotionCleanup = cleanup;
+      (
+        window as Window & { __convertixMotionCleanup?: () => void }
+      ).__convertixMotionCleanup?.();
+      (
+        window as Window & { __convertixMotionCleanup?: () => void }
+      ).__convertixMotionCleanup = cleanup;
     });
 
     return () => {
