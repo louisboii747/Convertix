@@ -60,8 +60,8 @@ const variantStyles: Record<
   primary: {
     border: "var(--cobalt)",
     background: "var(--cobalt)",
-    foreground: "var(--surface)",
-    fill: "var(--ink-950)",
+    foreground: "#ffffff",
+    fill: "#0d1b34",
     shadow: "var(--shadow-button)",
   },
   dark: {
@@ -74,8 +74,8 @@ const variantStyles: Record<
   success: {
     border: "var(--mint-ink)",
     background: "var(--mint-ink)",
-    foreground: "var(--surface)",
-    fill: "var(--ink-950)",
+    foreground: "#ffffff",
+    fill: "#0d1b34",
     shadow: "var(--shadow-button)",
   },
 };
