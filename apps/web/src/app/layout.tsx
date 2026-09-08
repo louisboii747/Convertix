@@ -13,21 +13,79 @@ import { SiteFooter } from "@/components/site-footer";
 import { AnalyticsConsentBanner } from "@/components/analytics-consent-banner";
 import { SiteEnhancements } from "@/components/site-enhancements";
 
-const displayFont = Bricolage_Grotesque({ variable: "--font-display", subsets: ["latin"], display: "swap" });
-const bodyFont = Figtree({ variable: "--font-body", subsets: ["latin"], display: "swap" });
-const siteUrl = (process.env.NEXT_PUBLIC_CONVERTIX_SITE_URL ?? "https://convertix.uk").replace(/\/$/, "");
+const displayFont = Bricolage_Grotesque({
+  variable: "--font-display",
+  subsets: ["latin"],
+  display: "swap",
+});
+const bodyFont = Figtree({
+  variable: "--font-body",
+  subsets: ["latin"],
+  display: "swap",
+});
+const siteUrl = (
+  process.env.NEXT_PUBLIC_CONVERTIX_SITE_URL ?? "https://convertix.uk"
+).replace(/\/$/, "");
 
-const themeBootScript = `(() => { try { const saved = localStorage.getItem("convertix_theme"); const theme = saved === "dark" || saved === "light" ? saved : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"); document.documentElement.dataset.theme = theme; } catch {} })();`;
+const themeBootScript = `(() => {
+  try {
+    const saved = localStorage.getItem("convertix_theme");
+    const theme = saved === "dark" || saved === "light"
+      ? saved
+      : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.dataset.theme = theme;
+
+    const consent = localStorage.getItem("convertix_analytics_consent");
+    if (consent === "accepted" || consent === "rejected") {
+      document.documentElement.dataset.analyticsConsent = consent;
+    }
+  } catch {}
+})();`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: { default: "Convertix | Free Online File Converter", template: "%s | Convertix" },
-  description: "Convert files online with Convertix. Choose a file, select an output format, and download the converted file.",
+  title: {
+    default: "Convertix | Free Online File Converter",
+    template: "%s | Convertix",
+  },
+  description:
+    "Convert files online with Convertix. Choose a file, select an output format, and download the converted file.",
   applicationName: "Convertix",
-  keywords: ["file converter", "online file converter", "free file converter", "convert files online", "DOCX to PDF", "document converter", "image converter", "file format guides"],
-  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
-  openGraph: { type: "website", url: "/", siteName: "Convertix", title: "Convertix | Free Online File Converter", description: "Choose a file, select an output format, and download the converted file." },
-  twitter: { card: "summary_large_image", title: "Convertix | Free Online File Converter", description: "Choose a file, select an output format, and download the converted file." },
+  keywords: [
+    "file converter",
+    "online file converter",
+    "free file converter",
+    "convert files online",
+    "DOCX to PDF",
+    "document converter",
+    "image converter",
+    "file format guides",
+  ],
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "Convertix",
+    title: "Convertix | Free Online File Converter",
+    description:
+      "Choose a file, select an output format, and download the converted file.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Convertix | Free Online File Converter",
+    description:
+      "Choose a file, select an output format, and download the converted file.",
+  },
 };
 
 const structuredData = [
@@ -47,7 +105,8 @@ const structuredData = [
     url: siteUrl,
     applicationCategory: "UtilitiesApplication",
     operatingSystem: "Web",
-    description: "Choose a file, select an output format, and download the converted file with Convertix.",
+    description:
+      "Choose a file, select an output format, and download the converted file with Convertix.",
     isPartOf: { "@id": `${siteUrl}/#website` },
     offers: { "@type": "Offer", price: "0", priceCurrency: "GBP" },
   },
@@ -55,13 +114,22 @@ const structuredData = [
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${displayFont.variable} ${bodyFont.variable}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${displayFont.variable} ${bodyFont.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
       </head>
       <body>
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
-        <a className="skip-link" href="#main-content">Skip to main content</a>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+        <a className="skip-link" href="#main-content">
+          Skip to main content
+        </a>
         {children}
         <SiteFooter />
         <AnalyticsConsentBanner />
