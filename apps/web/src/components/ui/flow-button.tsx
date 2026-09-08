@@ -58,10 +58,10 @@ const variantStyles: Record<
     shadow: "none",
   },
   primary: {
-    border: "var(--cobalt)",
-    background: "var(--cobalt)",
-    foreground: "var(--surface)",
-    fill: "var(--ink-950)",
+    border: "#315cf5",
+    background: "#315cf5",
+    foreground: "#ffffff",
+    fill: "#0d1b34",
     shadow: "var(--shadow-button)",
   },
   dark: {
@@ -72,10 +72,10 @@ const variantStyles: Record<
     shadow: "var(--shadow-button)",
   },
   success: {
-    border: "var(--mint-ink)",
-    background: "var(--mint-ink)",
-    foreground: "var(--surface)",
-    fill: "var(--ink-950)",
+    border: "#218a59",
+    background: "#218a59",
+    foreground: "#ffffff",
+    fill: "#0d1b34",
     shadow: "var(--shadow-button)",
   },
 };

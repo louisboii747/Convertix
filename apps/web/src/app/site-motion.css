@@ -1,0 +1,152 @@
+/* Site-wide motion polish.
+ *
+ * Scroll reveals are progressive enhancement: content stays fully visible
+ * without JavaScript, and the observer only adds this animation when a real
+ * element enters the viewport. Keep distances short so Convertix still feels
+ * like a utility rather than an animated landing-page template.
+ */
+
+@keyframes site-motion-enter {
+  from {
+    opacity: 0.72;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes site-dialog-backdrop-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes site-dialog-enter {
+  from {
+    opacity: 0.72;
+    transform: translateY(-8px) scale(0.992);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes site-mobile-panel-enter {
+  from {
+    opacity: 0.78;
+    transform: translateY(-6px) scale(0.992);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes site-feedback-pop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -3px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+.site-motion-enter {
+  animation-name: site-motion-enter;
+  animation-duration: 420ms;
+  animation-delay: var(--site-motion-delay, 0ms);
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: backwards;
+}
+
+/* Search and mobile navigation should feel attached to the controls that open
+ * them, not appear as a hard cut. */
+.site-search-backdrop {
+  animation: site-dialog-backdrop-enter 150ms ease-out both;
+}
+
+.site-search-dialog {
+  transform-origin: top center;
+  animation: site-dialog-enter 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mobile-nav-panel {
+  transform-origin: top right;
+  animation: site-mobile-panel-enter 190ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.utility-feedback:not(:empty) {
+  transform-origin: top center;
+  animation: site-feedback-pop 170ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Tiny icon travel makes existing card/link hover states feel more deliberate
+ * without changing their layout or visual language. */
+:is(
+  .popular-links a,
+  .format-cloud-item,
+  .post-conversion-actions a,
+  .guide-route-links a,
+  .guide-related-links a
+) svg {
+  transition: transform 180ms var(--ease-out);
+}
+
+:is(
+  .popular-links a,
+  .format-cloud-item,
+  .post-conversion-actions a,
+  .guide-route-links a,
+  .guide-related-links a
+):hover svg,
+:is(
+  .popular-links a,
+  .format-cloud-item,
+  .post-conversion-actions a,
+  .guide-route-links a,
+  .guide-related-links a
+):focus-visible svg {
+  transform: translateX(3px);
+}
+
+/* FAQ copy gets a small settle when a row is genuinely opened. */
+.faq-list details[open] > :not(summary) {
+  animation: site-motion-enter 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Buttons already have their own hover language. A very small press response
+ * makes native/plain buttons elsewhere feel consistent with FlowButton. */
+button:not(:disabled):active {
+  transition-duration: 80ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-motion-enter,
+  .site-search-backdrop,
+  .site-search-dialog,
+  .mobile-nav-panel,
+  .utility-feedback:not(:empty),
+  .faq-list details[open] > :not(summary) {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  :is(
+    .popular-links a,
+    .format-cloud-item,
+    .post-conversion-actions a,
+    .guide-route-links a,
+    .guide-related-links a
+  ) svg {
+    transition: none !important;
+    transform: none !important;
+  }
+}

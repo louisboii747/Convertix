@@ -274,6 +274,51 @@
   font-size: 14px;
 }
 
+:global(html[data-theme="dark"]) .dropZone {
+  border-color: var(--line-strong);
+  background: linear-gradient(180deg, var(--surface) 0%, var(--canvas-blue) 100%);
+  color: var(--ink-950);
+}
+
+:global(html[data-theme="dark"]) .dropZone:hover {
+  border-color: var(--cobalt);
+  box-shadow: 0 16px 34px -25px rgba(118, 148, 255, 0.58);
+}
+
+:global(html[data-theme="dark"]) .explainer article,
+:global(html[data-theme="dark"]) .previewCard,
+:global(html[data-theme="dark"]) .previewHeading {
+  border-color: var(--line);
+  background: var(--surface);
+}
+
+:global(html[data-theme="dark"]) .previewCanvas {
+  background-image:
+    linear-gradient(45deg, #1b2638 25%, transparent 25%),
+    linear-gradient(-45deg, #1b2638 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #1b2638 75%),
+    linear-gradient(-45deg, transparent 75%, #1b2638 75%);
+  background-color: #121b2d;
+}
+
+:global(html[data-theme="dark"]) .warning {
+  border-color: #66552c;
+  background: #2c2617;
+  color: #f0d68a;
+}
+
+:global(html[data-theme="dark"]) .verification {
+  border-color: var(--line);
+  background: var(--canvas-blue);
+  color: var(--ink-800);
+}
+
+:global(html[data-theme="dark"]) .verified {
+  border-color: color-mix(in srgb, var(--mint-ink) 34%, var(--line));
+  background: var(--mint);
+  color: var(--mint-ink);
+}
+
 @media (max-width: 760px) {
   .tool {
     width: min(100% - 20px, 1120px);
