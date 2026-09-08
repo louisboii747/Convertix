@@ -123,13 +123,18 @@ function SiteMotion() {
 
               element.dataset.siteMotionSeen = "true";
               element.classList.add("site-motion-enter");
+              element.addEventListener(
+                "animationend",
+                () => element.classList.remove("site-motion-enter"),
+                { once: true },
+              );
             }
 
             observer.unobserve(element);
           }
         },
         compactMotion
-          ? { threshold: 0.01, rootMargin: "0px 0px 12% 0px" }
+          ? { threshold: 0.035, rootMargin: "0px 0px -3% 0px" }
           : { threshold: 0.06, rootMargin: "0px 0px -5% 0px" },
       );
 
