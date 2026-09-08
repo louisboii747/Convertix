@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -11,14 +10,12 @@ import {
 
 export function AnalyticsConsentBanner() {
   const [consent, setConsent] = useState<AnalyticsConsent | null>(null);
-  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     setConsent(getAnalyticsConsent());
-    setReady(true);
   }, []);
 
-  if (!ready || consent) {
+  if (consent) {
     return null;
   }
 
