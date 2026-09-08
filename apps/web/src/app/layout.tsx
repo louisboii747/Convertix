@@ -8,6 +8,7 @@ import "./converter-motion.css";
 import "./feedback-polish.css";
 import "./site-enhancements.css";
 import "./dark-mode.css";
+import "./site-motion.css";
 import { SiteFooter } from "@/components/site-footer";
 import { AnalyticsConsentBanner } from "@/components/analytics-consent-banner";
 import { SiteEnhancements } from "@/components/site-enhancements";
