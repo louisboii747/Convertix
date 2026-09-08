@@ -241,6 +241,13 @@
   border-color: color-mix(in srgb, var(--cobalt) 28%, var(--line));
 }
 
+/* The reveal animation gives each route step its own stacking context. Elevate
+ * the entire target step while its menu is open so the dropdown can paint
+ * above the following FlowButton instead of being trapped underneath it. */
+.route-step:has(.target-select-button[aria-expanded="true"]) {
+  z-index: 30;
+}
+
 .target-select-button[aria-expanded="true"] svg {
   transform: rotate(180deg);
 }
@@ -254,6 +261,7 @@
 }
 
 .target-select-menu {
+  z-index: 40;
   transform-origin: top center;
   animation: target-menu-reveal 170ms var(--ease-out) both;
 }
