@@ -83,3 +83,33 @@ html[data-theme="dark"] .post-conversion-actions > a {
   border-color: var(--line);
   background: color-mix(in srgb, var(--surface) 92%, transparent);
 }
+
+/* Converter lifecycle details still contained a few literal light colours.
+   Keep the route rail and progress track quiet in dark mode so they do not
+   read as bright white dividers. */
+html[data-theme="dark"] .route-line {
+  background: color-mix(in srgb, var(--line-strong) 72%, var(--canvas));
+}
+
+html[data-theme="dark"] .route-index {
+  border-color: var(--surface);
+}
+
+html[data-theme="dark"] .status-progress {
+  background: color-mix(in srgb, var(--line-strong) 74%, var(--canvas));
+}
+
+html[data-theme="dark"] .conversion-status.is-active {
+  border-color: color-mix(in srgb, var(--cobalt) 30%, var(--line)) !important;
+  background: color-mix(in srgb, var(--cobalt-soft) 48%, var(--surface)) !important;
+}
+
+html[data-theme="dark"] .conversion-status.is-success {
+  border-color: color-mix(in srgb, var(--mint-ink) 30%, var(--line)) !important;
+  background: color-mix(in srgb, var(--mint) 58%, var(--surface)) !important;
+}
+
+html[data-theme="dark"] .conversion-status.is-error {
+  border-color: color-mix(in srgb, var(--danger) 30%, var(--line)) !important;
+  background: color-mix(in srgb, var(--danger-soft) 68%, var(--surface)) !important;
+}
