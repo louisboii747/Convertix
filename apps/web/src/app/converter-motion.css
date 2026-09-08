@@ -324,6 +324,12 @@
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Starting is a genuine busy state too. Keep the route fill continuous rather
+ * than letting it fall back to the idle transform between queued/converting. */
+.conversion-route[data-status="starting"] .route-line::after {
+  transform: translateY(-16%);
+}
+
 .status-progress span {
   transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -333,7 +339,6 @@
   .file-drop.has-file .selected-file-copy,
   .conversion-route.is-revealed,
   .conversion-route.is-revealed > .route-step,
-  .conversion-route.is-revealed .route-index,
   .target-select-button[aria-expanded="false"] strong,
   .target-select-menu,
   .conversion-status,
@@ -344,6 +349,11 @@
   .unsupported-conversion-request {
     animation: none !important;
     transform: none !important;
+  }
+
+  .conversion-route.is-revealed .route-index {
+    animation: none !important;
+    transform: translateY(-50%) !important;
   }
 
   .file-drop-icon,
