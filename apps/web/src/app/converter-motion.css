@@ -1,0 +1,360 @@
+/* Converter motion polish
+ *
+ * These transitions are deliberately state-driven. They only respond to real
+ * converter state exposed by converter.tsx and never simulate conversion
+ * progress or completion.
+ */
+
+@keyframes converter-route-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes converter-step-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.992);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes converter-index-pop {
+  0% {
+    transform: translateY(-50%) scale(0.82);
+  }
+  70% {
+    transform: translateY(-50%) scale(1.06);
+  }
+  100% {
+    transform: translateY(-50%) scale(1);
+  }
+}
+
+@keyframes selected-file-settle {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes selected-format-pop {
+  0% {
+    transform: scale(0.9) rotate(-2deg);
+  }
+  70% {
+    transform: scale(1.04) rotate(0deg);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes target-menu-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes target-label-settle {
+  from {
+    opacity: 0.68;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes status-uploading-enter {
+  from {
+    opacity: 0.72;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes status-queued-enter {
+  from {
+    opacity: 0.74;
+    transform: translateX(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes status-starting-enter {
+  from {
+    opacity: 0.74;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes status-converting-enter {
+  from {
+    opacity: 0.78;
+    transform: scale(0.994);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes status-success-enter {
+  0% {
+    opacity: 0.72;
+    transform: translateY(5px) scale(0.992);
+  }
+  72% {
+    opacity: 1;
+    transform: translateY(-1px) scale(1.002);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes success-marker-pop {
+  0% {
+    transform: scale(0.72);
+  }
+  68% {
+    transform: scale(1.13);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes status-error-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  28% {
+    transform: translateX(-3px);
+  }
+  56% {
+    transform: translateX(3px);
+  }
+  78% {
+    transform: translateX(-1px);
+  }
+}
+
+@keyframes post-conversion-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* File selection */
+.file-drop.has-file .file-drop-icon {
+  animation: selected-format-pop 320ms var(--ease-out) both;
+}
+
+.file-drop.has-file .selected-file-copy {
+  animation: selected-file-settle 260ms var(--ease-out) both;
+}
+
+.file-drop.is-dragging .file-drop-icon {
+  transform: scale(1.045);
+}
+
+.file-drop-icon {
+  transition: transform 180ms var(--ease-out);
+}
+
+/* Route reveal after a valid file is selected */
+.conversion-route.is-revealed {
+  animation: converter-route-reveal 320ms var(--ease-out) both;
+}
+
+.conversion-route.is-revealed > .route-step {
+  animation: converter-step-reveal 300ms var(--ease-out) both;
+}
+
+.conversion-route.is-revealed > .route-step:nth-of-type(1) {
+  animation-delay: 45ms;
+}
+
+.conversion-route.is-revealed > .route-step:nth-of-type(2) {
+  animation-delay: 95ms;
+}
+
+.conversion-route.is-revealed > .route-step:nth-of-type(1) .route-index {
+  animation: converter-index-pop 320ms 75ms var(--ease-out) both;
+}
+
+.conversion-route.is-revealed > .route-step:nth-of-type(2) .route-index {
+  animation: converter-index-pop 320ms 125ms var(--ease-out) both;
+}
+
+.route-step,
+.route-confirmed,
+.target-select-button,
+.target-select-button strong,
+.target-select-button svg {
+  transition:
+    border-color 180ms var(--ease-out),
+    background 180ms var(--ease-out),
+    color 180ms var(--ease-out),
+    opacity 180ms var(--ease-out),
+    transform 180ms var(--ease-out);
+}
+
+.route-step:has(.target-select-button:not(:disabled)):hover {
+  border-color: color-mix(in srgb, var(--cobalt) 28%, var(--line));
+}
+
+.target-select-button[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.target-select-button[aria-expanded="true"] strong {
+  opacity: 0.78;
+}
+
+.target-select-button[aria-expanded="false"] strong {
+  animation: target-label-settle 220ms var(--ease-out) both;
+}
+
+.target-select-menu {
+  transform-origin: top center;
+  animation: target-menu-reveal 170ms var(--ease-out) both;
+}
+
+.target-select-menu button {
+  transition:
+    background 150ms var(--ease-out),
+    color 150ms var(--ease-out),
+    transform 150ms var(--ease-out);
+}
+
+.target-select-menu button:hover:not(:disabled),
+.target-select-menu button:focus-visible:not(:disabled) {
+  transform: translateX(2px);
+}
+
+/* Genuine lifecycle transitions. Unique animation names ensure each real state
+ * change gets its own small visual acknowledgement. */
+.conversion-route[data-status="uploading"] .conversion-status {
+  animation: status-uploading-enter 210ms var(--ease-out) both;
+}
+
+.conversion-route[data-status="queued"] .conversion-status {
+  animation: status-queued-enter 210ms var(--ease-out) both;
+}
+
+.conversion-route[data-status="starting"] .conversion-status {
+  animation: status-starting-enter 210ms var(--ease-out) both;
+}
+
+.conversion-route[data-status="converting"] .conversion-status {
+  animation: status-converting-enter 210ms var(--ease-out) both;
+}
+
+.conversion-route[data-status="uploading"] .status-marker,
+.conversion-route[data-status="queued"] .status-marker,
+.conversion-route[data-status="starting"] .status-marker,
+.conversion-route[data-status="converting"] .status-marker {
+  box-shadow: 0 0 0 0 rgba(49, 92, 245, 0.14);
+  transition: box-shadow 220ms var(--ease-out);
+}
+
+.conversion-route[data-status="completed"] .conversion-status {
+  animation: status-success-enter 360ms var(--ease-out) both;
+}
+
+.conversion-route[data-status="completed"] .status-marker {
+  animation: success-marker-pop 380ms 70ms var(--ease-out) both;
+}
+
+.conversion-route[data-status="completed"] .post-conversion-panel,
+.conversion-route[data-status="completed"] .post-conversion-actions {
+  animation: post-conversion-reveal 320ms 90ms var(--ease-out) both;
+}
+
+.conversion-route[data-status="failed"] .conversion-status {
+  animation: status-error-shake 240ms var(--ease-out) both;
+}
+
+.converter-inline-error,
+.unsupported-conversion-request {
+  animation: selected-file-settle 240ms var(--ease-out) both;
+}
+
+/* Make the already-stateful route fill feel a little more deliberate. */
+.route-line::after {
+  transition-duration: 760ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.status-progress span {
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .file-drop.has-file .file-drop-icon,
+  .file-drop.has-file .selected-file-copy,
+  .conversion-route.is-revealed,
+  .conversion-route.is-revealed > .route-step,
+  .conversion-route.is-revealed .route-index,
+  .target-select-button[aria-expanded="false"] strong,
+  .target-select-menu,
+  .conversion-status,
+  .conversion-route[data-status="completed"] .status-marker,
+  .conversion-route[data-status="completed"] .post-conversion-panel,
+  .conversion-route[data-status="completed"] .post-conversion-actions,
+  .converter-inline-error,
+  .unsupported-conversion-request {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .file-drop-icon,
+  .route-step,
+  .route-confirmed,
+  .target-select-button,
+  .target-select-button strong,
+  .target-select-button svg,
+  .target-select-menu button,
+  .route-line::after,
+  .status-progress span {
+    transition-duration: 0.01ms !important;
+  }
+}
