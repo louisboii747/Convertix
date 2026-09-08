@@ -5,44 +5,28 @@ import {
   useMemo,
   useRef,
   useState,
-  type ComponentType,
-  type RefAttributes,
-  type RefObject,
+  type ElementType,
+  type HTMLAttributes,
 } from "react";
-import {
-  motion,
-  useInView,
-  useReducedMotion,
-  type DOMMotionComponents,
-  type HTMLMotionProps,
-  type MotionProps,
-} from "motion/react";
 
-const motionElements = {
-  article: motion.article,
-  div: motion.div,
-  h1: motion.h1,
-  h2: motion.h2,
-  h3: motion.h3,
-  h4: motion.h4,
-  h5: motion.h5,
-  h6: motion.h6,
-  li: motion.li,
-  p: motion.p,
-  section: motion.section,
-  span: motion.span,
-} as const;
+type TypingElementType =
+  | "article"
+  | "div"
+  | "h1"
+  | "h2"
+  | "h3"
+  | "h4"
+  | "h5"
+  | "h6"
+  | "li"
+  | "p"
+  | "section"
+  | "span";
 
-type MotionElementType = Extract<
-  keyof DOMMotionComponents,
-  keyof typeof motionElements
->;
-
-type TypingAnimationMotionComponent = ComponentType<
-  Omit<HTMLMotionProps<"span">, "ref"> & RefAttributes<HTMLElement>
->;
-
-interface TypingAnimationProps extends Omit<MotionProps, "children"> {
+interface TypingAnimationProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  "children"
+> {
   children?: string;
   words?: string[];
   className?: string;
@@ -52,8 +36,9 @@ interface TypingAnimationProps extends Omit<MotionProps, "children"> {
   delay?: number;
   pauseDelay?: number;
   loop?: boolean;
-  as?: MotionElementType;
+  as?: TypingElementType;
   startOnView?: boolean;
+  startOnInteraction?: boolean;
   showCursor?: boolean;
   blinkCursor?: boolean;
   cursorStyle?: "line" | "block" | "underscore";
@@ -77,8 +62,9 @@ export function TypingAnimation({
   delay = 0,
   pauseDelay = 1000,
   loop = false,
-  as: Component = "span",
+  as = "span",
   startOnView = true,
+  startOnInteraction = false,
   showCursor = true,
   blinkCursor = true,
   cursorStyle = "line",
@@ -86,10 +72,6 @@ export function TypingAnimation({
   reserveSpace = true,
   ...props
 }: TypingAnimationProps) {
-  const MotionComponent = motionElements[
-    Component
-  ] as TypingAnimationMotionComponent;
-
   const wordsToAnimate = useMemo(
     () => words ?? (children ? [children] : []),
     [words, children],
@@ -106,26 +88,25 @@ export function TypingAnimation({
     [wordsToAnimate],
   );
 
-  // Rendering the first phrase initially keeps the server-rendered/no-JS hero
-  // complete. Hydration then resets the visual line and begins the animation.
+  // Keep the complete server-rendered first phrase through hydration. Starting
+  // from a full phrase avoids repainting the page's largest text block during
+  // the initial LCP measurement window.
   const [displayedText, setDisplayedText] = useState(firstWord);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [currentCharIndex, setCurrentCharIndex] = useState(0);
-  const [phase, setPhase] = useState<"typing" | "pause" | "deleting">("typing");
-  const [animationReady, setAnimationReady] = useState(false);
+  const [currentCharIndex, setCurrentCharIndex] = useState(
+    Array.from(firstWord).length,
+  );
+  const [phase, setPhase] = useState<"typing" | "pause" | "deleting">(
+    "pause",
+  );
+  const [isInView, setIsInView] = useState(!startOnView);
+  const [interactionReady, setInteractionReady] = useState(!startOnInteraction);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   const elementRef = useRef<HTMLElement | null>(null);
-  const isInView = useInView(elementRef as RefObject<Element>, {
-    amount: 0.3,
-    once: true,
-  });
-  const prefersReducedMotion = useReducedMotion();
-
   const hasMultipleWords = wordsToAnimate.length > 1;
   const typingSpeed = typeSpeed ?? duration;
   const deletingSpeed = deleteSpeed ?? typingSpeed / 2;
-  const shouldStart =
-    animationReady && !prefersReducedMotion && (startOnView ? isInView : true);
 
   const animationSourceKey = useMemo(
     () => (words ? words.join("\u0000") : (children ?? "")),
@@ -133,16 +114,63 @@ export function TypingAnimation({
   );
 
   useEffect(() => {
-    const resetTimeout = window.setTimeout(() => {
-      setDisplayedText("");
-      setCurrentWordIndex(0);
-      setCurrentCharIndex(0);
-      setPhase("typing");
-      setAnimationReady(true);
-    }, 0);
+    setDisplayedText(firstWord);
+    setCurrentWordIndex(0);
+    setCurrentCharIndex(Array.from(firstWord).length);
+    setPhase("pause");
+  }, [animationSourceKey, firstWord]);
 
-    return () => window.clearTimeout(resetTimeout);
-  }, [animationSourceKey]);
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncPreference = () => setPrefersReducedMotion(mediaQuery.matches);
+
+    syncPreference();
+    mediaQuery.addEventListener("change", syncPreference);
+    return () => mediaQuery.removeEventListener("change", syncPreference);
+  }, []);
+
+  useEffect(() => {
+    if (!startOnView) {
+      setIsInView(true);
+      return;
+    }
+
+    const element = elementRef.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInView(Boolean(entry?.isIntersecting)),
+      { threshold: 0.3 },
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [startOnView]);
+
+  useEffect(() => {
+    if (!startOnInteraction) {
+      setInteractionReady(true);
+      return;
+    }
+
+    const activate = () => setInteractionReady(true);
+    const options: AddEventListenerOptions = { passive: true, once: true };
+
+    window.addEventListener("pointerdown", activate, options);
+    window.addEventListener("scroll", activate, options);
+    window.addEventListener("keydown", activate, { once: true });
+
+    return () => {
+      window.removeEventListener("pointerdown", activate);
+      window.removeEventListener("scroll", activate);
+      window.removeEventListener("keydown", activate);
+    };
+  }, [startOnInteraction]);
+
+  const shouldStart =
+    interactionReady &&
+    !prefersReducedMotion &&
+    (startOnView ? isInView : true);
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout> | null = null;
@@ -173,10 +201,7 @@ export function TypingAnimation({
               setCurrentCharIndex(currentCharIndex + 1);
             } else if (hasMultipleWords || loop) {
               const isLastWord = currentWordIndex === wordsToAnimate.length - 1;
-
-              if (!isLastWord || loop) {
-                setPhase("pause");
-              }
+              if (!isLastWord || loop) setPhase("pause");
             }
             break;
 
@@ -192,9 +217,12 @@ export function TypingAnimation({
               setCurrentCharIndex(currentCharIndex - 1);
             } else {
               const nextIndex = (currentWordIndex + 1) % wordsToAnimate.length;
+              const nextWord = wordsToAnimate[nextIndex] ?? "";
 
               setCurrentWordIndex(nextIndex);
-              setPhase("typing");
+              setDisplayedText("");
+              setCurrentCharIndex(0);
+              setPhase(nextWord ? "typing" : "pause");
             }
             break;
         }
@@ -227,26 +255,25 @@ export function TypingAnimation({
     currentCharIndex >= currentWordGraphemes.length &&
     phase !== "deleting";
   const shouldShowCursor =
-    animationReady &&
+    interactionReady &&
     !prefersReducedMotion &&
     showCursor &&
     !isComplete &&
-    (hasMultipleWords ||
-      loop ||
-      currentCharIndex < currentWordGraphemes.length);
+    (hasMultipleWords || loop || currentCharIndex < currentWordGraphemes.length);
   const visibleText = prefersReducedMotion
     ? (reducedMotionText ?? lastWord)
     : displayedText;
 
   const cursorCharacter =
     cursorStyle === "block" ? "▌" : cursorStyle === "underscore" ? "_" : "|";
+  const Component = as as ElementType;
 
   return (
-    <MotionComponent
+    <Component
       ref={elementRef}
       className={joinClassNames(
         "grid min-w-0",
-        Component === "span" && "w-full",
+        as === "span" && "w-full",
         reserveSpace && "typing-animation-reserved",
         className,
       )}
@@ -271,6 +298,6 @@ export function TypingAnimation({
           </span>
         ) : null}
       </span>
-    </MotionComponent>
+    </Component>
   );
 }
