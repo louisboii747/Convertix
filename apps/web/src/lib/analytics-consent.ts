@@ -38,5 +38,12 @@ export function setAnalyticsConsent(consent: AnalyticsConsent) {
 
 export function syncAnalyticsConsentCookie(consent: AnalyticsConsent | null) {
   if (typeof document === "undefined") return;
+
+  if (consent) {
+    document.documentElement.dataset.analyticsConsent = consent;
+  } else {
+    delete document.documentElement.dataset.analyticsConsent;
+  }
+
   document.cookie = `${ANALYTICS_CONSENT_KEY}=${consent ?? ""}; Path=/; Max-Age=${consent ? 31536000 : 0}; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
 }

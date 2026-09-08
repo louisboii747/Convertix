@@ -1,26 +1,18 @@
-import posthog from "posthog-js";
-
-import { getAnalyticsConsent } from "@/lib/analytics-consent";
+import {
+  capturePostHogEvent,
+  capturePostHogException,
+} from "@/lib/posthog-runtime";
 
 export function captureEvent(
   event: string,
   properties?: Record<string, unknown>,
 ): boolean {
-  if (getAnalyticsConsent() !== "accepted") {
-    return false;
-  }
-
-  posthog.capture(event, properties);
-  return true;
+  return capturePostHogEvent(event, properties);
 }
 
 export function captureException(
   error: unknown,
   properties?: Record<string, unknown>,
 ) {
-  if (getAnalyticsConsent() !== "accepted") {
-    return;
-  }
-
-  posthog.captureException(error, properties);
+  capturePostHogException(error, properties);
 }
