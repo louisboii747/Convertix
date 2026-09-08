@@ -64,7 +64,7 @@ export function TypingAnimation({
   loop = false,
   as = "span",
   startOnView = true,
-  startOnInteraction = false,
+  startOnInteraction = true,
   showCursor = true,
   blinkCursor = true,
   cursorStyle = "line",
