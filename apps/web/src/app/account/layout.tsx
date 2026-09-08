@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { SiteHeader } from "@/components/site-header";
 import { ConfirmLogoutButton } from "@/components/confirm-logout-button";
 import { AccountNavigation } from "@/components/account/account-navigation";
 import { requireAccount } from "@/lib/account-server";
@@ -21,7 +20,6 @@ export default async function AccountLayout({
   await requireAccount();
   return (
     <>
-      <SiteHeader />
       <main
         id="main-content"
         className={`${styles.shell} ph-no-capture ph-mask`}
@@ -30,14 +28,14 @@ export default async function AccountLayout({
       >
         <aside className={styles.sidebar}>
           <div className={styles.sidebarTitle}>
-            My Convertix<span>Your personal workspace</span>
+            My Convertix<span>Profile and conversion history</span>
           </div>
           <AccountNavigation />
           <div className={styles.sidebarFooter}>
-            <span>You’re free to convert.</span>
+            <span>Convert without an account</span>
             <p>
-              An account keeps your history together. Basic conversion is always
-              open to everyone.
+              Log in to keep your conversion history. You can also convert files
+              without signing in.
             </p>
             <ConfirmLogoutButton />
           </div>

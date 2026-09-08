@@ -15,9 +15,9 @@ logger.setLevel(logging.INFO)
 
 def _handle_pdf_merge(event):
     try:
-        body = json.loads(event.get("body") or "{}")
-    except json.JSONDecodeError:
-        return base.response(400, {"error": "invalid_json"})
+        body = base.parse_request_body(event)
+    except base.InvalidRequest as error:
+        return base.response(error.status, {"error": str(error)})
 
     input_keys = body.get("input_keys")
 
@@ -40,9 +40,7 @@ def _handle_pdf_merge(event):
 
     for input_key in normalized_keys:
         if (
-            not input_key
-            or "|" in input_key
-            or not input_key.startswith("uploads/")
+            not base.is_upload_key(input_key)
             or not input_key.lower().endswith(".pdf")
         ):
             return base.response(400, {"error": "invalid_merge_input_key"})
@@ -123,9 +121,9 @@ def lambda_handler(event, context):
 
     if method == "POST" and path == "/conversions":
         try:
-            body = json.loads(event.get("body") or "{}")
-        except json.JSONDecodeError:
-            return base.lambda_handler(event, context)
+            body = base.parse_request_body(event)
+        except base.InvalidRequest as error:
+            return base.response(error.status, {"error": str(error)})
 
         if isinstance(body, dict) and body.get("operation") == "merge_pdf":
             return _handle_pdf_merge(event)

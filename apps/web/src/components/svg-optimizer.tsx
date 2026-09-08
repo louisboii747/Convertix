@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { optimize } from "svgo/browser";
 import { captureEvent, captureException } from "@/lib/posthog-client";
 import { FlowButton } from "@/components/ui/flow-button";
+import { sanitizeSvgDownload } from "@/lib/svg-security";
 import styles from "./svg-optimizer.module.css";
 
 type VerificationState =
@@ -36,6 +37,8 @@ function formatBytes(bytes: number): string {
 }
 
 function validateSvg(svg: string): string | null {
+  if (/<!\s*(?:DOCTYPE|ENTITY)\b/i.test(svg))
+    return "Export a standalone SVG without document types or entity declarations.";
   const parser = new DOMParser();
   const document = parser.parseFromString(svg, "image/svg+xml");
   const parserError = document.querySelector("parsererror");
@@ -212,7 +215,10 @@ export function SvgOptimizer() {
     setVerification({ status: "idle" });
 
     if (!file.name.toLowerCase().endsWith(".svg")) {
-      captureEvent("svg_optimization_file_rejected", { reason: "not_svg", file_size_bytes: file.size });
+      captureEvent("svg_optimization_file_rejected", {
+        reason: "not_svg",
+        file_size_bytes: file.size,
+      });
       setError(
         "Choose an SVG file. Renaming another image format to .svg does not convert it.",
       );
@@ -226,7 +232,11 @@ export function SvgOptimizer() {
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      captureEvent("svg_optimization_file_rejected", { reason: "too_large", file_size_bytes: file.size, limit_bytes: MAX_FILE_SIZE });
+      captureEvent("svg_optimization_file_rejected", {
+        reason: "too_large",
+        file_size_bytes: file.size,
+        limit_bytes: MAX_FILE_SIZE,
+      });
       setError("Choose an SVG smaller than 5 MB.");
       return;
     }
@@ -236,7 +246,10 @@ export function SvgOptimizer() {
     const validationError = validateSvg(source);
 
     if (validationError) {
-      captureEvent("svg_optimization_file_rejected", { reason: "invalid_markup", file_size_bytes: file.size });
+      captureEvent("svg_optimization_file_rejected", {
+        reason: "invalid_markup",
+        file_size_bytes: file.size,
+      });
       setError(validationError);
       return;
     }
@@ -246,22 +259,28 @@ export function SvgOptimizer() {
     setOriginal(source);
     setWarning(
       containsActiveContent
-        ? "This SVG may contain active content, such as scripts, event handlers, external references, or foreign markup. Optimization does not make it safe to embed."
+        ? "This SVG includes active content or external references. We remove them from the download and check that the artwork still matches."
         : null,
     );
-    captureEvent("svg_optimization_started", { input_size_bytes: file.size, active_content_detected: containsActiveContent });
+    captureEvent("svg_optimization_started", {
+      input_size_bytes: file.size,
+      active_content_detected: containsActiveContent,
+    });
 
     try {
       const result = optimize(source, {
         multipass: true,
-        plugins: ["preset-default"],
+        plugins: ["preset-default", "convertStyleToAttrs"],
       });
 
-      const output = result.data;
+      // Sanitize after optimization so it cannot reintroduce active markup.
+      const output = sanitizeSvgDownload(result.data);
       const outputValidationError = validateSvg(output);
 
       if (outputValidationError) {
-        captureEvent("svg_optimization_failed", { error_category: "invalid_output" });
+        captureEvent("svg_optimization_failed", {
+          error_category: "invalid_output",
+        });
         setError(
           "The optimizer produced invalid SVG markup, so no download was created.",
         );
@@ -314,7 +333,9 @@ export function SvgOptimizer() {
       } catch (verificationError) {
         if (processSequenceRef.current !== processId) return;
         captureException(verificationError);
-        captureEvent("svg_optimization_failed", { error_category: "verification_unavailable" });
+        captureEvent("svg_optimization_failed", {
+          error_category: "verification_unavailable",
+        });
         setVerification({
           status: "failed",
           message:
@@ -351,7 +372,10 @@ export function SvgOptimizer() {
     document.body.appendChild(anchor);
     anchor.click();
     anchor.remove();
-    captureEvent("svg_optimization_downloaded", { input_size_bytes: originalBytes, output_size_bytes: optimizedBytes });
+    captureEvent("svg_optimization_downloaded", {
+      input_size_bytes: originalBytes,
+      output_size_bytes: optimizedBytes,
+    });
     window.setTimeout(() => URL.revokeObjectURL(url), 0);
   }
 
@@ -403,7 +427,11 @@ export function SvgOptimizer() {
               </div>
             </div>
 
-            {warning ? <div className={styles.warning} role="status">{warning}</div> : null}
+            {warning ? (
+              <div className={styles.warning} role="status">
+                {warning}
+              </div>
+            ) : null}
 
             <div className={styles.previewGrid}>
               <article className={styles.previewCard}>
@@ -488,7 +516,11 @@ export function SvgOptimizer() {
           </>
         )}
 
-        {error ? <div className={styles.error} role="alert">{error}</div> : null}
+        {error ? (
+          <div className={styles.error} role="alert">
+            {error}
+          </div>
+        ) : null}
       </div>
 
       <div className={styles.explainer}>
@@ -507,10 +539,11 @@ export function SvgOptimizer() {
           </p>
         </article>
         <article>
-          <strong>Is this a sanitizer?</strong>
+          <strong>How do you handle active content?</strong>
           <p>
-            No. Convertix warns you when it finds active content, but this tool
-            does not make an untrusted SVG safe to embed.
+            We remove scripts, event handlers, embedded HTML, animations, and
+            external references from downloads. The artwork must still pass the
+            visual comparison.
           </p>
         </article>
       </div>

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import { PdfCompressor } from "@/components/pdf-compressor";
-import { SiteHeader } from "@/components/site-header";
 
 export const metadata: Metadata = {
   title: "Compress PDF Online",
@@ -20,14 +19,14 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Compress PDF Online — Convertix",
-    description: "Reduce PDF file size with adjustable compression levels and clear before-and-after size comparison.",
+    description:
+      "Reduce PDF file size with adjustable compression levels and clear before-and-after size comparison.",
   },
 };
 
 export default function CompressPdfPage() {
   return (
     <>
-      <SiteHeader />
       <main id="main-content">
         <PdfCompressor />
       </main>

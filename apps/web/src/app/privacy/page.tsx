@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 
-import { SiteHeader } from "@/components/site-header";
-
 export const metadata: Metadata = {
   title: "Privacy",
   description:
@@ -13,21 +11,21 @@ export const metadata: Metadata = {
     type: "website",
     url: "/privacy",
     title: "Privacy — Convertix",
-    description: "Learn how Convertix handles account information, uploaded files, analytics, and other data.",
+    description:
+      "Learn how Convertix handles account information, uploaded files, analytics, and other data.",
     siteName: "Convertix",
   },
   twitter: {
     card: "summary_large_image",
     title: "Privacy — Convertix",
-    description: "Learn how Convertix handles account information, uploaded files, analytics, and other data.",
+    description:
+      "Learn how Convertix handles account information, uploaded files, analytics, and other data.",
   },
 };
 
 export default function PrivacyPage() {
   return (
     <>
-      <SiteHeader />
-
       <main className="legal-page" id="main-content">
         <header className="legal-hero">
           <h1>How Convertix handles your data.</h1>
@@ -35,7 +33,7 @@ export default function PrivacyPage() {
             This policy explains what information Convertix processes, why it is
             used, and the choices available to you.
           </p>
-          <p className="legal-updated">Last updated: 28 August 2026</p>
+          <p className="legal-updated">Last updated: 8 September 2026</p>
         </header>
 
         <article className="legal-content">
@@ -116,8 +114,10 @@ export default function PrivacyPage() {
               <p>
                 Convertix uses Supabase to provide authentication and account
                 functionality. Account information can include your email
-                address and display name. Convertix does not receive your
-                password in readable form.
+                address and display name. When you sign in with email, our
+                server passes your credentials to Supabase over HTTPS. Supabase
+                stores a password hash; we do not store your password in the
+                Convertix database.
               </p>
             </div>
           </section>
@@ -175,6 +175,20 @@ export default function PrivacyPage() {
                 product analytics and session replay, Amazon Web Services for
                 conversion infrastructure, and Vercel for website hosting and
                 delivery.
+              </p>
+            </div>
+          </section>
+
+          <section>
+            <h2>Saved conversions and recent pages</h2>
+
+            <div>
+              <p>
+                You can save conversion shortcuts in your browser. We store the
+                conversion type on this device. Search also shows up to four
+                converters or tools you opened in the current tab. You can clear
+                that list from the search window. These shortcuts do not contain
+                filenames, file contents, or account details.
               </p>
             </div>
           </section>

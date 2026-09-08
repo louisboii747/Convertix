@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { SiteHeader } from "@/components/site-header";
 import { SvgOptimizer } from "@/components/svg-optimizer";
 import { FlowButton } from "@/components/ui/flow-button";
 
@@ -20,14 +19,14 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Optimize SVG Online — Convertix",
-    description: "Reduce an SVG in your browser and compare both renders before downloading.",
+    description:
+      "Reduce an SVG in your browser and compare both renders before downloading.",
   },
 };
 
 export default function OptimizeSvgPage() {
   return (
     <>
-      <SiteHeader />
       <main id="main-content">
         <SvgOptimizer />
         <section
@@ -35,7 +34,9 @@ export default function OptimizeSvgPage() {
           aria-labelledby="svg-raster-conversion-title"
         >
           <div>
-            <h2 id="svg-raster-conversion-title">Need a raster image instead?</h2>
+            <h2 id="svg-raster-conversion-title">
+              Need a raster image instead?
+            </h2>
             <p>
               Convert SVG to WebP when you need a fixed-resolution image for a
               website, app, upload, or raster-only workflow.

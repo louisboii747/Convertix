@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 
-import { SiteHeader } from "@/components/site-header";
 import { ContactForm } from "@/components/contact-form";
 import "./contact.css";
 
@@ -15,21 +14,21 @@ export const metadata: Metadata = {
     type: "website",
     url: "/contact",
     title: "Contact Convertix",
-    description: "Contact Convertix for support, feedback, conversion requests, partnerships, or general questions.",
+    description:
+      "Contact Convertix for support, feedback, conversion requests, partnerships, or general questions.",
     siteName: "Convertix",
   },
   twitter: {
     card: "summary_large_image",
     title: "Contact Convertix",
-    description: "Contact Convertix for support, feedback, conversion requests, partnerships, or general questions.",
+    description:
+      "Contact Convertix for support, feedback, conversion requests, partnerships, or general questions.",
   },
 };
 
 export default function ContactPage() {
   return (
     <>
-      <SiteHeader />
-
       <main className="contact-page" id="main-content">
         <section className="contact-shell">
           <div className="contact-intro">

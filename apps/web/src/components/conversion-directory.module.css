@@ -7,16 +7,16 @@
   display: grid;
   gap: 1rem;
   padding: 1.4rem;
-  border: 1px solid rgba(13, 27, 52, 0.09);
+  border: 1px solid var(--line);
   border-radius: 1.4rem;
-  background: rgba(255, 255, 255, 0.75);
+  background: var(--surface);
 }
 
 .controls h2,
 .groupHeading h3,
 .empty h3 {
   margin: 0;
-  color: #0d1b34;
+  color: var(--ink-950);
 }
 
 .searchLabel {
@@ -26,14 +26,16 @@
 .search {
   width: 100%;
   min-height: 3.25rem;
-  border: 1px solid rgba(13, 27, 52, 0.12);
+  border: 1px solid var(--line-strong);
   border-radius: 1rem;
-  background: white;
+  background: var(--surface);
   padding: 0 1rem;
-  color: #0d1b34;
+  color: var(--ink-950);
   font: inherit;
   outline: none;
-  transition: border-color 160ms ease, box-shadow 160ms ease;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .search:focus {
@@ -42,7 +44,7 @@
 }
 
 .search::placeholder {
-  color: #66728d;
+  color: var(--ink-500);
 }
 
 .filters {
@@ -55,25 +57,28 @@
 .activeFilter {
   min-height: 44px;
   appearance: none;
-  border: 1px solid rgba(13, 27, 52, 0.1);
+  border: 1px solid var(--line);
   border-radius: 999px;
   padding: 0.58rem 0.86rem;
   font: inherit;
   font-size: 0.88rem;
   font-weight: 650;
   cursor: pointer;
-  transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease,
+    background 150ms ease;
 }
 
 .filter {
-  background: white;
-  color: #0d1b34;
+  background: var(--surface);
+  color: var(--ink-950);
 }
 
 .activeFilter {
-  border-color: rgba(49, 92, 245, 0.26);
-  background: rgba(49, 92, 245, 0.09);
-  color: #2147d9;
+  border-color: var(--cobalt);
+  background: var(--cobalt-soft);
+  color: var(--cobalt-dark);
 }
 
 .filter:hover,
@@ -83,7 +88,7 @@
 
 .resultSummary {
   margin: 1rem 0 1.2rem;
-  color: rgba(13, 27, 52, 0.62);
+  color: var(--ink-650);
   font-size: 0.9rem;
 }
 
@@ -107,20 +112,21 @@
   justify-content: space-between;
   min-height: 4.3rem;
   gap: 1rem;
-  border: 1px solid rgba(13, 27, 52, 0.08);
-  border-radius: 1rem;
-  background: white;
+  border: 0;
+  border-radius: 1rem 0 0 1rem;
+  background: var(--surface);
   padding: 0.9rem 1rem;
-  color: #0d1b34;
+  color: var(--ink-950);
   text-decoration: none;
   font-weight: 700;
-  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .links a:hover {
-  transform: translateY(-2px);
-  border-color: rgba(49, 92, 245, 0.22);
-  box-shadow: 0 10px 30px rgba(24, 48, 91, 0.07);
+  background: var(--cobalt-soft);
 }
 
 .links a > span {
@@ -132,24 +138,94 @@
 
 .links small {
   border-radius: 999px;
-  background: rgba(49, 92, 245, 0.08);
+  background: var(--cobalt-soft);
   padding: 0.25rem 0.45rem;
-  color: #315cf5;
+  color: var(--cobalt-dark);
   font-size: 0.68rem;
   font-weight: 800;
 }
 
 .empty {
   margin-top: 1.5rem;
-  border: 1px dashed rgba(13, 27, 52, 0.16);
+  border: 1px dashed var(--line-strong);
   border-radius: 1rem;
   padding: 2rem;
   text-align: center;
 }
 
 .empty p {
+  margin: 0.5rem 0 1rem;
+  color: var(--ink-650);
+}
+
+.savedHint {
   margin: 0.5rem 0 0;
-  color: rgba(13, 27, 52, 0.62);
+  color: var(--ink-650);
+  font-size: 0.9rem;
+}
+.entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 48px;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--surface);
+}
+.entry a {
+  min-width: 0;
+}
+.entry a svg {
+  width: 18px;
+  flex-shrink: 0;
+}
+.saveButton {
+  display: grid;
+  place-items: center;
+  min-height: 44px;
+  align-self: center;
+  width: 40px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink-650);
+  cursor: pointer;
+}
+.saveButton:hover,
+.saveButton[aria-pressed="true"] {
+  background: var(--cobalt-soft);
+  color: var(--cobalt-dark);
+}
+.saveButton[aria-pressed="true"] svg {
+  fill: currentColor;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .saveButton svg {
+    transition: transform 180ms ease;
+  }
+  .saveButton:active svg {
+    transform: scale(0.8);
+  }
+  .group {
+    animation: directory-enter 180ms ease-out;
+  }
+  @keyframes directory-enter {
+    from {
+      opacity: 0.65;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .filter,
+  .activeFilter,
+  .search,
+  .links a {
+    transition: none;
+    transform: none;
+  }
 }
 
 @media (max-width: 720px) {

@@ -1,8 +1,8 @@
+import { serializeJsonLd } from "@/lib/request-security";
 import Link from "next/link";
 import { Converter } from "@/components/converter";
 import { ImageToPdfConverter } from "@/components/image-to-pdf-converter";
 import { ArrowIcon, RouteIcon } from "@/components/icons";
-import { SiteHeader } from "@/components/site-header";
 import { SupportedFormats } from "@/components/supported-formats";
 import { FlowButton } from "@/components/ui/flow-button";
 import { TypingAnimation } from "@/components/ui/typing-animation";
@@ -145,7 +145,6 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
 
   return (
     <>
-      <SiteHeader />
       <main id="main-content">
         <section className="hero-section" aria-labelledby="page-title">
           <div className="hero-copy hero-copy-benefit">
@@ -383,8 +382,8 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
             <div>
               <h2 id="txt-docx-format-title">TXT and Word DOCX files</h2>
               <p>
-                Learn what plain-text TXT files contain and how DOCX adds editable
-                Word document structure and formatting.
+                Learn what plain-text TXT files contain and how DOCX adds
+                editable Word document structure and formatting.
               </p>
             </div>
             <div className="guide-route-links">
@@ -503,7 +502,7 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
 
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqStructuredData) }}
       />
     </>
   );

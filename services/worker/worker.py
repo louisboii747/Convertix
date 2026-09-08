@@ -478,6 +478,7 @@ def convert_txt_document(
 
 IMAGE_INPUT_FORMATS = {"jpg", "jpeg", "png", "webp", "heic", "heif"}
 IMAGE_TARGET_FORMATS = {"jpg", "jpeg", "png", "webp"}
+IMAGE_DECODERS = ("JPEG", "PNG", "WEBP", "HEIF")
 
 PDF_PAGE_SHORT_EDGE = 1240
 PDF_PAGE_LONG_EDGE = 1754
@@ -581,7 +582,7 @@ def convert_images_to_pdf(
                 )
 
                 try:
-                    with Image.open(input_path) as opened_image:
+                    with Image.open(input_path, formats=IMAGE_DECODERS) as opened_image:
                         detected_format = normalize_decoded_image_format(
                             opened_image.format
                         )
@@ -705,7 +706,7 @@ def convert_image(
         )
 
         try:
-            with Image.open(input_path) as opened_image:
+            with Image.open(input_path, formats=IMAGE_DECODERS) as opened_image:
                 detected_format = normalize_decoded_image_format(
                     opened_image.format
                 )

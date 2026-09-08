@@ -1,10 +1,10 @@
+import { serializeJsonLd } from "@/lib/request-security";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ArrowIcon, RouteIcon } from "@/components/icons";
 import { FormatMark } from "@/components/format-mark";
-import { SiteHeader } from "@/components/site-header";
 import { getFormatContent } from "@/lib/format-content";
 import {
   FORMATS,
@@ -153,7 +153,6 @@ export default async function FormatPage({ params }: FormatPageProps) {
 
   return (
     <>
-      <SiteHeader />
       <main id="main-content">
         <section className="hero-section" aria-labelledby="format-page-title">
           <div className="hero-copy hero-copy-benefit">
@@ -250,7 +249,7 @@ export default async function FormatPage({ params }: FormatPageProps) {
       </main>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }}
       />
     </>
   );

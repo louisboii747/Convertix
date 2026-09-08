@@ -1,6 +1,9 @@
 import json
+import base64
+import binascii
 import logging
 import os
+import re
 import uuid
 
 import boto3  # pyright: ignore[reportMissingImports]
@@ -131,12 +134,56 @@ UPLOAD_CONTENT_TYPES = {
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+MAX_JSON_BYTES = 16384
+UPLOAD_KEY_PATTERN = re.compile(
+    r"uploads/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/input\.[a-z0-9]+",
+    re.IGNORECASE,
+)
+
+
+class InvalidRequest(ValueError):
+    def __init__(self, code, status=400):
+        super().__init__(code)
+        self.status = status
+
+
+def parse_request_body(event):
+    raw = event.get("body") or "{}"
+    if not isinstance(raw, str):
+        raise InvalidRequest("invalid_json")
+    if len(raw) > MAX_JSON_BYTES * 2:
+        raise InvalidRequest("body_too_large", 413)
+    try:
+        payload = base64.b64decode(raw, validate=True) if event.get("isBase64Encoded") else raw.encode("utf-8")
+        if len(payload) > MAX_JSON_BYTES:
+            raise InvalidRequest("body_too_large", 413)
+        body = json.loads(payload)
+    except (json.JSONDecodeError, UnicodeError, binascii.Error) as error:
+        raise InvalidRequest("invalid_json") from error
+    if not isinstance(body, dict):
+        raise InvalidRequest("json_object_required")
+    for field in ("filename", "content_type", "source_format", "target_format", "input_key", "compression_level", "operation"):
+        if field in body and not isinstance(body[field], str):
+            raise InvalidRequest("invalid_field_type")
+    if "input_keys" in body and (
+        not isinstance(body["input_keys"], list)
+        or not all(isinstance(key, str) for key in body["input_keys"])
+    ):
+        raise InvalidRequest("invalid_input_keys")
+    return body
+
+
+def is_upload_key(value):
+    return isinstance(value, str) and UPLOAD_KEY_PATTERN.fullmatch(value) is not None
+
 
 def response(status_code, body):
     return {
         "statusCode": status_code,
         "headers": {
             "content-type": "application/json",
+            "cache-control": "private, no-store",
+            "x-content-type-options": "nosniff",
         },
         "body": json.dumps(body),
     }
@@ -167,17 +214,20 @@ def lambda_handler(event, context):
 
     if method == "POST" and path == "/uploads":
         try:
-            body = json.loads(event.get("body") or "{}")
+            body = parse_request_body(event)
 
-        except json.JSONDecodeError:
+        except InvalidRequest as error:
             return response(
-                400,
+                error.status,
                 {
-                    "error": "invalid_json",
+                    "error": str(error),
                 },
             )
 
         filename = str(body.get("filename", "")).strip()
+
+        if len(filename) > 255 or re.search(r"[\x00-\x1f\x7f]", filename):
+            return response(400, {"error": "invalid_filename"})
 
         browser_content_type = str(
             body.get(
@@ -427,13 +477,13 @@ def lambda_handler(event, context):
 
     if method == "POST" and path == "/conversions":
         try:
-            body = json.loads(event.get("body") or "{}")
+            body = parse_request_body(event)
 
-        except json.JSONDecodeError:
+        except InvalidRequest as error:
             return response(
-                400,
+                error.status,
                 {
-                    "error": "invalid_json",
+                    "error": str(error),
                 },
             )
 
@@ -557,7 +607,7 @@ def lambda_handler(event, context):
 
         candidate_input_keys = input_keys if is_image_pdf_batch else [input_key]
 
-        if any(not key.startswith("uploads/") for key in candidate_input_keys):
+        if any(not is_upload_key(key) for key in candidate_input_keys):
             return response(
                 400,
                 {

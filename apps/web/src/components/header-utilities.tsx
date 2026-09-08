@@ -1,7 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { usePathname } from "next/navigation";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
+import {
+  clearRecentTools,
+  recordRecentTool,
+  useRecentTools,
+} from "@/lib/use-route-shortcuts";
+import { isPrivateAnalyticsPath } from "@/lib/analytics-privacy";
 
 import {
   FORMATS,
@@ -19,16 +32,67 @@ type SearchItem = {
 };
 
 const STATIC_SEARCH_ITEMS: SearchItem[] = [
-  { label: "Home", href: "/", description: "Convert a file", keywords: "converter upload file home" },
-  { label: "Formats", href: "/formats", description: "Browse supported file formats", keywords: "formats file types extensions" },
-  { label: "Tools", href: "/tools", description: "Compression, merge and optimisation tools", keywords: "tools compress compression merge optimize optimiser optimizer" },
-  { label: "Compress PDF", href: "/compress-pdf", description: "Reduce PDF file size", keywords: "pdf compress compression smaller" },
-  { label: "Batch Image Compressor", href: "/compress-image", description: "Compress up to 30 images and download them as a ZIP", keywords: "image images batch bulk multiple jpg jpeg png webp compress compression compressor zip download all" },
-  { label: "Merge PDF", href: "/merge-pdf", description: "Combine PDF files", keywords: "pdf merge combine join" },
-  { label: "Optimize SVG", href: "/optimize-svg", description: "Clean and optimise SVG files", keywords: "svg optimize optimise minify cleanup" },
-  { label: "Guides", href: "/guides", description: "Learn about file formats", keywords: "guides help documentation formats" },
-  { label: "Contact", href: "/contact", description: "Contact Convertix", keywords: "contact support help email" },
-  { label: "Privacy", href: "/privacy", description: "Privacy and data handling", keywords: "privacy data cookies analytics" },
+  {
+    label: "Home",
+    href: "/",
+    description: "Convert a file",
+    keywords: "converter upload file home",
+  },
+  {
+    label: "Formats",
+    href: "/formats",
+    description: "Browse supported file formats",
+    keywords: "formats file types extensions",
+  },
+  {
+    label: "Tools",
+    href: "/tools",
+    description: "Compression, merge and optimisation tools",
+    keywords: "tools compress compression merge optimize optimiser optimizer",
+  },
+  {
+    label: "Compress PDF",
+    href: "/compress-pdf",
+    description: "Reduce PDF file size",
+    keywords: "pdf compress compression smaller",
+  },
+  {
+    label: "Batch Image Compressor",
+    href: "/compress-image",
+    description: "Compress up to 30 images and download them as a ZIP",
+    keywords:
+      "image images batch bulk multiple jpg jpeg png webp compress compression compressor zip download all",
+  },
+  {
+    label: "Merge PDF",
+    href: "/merge-pdf",
+    description: "Combine PDF files",
+    keywords: "pdf merge combine join",
+  },
+  {
+    label: "Optimize SVG",
+    href: "/optimize-svg",
+    description: "Clean and optimise SVG files",
+    keywords: "svg optimize optimise minify cleanup",
+  },
+  {
+    label: "Guides",
+    href: "/guides",
+    description: "Learn about file formats",
+    keywords: "guides help documentation formats",
+  },
+  {
+    label: "Contact",
+    href: "/contact",
+    description: "Contact Convertix",
+    keywords: "contact support help email",
+  },
+  {
+    label: "Privacy",
+    href: "/privacy",
+    description: "Privacy and data handling",
+    keywords: "privacy data cookies analytics",
+  },
 ];
 
 const SEARCH_ITEMS: SearchItem[] = [
@@ -101,6 +165,15 @@ function MoonIcon() {
 }
 
 export function HeaderUtilities() {
+  const pathname = usePathname();
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
+  const recentRoutes = useRecentTools();
+  const recentItems = recentRoutes.flatMap((route) => {
+    const item = SEARCH_ITEMS.find((entry) => entry.href === route);
+    return item ? [item] : [];
+  });
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const theme = useSyncExternalStore(
@@ -110,6 +183,24 @@ export function HeaderUtilities() {
   );
   const [copied, setCopied] = useState(false);
 
+  useEffect(() => recordRecentTool(pathname), [pathname]);
+
+  useEffect(() => {
+    if (!searchOpen) return;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    dialog.showModal();
+    searchRef.current?.focus();
+    document.body.style.overflow = "hidden";
+    return () => {
+      dialog.close();
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
+    };
+  }, [searchOpen]);
+
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
@@ -118,13 +209,22 @@ export function HeaderUtilities() {
         target?.tagName === "TEXTAREA" ||
         target?.isContentEditable;
 
+      if (document.querySelector("dialog[open]") && !dialogRef.current?.open)
+        return;
+
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
         setSearchOpen(true);
         return;
       }
 
-      if (!typing && event.key === "/") {
+      if (
+        !typing &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        !event.altKey &&
+        event.key === "/"
+      ) {
         event.preventDefault();
         setSearchOpen(true);
       }
@@ -152,12 +252,21 @@ export function HeaderUtilities() {
   function toggleTheme() {
     const nextTheme: Theme = theme === "dark" ? "light" : "dark";
     document.documentElement.dataset.theme = nextTheme;
-    window.localStorage.setItem("convertix_theme", nextTheme);
+    try {
+      window.localStorage.setItem("convertix_theme", nextTheme);
+    } catch {
+      /* Keep the choice for this page when storage is restricted. */
+    }
     window.dispatchEvent(new Event("convertix-theme-change"));
   }
 
   async function copyPageLink() {
-    const value = window.location.href;
+    const url = new URL(window.location.href);
+    if (isPrivateAnalyticsPath(url.pathname)) {
+      url.search = "";
+      url.hash = "";
+    }
+    const value = url.href;
 
     try {
       await navigator.clipboard.writeText(value);
@@ -213,53 +322,111 @@ export function HeaderUtilities() {
         </button>
       </div>
 
-      {searchOpen ? (
-        <div
-          className="site-search-backdrop"
-          role="presentation"
-          onMouseDown={() => setSearchOpen(false)}
+      <dialog
+        ref={dialogRef}
+        className="site-search-backdrop"
+        aria-labelledby="site-search-title"
+        onCancel={() => setSearchOpen(false)}
+        onMouseDown={(event) => {
+          if (event.target === event.currentTarget) setSearchOpen(false);
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "Tab") {
+            const controls = Array.from(
+              event.currentTarget.querySelectorAll<HTMLElement>(
+                "button:not(:disabled), a[href], input:not(:disabled), [tabindex='0']",
+              ),
+            ).filter((element) => element.getClientRects().length > 0);
+            const first = controls[0];
+            const last = controls.at(-1);
+            if (event.shiftKey && document.activeElement === first) {
+              event.preventDefault();
+              last?.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+              event.preventDefault();
+              first?.focus();
+            }
+            return;
+          }
+          const links = Array.from(
+            resultsRef.current?.querySelectorAll<HTMLAnchorElement>("a") ?? [],
+          );
+          const index = links.indexOf(
+            document.activeElement as HTMLAnchorElement,
+          );
+          const inSearch = document.activeElement === searchRef.current;
+          if (
+            (event.key === "ArrowDown" || event.key === "ArrowUp") &&
+            (inSearch || index >= 0)
+          ) {
+            event.preventDefault();
+            const next =
+              event.key === "ArrowDown"
+                ? Math.min(index + 1, links.length - 1)
+                : index - 1;
+            if (next < 0) searchRef.current?.focus();
+            else links[next]?.focus();
+          } else if (
+            event.key === "Enter" &&
+            inSearch &&
+            !event.nativeEvent.isComposing
+          ) {
+            event.preventDefault();
+            links[0]?.click();
+          }
+        }}
+      >
+        <section
+          className="site-search-dialog"
+          onMouseDown={(event) => event.stopPropagation()}
         >
-          <section
-            className="site-search-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="site-search-title"
-            onMouseDown={(event) => event.stopPropagation()}
-          >
-            <div className="site-search-heading">
-              <div>
-                <strong id="site-search-title">Search Convertix</strong>
-                <span>Converters, tools, formats and guides</span>
-              </div>
-              <button
-                type="button"
-                className="site-search-close"
-                aria-label="Close search"
-                onClick={() => setSearchOpen(false)}
-              >
-                ×
-              </button>
+          <div className="site-search-heading">
+            <div>
+              <strong id="site-search-title">Search Convertix</strong>
+              <span>Converters, tools, formats and guides</span>
             </div>
+            <button
+              type="button"
+              className="site-search-close"
+              aria-label="Close search"
+              onClick={() => setSearchOpen(false)}
+            >
+              ×
+            </button>
+          </div>
 
-            <label className="site-search-input-shell">
-              <span className="sr-only">Search Convertix</span>
-              <SearchIcon />
-              <input
-                autoFocus
-                type="search"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Try “PDF”, “compress”, or “Word to PDF”"
-              />
-              <kbd>Esc</kbd>
-            </label>
+          <label className="site-search-input-shell">
+            <span className="sr-only">Search Convertix</span>
+            <SearchIcon />
+            <input
+              ref={searchRef}
+              type="search"
+              maxLength={120}
+              aria-controls="site-search-results"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Try “PDF”, “compress”, or “Word to PDF”"
+            />
+            <kbd>Esc</kbd>
+          </label>
 
-            <div className="site-search-results" aria-live="polite">
-              {results.length ? (
-                results.map((item) => (
+          <div
+            className="site-search-results"
+            id="site-search-results"
+            ref={resultsRef}
+          >
+            {!query.trim() && recentItems.length > 0 && (
+              <>
+                <div className="site-search-recent-heading">
+                  <span>Recently opened in this tab</span>
+                  <button type="button" onClick={clearRecentTools}>
+                    Clear recent pages
+                  </button>
+                </div>
+                {recentItems.map((item) => (
                   <Link
+                    key={`recent-${item.href}`}
                     href={item.href}
-                    key={`${item.href}-${item.label}`}
                     onClick={() => {
                       setSearchOpen(false);
                       setQuery("");
@@ -269,20 +436,46 @@ export function HeaderUtilities() {
                       <strong>{item.label}</strong>
                       <small>{item.description}</small>
                     </span>
-                    <span aria-hidden="true">→</span>
+                    <span aria-hidden="true">↗</span>
                   </Link>
-                ))
-              ) : (
-                <p className="site-search-empty">No matching page found.</p>
-              )}
-            </div>
+                ))}
+                <div className="site-search-recent-heading">
+                  <span>Browse Convertix</span>
+                </div>
+              </>
+            )}
+            {results.length ? (
+              results.map((item) => (
+                <Link
+                  href={item.href}
+                  key={`${item.href}-${item.label}`}
+                  onClick={() => {
+                    setSearchOpen(false);
+                    setQuery("");
+                  }}
+                >
+                  <span>
+                    <strong>{item.label}</strong>
+                    <small>{item.description}</small>
+                  </span>
+                  <span aria-hidden="true">→</span>
+                </Link>
+              ))
+            ) : (
+              <p className="site-search-empty">No matching page found.</p>
+            )}
+          </div>
 
-            <div className="site-search-hint">
-              Press <kbd>/</kbd> anywhere to search.
-            </div>
-          </section>
-        </div>
-      ) : null}
+          <div className="site-search-hint">
+            <span role="status">
+              {query.trim() ? `${results.length} matching pages` : ""}
+            </span>
+            <span>
+              <kbd>↑</kbd> <kbd>↓</kbd> to move · <kbd>Enter</kbd> to open
+            </span>
+          </div>
+        </section>
+      </dialog>
     </>
   );
 }

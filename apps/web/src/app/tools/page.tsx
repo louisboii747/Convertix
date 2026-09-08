@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ArrowIcon } from "@/components/icons";
-import { SiteHeader } from "@/components/site-header";
 import styles from "./tools.module.css";
 
 export const metadata: Metadata = {
@@ -61,7 +60,6 @@ const tools = [
 export default function ToolsPage() {
   return (
     <>
-      <SiteHeader />
       <main id="main-content" className={styles.main}>
         <section className={styles.hero}>
           <h1>Free online file tools</h1>

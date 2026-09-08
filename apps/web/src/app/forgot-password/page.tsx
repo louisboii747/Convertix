@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SiteHeader } from "@/components/site-header";
 import { RecoveryForm } from "@/components/account/recovery-form";
 export const metadata: Metadata = {
   title: "Reset your password",
@@ -9,7 +8,6 @@ export const metadata: Metadata = {
 export default function ForgotPasswordPage() {
   return (
     <>
-      <SiteHeader />
       <main
         id="main-content"
         className="auth-page ph-no-capture ph-mask"

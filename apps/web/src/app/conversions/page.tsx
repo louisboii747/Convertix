@@ -1,7 +1,7 @@
+import { serializeJsonLd } from "@/lib/request-security";
 import type { Metadata } from "next";
 
 import { ConversionDirectory } from "@/components/conversion-directory";
-import { SiteHeader } from "@/components/site-header";
 import { FORMATS, getEnabledConversionPairs } from "@/lib/formats";
 
 export const metadata: Metadata = {
@@ -51,7 +51,6 @@ export default function ConversionsPage() {
 
   return (
     <>
-      <SiteHeader />
       <main id="main-content">
         <section className="hero-section" aria-labelledby="conversions-title">
           <div className="hero-copy hero-copy-benefit">
@@ -68,7 +67,7 @@ export default function ConversionsPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(itemListStructuredData),
+          __html: serializeJsonLd(itemListStructuredData),
         }}
       />
     </>

@@ -95,10 +95,56 @@
   z-index: 120;
   display: grid;
   place-items: start center;
+  align-content: start;
+  width: 100%;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  color: var(--ink-950);
   padding: min(12vh, 96px) 20px 20px;
   background: rgba(6, 12, 25, 0.52);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+}
+
+.site-search-backdrop:not([open]) {
+  display: none;
+}
+.site-search-backdrop::backdrop {
+  background: transparent;
+}
+.site-search-recent-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 13px;
+  color: var(--ink-650);
+  font-size: 12px;
+}
+.site-search-recent-heading button {
+  min-height: 32px;
+  border: 0;
+  background: transparent;
+  color: var(--cobalt-dark);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.site-nav a[aria-current="page"] {
+  color: var(--cobalt-dark);
+}
+.site-nav a[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+.site-auth-link {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .site-search-dialog {
@@ -254,6 +300,10 @@
 }
 
 .site-search-hint {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
   padding: 10px 20px 16px;
   color: var(--ink-500);
   font-size: 12px;
@@ -410,39 +460,34 @@ html[data-theme="dark"] .site-header {
   background: rgba(11, 18, 32, 0.9);
 }
 
-html[data-theme="dark"] :is(
-  .converter-shell,
-  .route-step,
-  .conversion-status,
-  .popular-links a,
-  .process-list li,
-  .why-points article,
-  .format-cloud-item,
-  .guides-promo,
-  .faq-list details,
-  .auth-card,
-  .contact-card,
-  .legal-content,
-  .guide-route-cta,
-  .guide-related-links a,
-  .analytics-consent
-) {
+html[data-theme="dark"]
+  :is(
+    .converter-shell,
+    .route-step,
+    .conversion-status,
+    .popular-links a,
+    .process-list li,
+    .why-points article,
+    .format-cloud-item,
+    .guides-promo,
+    .faq-list details,
+    .auth-card,
+    .contact-card,
+    .legal-content,
+    .guide-route-cta,
+    .guide-related-links a,
+    .analytics-consent
+  ) {
   border-color: var(--line) !important;
   background-color: var(--surface) !important;
 }
 
-html[data-theme="dark"] :is(
-  .file-drop,
-  .site-search-input-shell
-) {
+html[data-theme="dark"] :is(.file-drop, .site-search-input-shell) {
   border-color: var(--line-strong) !important;
   background-color: var(--canvas) !important;
 }
 
-html[data-theme="dark"] :is(
-  .file-picker-button,
-  .status-action
-) {
+html[data-theme="dark"] :is(.file-picker-button, .status-action) {
   border-color: var(--line-strong);
   background: var(--surface);
   color: var(--cobalt-dark);
@@ -452,7 +497,8 @@ html[data-theme="dark"] :is(input, textarea, select) {
   color: var(--ink-950);
 }
 
-html[data-theme="dark"] :is(.auth-field input, .auth-field textarea, .contact-form textarea) {
+html[data-theme="dark"]
+  :is(.auth-field input, .auth-field textarea, .contact-form textarea) {
   border-color: var(--line-strong);
   background: var(--canvas);
 }

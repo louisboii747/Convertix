@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import { PdfMerger } from "@/components/pdf-merger";
-import { SiteHeader } from "@/components/site-header";
 
 export const metadata: Metadata = {
   title: "Merge PDF Online",
@@ -28,7 +27,6 @@ export const metadata: Metadata = {
 export default function MergePdfPage() {
   return (
     <>
-      <SiteHeader />
       <main id="main-content">
         <PdfMerger />
       </main>

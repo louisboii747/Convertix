@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { requireRecoverySession } from "@/lib/password-recovery";
-import { SiteHeader } from "@/components/site-header";
 import { RecoveryForm } from "@/components/account/recovery-form";
 export const metadata: Metadata = {
   title: "Choose a new password",
@@ -13,7 +12,6 @@ export default async function ResetPasswordPage() {
   const user = await requireRecoverySession(supabase).catch(() => null);
   return (
     <>
-      <SiteHeader />
       <main
         id="main-content"
         className="auth-page ph-no-capture ph-mask"

@@ -1,3 +1,4 @@
+import { serializeJsonLd } from "@/lib/request-security";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -316,7 +317,9 @@ export default async function ConversionPage({ params }: ConversionPageProps) {
       <ConversionLandingPage pair={pair} />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageStructuredData) }}
+        dangerouslySetInnerHTML={{
+          __html: serializeJsonLd(pageStructuredData),
+        }}
       />
     </>
   );

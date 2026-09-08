@@ -77,7 +77,7 @@ def test_heif_conversions_are_accepted(
             {
                 "source_format": source_format.upper(),
                 "target_format": target_format.upper(),
-                "input_key": f"uploads/test/input.{source_format.upper()}",
+                "input_key": f"uploads/12345678-1234-4234-8234-123456789abc/input.{source_format.upper()}",
             },
         ),
         None,
@@ -105,7 +105,7 @@ def test_existing_image_conversion_remains_accepted(monkeypatch):
             {
                 "source_format": "jpg",
                 "target_format": "png",
-                "input_key": "uploads/test/input.jpeg",
+                "input_key": "uploads/12345678-1234-4234-8234-123456789abc/input.jpeg",
             },
         ),
         None,

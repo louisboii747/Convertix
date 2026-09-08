@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { isUnavailableAuthError } from "@/lib/auth-status";
 
 import { PasswordField } from "@/components/password-field";
-import { SiteHeader } from "@/components/site-header";
 import { FlowButton } from "@/components/ui/flow-button";
 
 import { login, loginWithGoogle } from "./actions";
@@ -15,11 +17,18 @@ type LoginPageProps = {
 };
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+  if (isUnavailableAuthError(authError))
+    throw new Error("We couldn’t check your session. Please try again.");
+  if (user && !user.is_anonymous) redirect("/account");
   const { error, verified, success } = await searchParams;
 
   return (
     <>
-      <SiteHeader />
       <main
         className="auth-page ph-no-capture ph-mask"
         id="main-content"

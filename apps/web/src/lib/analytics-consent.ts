@@ -11,7 +11,8 @@ export function getAnalyticsConsent(): AnalyticsConsent | null {
   try {
     value = window.localStorage.getItem(ANALYTICS_CONSENT_KEY);
   } catch {
-    return null;
+    const consent = document.documentElement.dataset.analyticsConsent;
+    return consent === "accepted" || consent === "rejected" ? consent : null;
   }
 
   if (value === "accepted" || value === "rejected") {

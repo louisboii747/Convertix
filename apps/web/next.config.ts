@@ -53,7 +53,7 @@ if (!isProduction) {
 
 const contentSecurityPolicy = [
   "default-src 'self'",
-  "base-uri 'self'",
+  "base-uri 'none'",
   `connect-src ${connectSources.join(" ")}`,
   "font-src 'self' data:",
   "form-action 'self'",
@@ -63,6 +63,7 @@ const contentSecurityPolicy = [
   "media-src 'self' blob:",
   "object-src 'none'",
   `script-src ${scriptSources.join(" ")}`,
+  "script-src-attr 'none'",
   "style-src 'self' 'unsafe-inline'",
   "worker-src 'self' blob:",
   ...(isProduction ? ["upgrade-insecure-requests"] : []),

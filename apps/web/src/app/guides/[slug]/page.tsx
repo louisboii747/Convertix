@@ -1,9 +1,9 @@
+import { serializeJsonLd } from "@/lib/request-security";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ArrowIcon } from "@/components/icons";
-import { SiteHeader } from "@/components/site-header";
 import { GUIDES, getGuide } from "@/lib/guides";
 
 interface GuidePageProps {
@@ -80,7 +80,6 @@ export default async function GuidePage({ params }: GuidePageProps) {
 
   return (
     <>
-      <SiteHeader />
       <main id="main-content" className="guide-article-page">
         <article className="guide-article">
           <nav className="guide-breadcrumb" aria-label="Breadcrumb">
@@ -169,7 +168,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(articleStructuredData),
+          __html: serializeJsonLd(articleStructuredData),
         }}
       />
     </>

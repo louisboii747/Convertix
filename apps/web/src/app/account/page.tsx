@@ -105,7 +105,7 @@ export default async function AccountPage() {
         <div className={styles.panelHeading}>
           <div>
             <h2 id="recent-title">Recent conversions</h2>
-            <p>Pick up where you left off with a fresh file.</p>
+            <p>Run a previous conversion with a new file.</p>
           </div>
           <Link className={styles.textButton} href="/account/history">
             View all history <ArrowUpRight size={16} aria-hidden="true" />
@@ -121,7 +121,7 @@ export default async function AccountPage() {
         ) : (
           <div className={styles.empty}>
             <FolderOpen size={32} aria-hidden="true" />
-            <h3>Your next conversion starts here</h3>
+            <h3>No saved conversions yet</h3>
             <p>Conversions saved while you’re logged in will appear here.</p>
             <Link className={styles.textButton} href="/">
               Convert your first file{" "}
@@ -131,9 +131,9 @@ export default async function AccountPage() {
         )}
       </section>
       <p className={styles.footnote}>
-        History is a record of your conversions, not file storage. To convert
-        again, you’ll need to choose a file. Totals reflect saved history and
-        decrease when entries are deleted.
+        Choose a new file when you repeat a conversion. Your history keeps the
+        conversion details; uploaded files expire. Deleting an entry also
+        removes it from your totals.
       </p>
     </>
   );

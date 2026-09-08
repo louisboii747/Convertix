@@ -52,7 +52,16 @@ function joinClassNames(
   return classNames.filter(Boolean).join(" ");
 }
 
-export function TypingAnimation({
+export function TypingAnimation(props: TypingAnimationProps) {
+  return (
+    <TypingAnimationContent
+      key={JSON.stringify(props.words ?? [props.children])}
+      {...props}
+    />
+  );
+}
+
+function TypingAnimationContent({
   children,
   words,
   className,
@@ -96,9 +105,7 @@ export function TypingAnimation({
   const [currentCharIndex, setCurrentCharIndex] = useState(
     Array.from(firstWord).length,
   );
-  const [phase, setPhase] = useState<"typing" | "pause" | "deleting">(
-    "pause",
-  );
+  const [phase, setPhase] = useState<"typing" | "pause" | "deleting">("pause");
   const [isInView, setIsInView] = useState(!startOnView);
   const [interactionReady, setInteractionReady] = useState(!startOnInteraction);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
@@ -107,18 +114,6 @@ export function TypingAnimation({
   const hasMultipleWords = wordsToAnimate.length > 1;
   const typingSpeed = typeSpeed ?? duration;
   const deletingSpeed = deleteSpeed ?? typingSpeed / 2;
-
-  const animationSourceKey = useMemo(
-    () => (words ? words.join("\u0000") : (children ?? "")),
-    [words, children],
-  );
-
-  useEffect(() => {
-    setDisplayedText(firstWord);
-    setCurrentWordIndex(0);
-    setCurrentCharIndex(Array.from(firstWord).length);
-    setPhase("pause");
-  }, [animationSourceKey, firstWord]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -130,10 +125,7 @@ export function TypingAnimation({
   }, []);
 
   useEffect(() => {
-    if (!startOnView) {
-      setIsInView(true);
-      return;
-    }
+    if (!startOnView) return;
 
     const element = elementRef.current;
     if (!element) return;
@@ -148,10 +140,7 @@ export function TypingAnimation({
   }, [startOnView]);
 
   useEffect(() => {
-    if (!startOnInteraction) {
-      setInteractionReady(true);
-      return;
-    }
+    if (!startOnInteraction) return;
 
     const activate = () => setInteractionReady(true);
     const options: AddEventListenerOptions = { passive: true, once: true };
@@ -168,7 +157,7 @@ export function TypingAnimation({
   }, [startOnInteraction]);
 
   const shouldStart =
-    interactionReady &&
+    (!startOnInteraction || interactionReady) &&
     !prefersReducedMotion &&
     (startOnView ? isInView : true);
 
@@ -259,7 +248,9 @@ export function TypingAnimation({
     !prefersReducedMotion &&
     showCursor &&
     !isComplete &&
-    (hasMultipleWords || loop || currentCharIndex < currentWordGraphemes.length);
+    (hasMultipleWords ||
+      loop ||
+      currentCharIndex < currentWordGraphemes.length);
   const visibleText = prefersReducedMotion
     ? (reducedMotionText ?? lastWord)
     : displayedText;

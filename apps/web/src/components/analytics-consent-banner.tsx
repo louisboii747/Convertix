@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 import {
   getAnalyticsConsent,
@@ -8,12 +8,22 @@ import {
   type AnalyticsConsent,
 } from "@/lib/analytics-consent";
 
-export function AnalyticsConsentBanner() {
-  const [consent, setConsent] = useState<AnalyticsConsent | null>(null);
+function subscribe(listener: () => void) {
+  window.addEventListener("convertix:analytics-consent", listener);
+  window.addEventListener("storage", listener);
+  return () => {
+    window.removeEventListener("convertix:analytics-consent", listener);
+    window.removeEventListener("storage", listener);
+  };
+}
+const serverConsent = () => null;
 
-  useEffect(() => {
-    setConsent(getAnalyticsConsent());
-  }, []);
+export function AnalyticsConsentBanner() {
+  const consent = useSyncExternalStore(
+    subscribe,
+    getAnalyticsConsent,
+    serverConsent,
+  );
 
   if (consent) {
     return null;
@@ -21,7 +31,6 @@ export function AnalyticsConsentBanner() {
 
   function chooseConsent(value: AnalyticsConsent) {
     setAnalyticsConsent(value);
-    setConsent(value);
   }
 
   return (

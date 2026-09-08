@@ -1,3 +1,4 @@
+import { serializeJsonLd } from "@/lib/request-security";
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
@@ -9,6 +10,7 @@ import "./feedback-polish.css";
 import "./site-enhancements.css";
 import "./dark-mode.css";
 import "./site-motion.css";
+import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { AnalyticsConsentBanner } from "@/components/analytics-consent-banner";
 import { SiteEnhancements } from "@/components/site-enhancements";
@@ -95,7 +97,8 @@ const structuredData = [
     "@id": `${siteUrl}/#website`,
     name: "Convertix",
     url: siteUrl,
-    description: "Free online file conversion tools and practical file format guides.",
+    description:
+      "Free online file conversion tools and practical file format guides.",
   },
   {
     "@context": "https://schema.org",
@@ -112,7 +115,11 @@ const structuredData = [
   },
 ];
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html
       lang="en"
@@ -125,11 +132,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }}
         />
         <a className="skip-link" href="#main-content">
           Skip to main content
         </a>
+        <SiteHeader />
         {children}
         <SiteFooter />
         <AnalyticsConsentBanner />

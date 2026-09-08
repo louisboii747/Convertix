@@ -2,12 +2,17 @@ import "server-only";
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { authenticatedAccount } from "./account-queries";
+import { isUnavailableAuthError } from "./auth-status";
 
 export const requireAccount = cache(async () => {
   const supabase = await createClient();
-  const user = await authenticatedAccount(supabase).catch(() => null);
-  if (!user) redirect("/login");
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+  if (isUnavailableAuthError(error))
+    throw new Error("We couldn’t check your account. Please try again.");
+  if (!user || user.is_anonymous) redirect("/login");
   return { supabase, user };
 });
 

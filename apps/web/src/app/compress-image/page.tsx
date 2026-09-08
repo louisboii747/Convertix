@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import { ImageCompressor } from "@/components/image-compressor";
-import { SiteHeader } from "@/components/site-header";
 
 export const metadata: Metadata = {
   title: "Batch Image Compressor | Compress JPG, PNG & WebP",
@@ -28,7 +27,6 @@ export const metadata: Metadata = {
 export default function CompressImagePage() {
   return (
     <>
-      <SiteHeader />
       <main id="main-content">
         <ImageCompressor />
       </main>

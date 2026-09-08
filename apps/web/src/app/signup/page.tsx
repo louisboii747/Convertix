@@ -2,7 +2,6 @@ import Link from "next/link";
 
 import { signup } from "@/app/login/actions";
 import { PasswordField } from "@/components/password-field";
-import { SiteHeader } from "@/components/site-header";
 import { FlowButton } from "@/components/ui/flow-button";
 
 type SignupPageProps = {
@@ -17,7 +16,6 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
 
   return (
     <>
-      <SiteHeader />
       <main
         className="auth-page ph-no-capture ph-mask"
         id="main-content"

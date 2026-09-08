@@ -4,6 +4,11 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { ArrowIcon } from "@/components/icons";
+import { Bookmark } from "lucide-react";
+import {
+  useSavedConversions,
+  toggleSavedConversion,
+} from "@/lib/use-route-shortcuts";
 import styles from "./conversion-directory.module.css";
 
 export interface ConversionDirectoryEntry {
@@ -22,6 +27,8 @@ interface ConversionDirectoryProps {
 export function ConversionDirectory({ entries }: ConversionDirectoryProps) {
   const [query, setQuery] = useState("");
   const [family, setFamily] = useState("all");
+  const [savedOnly, setSavedOnly] = useState(false);
+  const saved = useSavedConversions();
 
   const families = useMemo(
     () => Array.from(new Set(entries.map((entry) => entry.family))),
@@ -38,9 +45,13 @@ export function ConversionDirectory({ entries }: ConversionDirectoryProps) {
           .join(" ")
           .toLowerCase()
           .includes(normalized);
-      return matchesFamily && matchesQuery;
+      return (
+        matchesFamily &&
+        matchesQuery &&
+        (!savedOnly || saved.includes(`/${entry.slug}`))
+      );
     });
-  }, [entries, family, query]);
+  }, [entries, family, query, savedOnly, saved]);
 
   const grouped = useMemo(() => {
     const groups = new Map<string, ConversionDirectoryEntry[]>();
@@ -53,10 +64,16 @@ export function ConversionDirectory({ entries }: ConversionDirectoryProps) {
   }, [filtered]);
 
   return (
-    <section className={styles.directory} aria-labelledby="conversion-directory-title">
+    <section
+      className={styles.directory}
+      aria-labelledby="conversion-directory-title"
+    >
       <div className={styles.controls}>
         <div>
           <h2 id="conversion-directory-title">Search available conversions</h2>
+          <p className={styles.savedHint}>
+            Save the conversions you use often for quick access in this browser.
+          </p>
         </div>
 
         <label className={styles.searchLabel}>
@@ -95,6 +112,14 @@ export function ConversionDirectory({ entries }: ConversionDirectoryProps) {
               {item.charAt(0).toUpperCase() + item.slice(1)}
             </button>
           ))}
+          <button
+            type="button"
+            aria-pressed={savedOnly}
+            className={savedOnly ? styles.activeFilter : styles.filter}
+            onClick={() => setSavedOnly((value) => !value)}
+          >
+            Saved ({saved.length})
+          </button>
         </div>
       </div>
 
@@ -109,25 +134,57 @@ export function ConversionDirectory({ entries }: ConversionDirectoryProps) {
           grouped.map(([groupFamily, familyEntries]) => (
             <div className={styles.group} key={groupFamily}>
               <div className={styles.groupHeading}>
-                <h3>{groupFamily.charAt(0).toUpperCase() + groupFamily.slice(1)}</h3>
+                <h3>
+                  {groupFamily.charAt(0).toUpperCase() + groupFamily.slice(1)}
+                </h3>
               </div>
               <div className={styles.links}>
                 {familyEntries.map((entry) => (
-                  <Link key={entry.slug} href={`/${entry.slug}`}>
-                    <span>
-                      {entry.label}
-                      {entry.popular ? <small>Popular</small> : null}
-                    </span>
-                    <ArrowIcon />
-                  </Link>
+                  <div className={styles.entry} key={entry.slug}>
+                    <Link href={`/${entry.slug}`}>
+                      <span>
+                        {entry.label}
+                        {entry.popular ? <small>Popular</small> : null}
+                      </span>
+                      <ArrowIcon />
+                    </Link>
+                    <button
+                      type="button"
+                      className={styles.saveButton}
+                      aria-label={`${saved.includes(`/${entry.slug}`) ? "Unsave" : "Save"} ${entry.label}`}
+                      aria-pressed={saved.includes(`/${entry.slug}`)}
+                      onClick={() => toggleSavedConversion(`/${entry.slug}`)}
+                    >
+                      <Bookmark size={18} aria-hidden="true" />
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>
           ))
         ) : (
           <div className={styles.empty}>
-            <h3>No conversions match that search</h3>
-            <p>Try a format name like PDF, PNG, DOCX, XLSX, MP3, or MP4.</p>
+            <h3>
+              {savedOnly && !saved.length
+                ? "Your saved conversions will appear here"
+                : "No conversions match that search"}
+            </h3>
+            <p>
+              {savedOnly && !saved.length
+                ? "Use the bookmark beside a conversion to save it."
+                : "Try a format name like PDF, PNG, DOCX, XLSX, MP3, or MP4."}
+            </p>
+            <button
+              type="button"
+              className={styles.filter}
+              onClick={() => {
+                setQuery("");
+                setFamily("all");
+                setSavedOnly(false);
+              }}
+            >
+              Show all conversions
+            </button>
           </div>
         )}
       </div>
