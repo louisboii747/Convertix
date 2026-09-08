@@ -17,6 +17,15 @@
   }
 }
 
+@keyframes site-motion-enter-mobile {
+  from {
+    opacity: 0.9;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes site-dialog-backdrop-enter {
   from {
     opacity: 0;
@@ -126,6 +135,23 @@
  * makes native/plain buttons elsewhere feel consistent with FlowButton. */
 button:not(:disabled):active {
   transition-duration: 80ms;
+}
+
+/* Touch devices use a much cheaper reveal. Large sections no longer translate
+ * while the page is actively scrolling, and stagger delays are removed in JS.
+ * The observer also starts these slightly before they enter the visible
+ * viewport, so most of the fade is already complete by the time it is seen. */
+@media (max-width: 760px), (pointer: coarse) {
+  .site-motion-enter {
+    animation-name: site-motion-enter-mobile;
+    animation-duration: 160ms;
+    animation-delay: 0ms !important;
+    animation-timing-function: ease-out;
+  }
+
+  .faq-list details[open] > :not(summary) {
+    animation-duration: 160ms;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
