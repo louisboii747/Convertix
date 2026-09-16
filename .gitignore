@@ -35,3 +35,19 @@ services/worker/convertix-test.svg
 crash.log
 *.tfvars
 *.tfvars.json
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Xcode user-specific files
+xcuserdata/
+*.xcuserstate
+
+# Xcode build output
+DerivedData/
+build/
+
+# Swift Package Manager local state
+.swiftpm/
+.build/
