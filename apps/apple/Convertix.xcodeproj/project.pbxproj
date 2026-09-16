@@ -8,16 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		A10000000000000000000001 /* ConvertixApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* ConvertixApp.swift */; };
-		A10000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* ContentView.swift */; };
 		A10000000000000000000003 /* ConvertixApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* ConvertixApp.swift */; };
-		A10000000000000000000004 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* ContentView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		A20000000000000000000001 /* ConvertixApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvertixApp.swift; sourceTree = "<group>"; };
-		A20000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		A20000000000000000000003 /* Convertix (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "Convertix (iOS).app"; path = Convertix.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A20000000000000000000004 /* Convertix (macOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "Convertix (macOS).app"; path = Convertix.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000003 /* Convertix (iOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "Convertix (iOS).app"; path = "Convertix iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000004 /* Convertix (macOS).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "Convertix (macOS).app"; path = "Convertix macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,7 +63,6 @@
 		A40000000000000000000004 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				A20000000000000000000002 /* ContentView.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -177,7 +173,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10000000000000000000001 /* ConvertixApp.swift in Sources */,
-				A10000000000000000000002 /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -186,7 +181,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10000000000000000000003 /* ConvertixApp.swift in Sources */,
-				A10000000000000000000004 /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,7 +262,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Convertix;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = uk.convertix.mac;
@@ -286,7 +283,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Convertix;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = uk.convertix.mac;
