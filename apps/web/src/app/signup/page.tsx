@@ -114,7 +114,7 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
                 </div>
 
                 <FlowButton
-                  className="mt-1 w-full min-h-[54px]"
+                  className="mt-1 w-full min-h-13.5"
                   type="submit"
                   variant="dark"
                   shape="rounded"
