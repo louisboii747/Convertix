@@ -12,6 +12,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4A3344E7305BEB32007A8195 /* Convertix-iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Convertix-iOS-Info.plist"; sourceTree = "<group>"; };
+		4A3344E8305BEB32007A8195 /* Convertix-macOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Convertix-macOS-Info.plist"; sourceTree = "<group>"; };
 		A20000000000000000000001 /* ConvertixApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvertixApp.swift; sourceTree = "<group>"; };
 		A20000000000000000000003 /* Convertix iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Convertix iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A20000000000000000000004 /* Convertix macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Convertix macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -38,6 +40,8 @@
 		A40000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
+				4A3344E8305BEB32007A8195 /* Convertix-macOS-Info.plist */,
+				4A3344E7305BEB32007A8195 /* Convertix-iOS-Info.plist */,
 				A40000000000000000000002 /* Convertix */,
 				A40000000000000000000005 /* Products */,
 			);
@@ -281,6 +285,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Convertix-iOS-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Convertix;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 0.1.0;
@@ -300,6 +305,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Convertix-iOS-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Convertix;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 0.1.0;
@@ -320,6 +326,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Convertix-macOS-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Convertix;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -342,6 +349,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Convertix-macOS-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Convertix;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
