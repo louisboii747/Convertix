@@ -5,9 +5,10 @@ struct ToolsView: View {
         ZStack {
             ConvertixBackdrop()
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 24) {
                     Text("Tools")
                         .font(.largeTitle.bold())
+                        .foregroundStyle(.primary)
                     Text("Focused utilities for the jobs around conversion.")
                         .font(.title3)
                         .foregroundStyle(.secondary)
@@ -19,8 +20,8 @@ struct ToolsView: View {
                         ToolCard(title: "Optimize SVG", detail: "Clean and reduce vector artwork for the web.", symbol: "scribble.variable", tint: .orange)
                     }
                 }
-                .frame(maxWidth: 900, alignment: .leading)
-                .padding(24)
+                .frame(maxWidth: 860, alignment: .leading)
+                .padding(28)
                 .frame(maxWidth: .infinity)
             }
         }
@@ -41,11 +42,11 @@ struct ToolCard: View {
                     .font(.title2)
                     .foregroundStyle(tint)
                     .frame(width: 48, height: 48)
-                    .background(tint.opacity(0.12), in: RoundedRectangle(cornerRadius: 14))
+                    .background(tint.opacity(0.12), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
 
                 Text(title)
                     .font(.headline)
-                    .foregroundStyle(ConvertixTheme.ink)
+                    .foregroundStyle(.primary)
                 Text(detail)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -54,11 +55,10 @@ struct ToolCard: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(ConvertixTheme.cobalt)
             }
-            .frame(maxWidth: .infinity, minHeight: 170, alignment: .topLeading)
+            .frame(maxWidth: .infinity, minHeight: 164, alignment: .topLeading)
             .padding(20)
-            .convertixGlassPanel(cornerRadius: 22)
+            .convertixGlassPanel(cornerRadius: 18)
         }
         .buttonStyle(.plain)
     }
 }
-

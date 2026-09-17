@@ -4,12 +4,27 @@
 <dict>
 	<key>CFBundleIconName</key>
 	<string>AppIcon</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>uk.convertix.mac</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>convertix</string>
+			</array>
+		</dict>
+	</array>
 	<key>ConvertixAPIBaseURL</key>
-	<string>http://localhost:8000</string>
+	<string>https://qzecb33ili.execute-api.eu-west-2.amazonaws.com</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>SupabasePublishableKey</key>
+	<string>sb_publishable_-BMNwWgrDTktqkbMc2NIYg_OEoS2kOa</string>
+	<key>SupabaseURL</key>
+	<string>https://klwatzzobckewqxmkvoy.supabase.co</string>
 </dict>
 </plist>

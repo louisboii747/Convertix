@@ -5,21 +5,27 @@ struct SettingsView: View {
     @AppStorage("notifyWhenComplete") private var notifyWhenComplete = true
 
     var body: some View {
-        Form {
-            Section("Conversions") {
-                Toggle("Notify when complete", isOn: $notifyWhenComplete)
-                Toggle("Offer to delete the original", isOn: $deleteOriginalAfterConversion)
-            }
+        ZStack {
+            ConvertixBackdrop()
 
-            Section("Privacy") {
-                Label("Files upload only when conversion starts", systemImage: "lock.shield")
-                Label("On-device tools never upload files", systemImage: "iphone.gen3")
-            }
+            Form {
+                Section("Conversions") {
+                    Toggle("Notify when complete", isOn: $notifyWhenComplete)
+                    Toggle("Offer to delete the original", isOn: $deleteOriginalAfterConversion)
+                }
 
-            Section("About") {
-                LabeledContent("App", value: "Convertix")
-                LabeledContent("Iteration", value: "Native foundation")
+                Section("Privacy") {
+                    Label("Files upload only when conversion starts", systemImage: "lock.shield")
+                    Label("On-device tools never upload files", systemImage: "iphone.gen3")
+                }
+
+                Section("About") {
+                    LabeledContent("App", value: "Convertix")
+                    LabeledContent("Version", value: "1.0")
+                }
             }
+            .formStyle(.grouped)
+            .scrollContentBackground(.hidden)
         }
         .navigationTitle("Settings")
     }

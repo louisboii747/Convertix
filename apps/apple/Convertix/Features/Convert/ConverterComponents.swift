@@ -1,34 +1,32 @@
 import SwiftUI
 
+#if os(macOS)
+import AppKit
+#endif
+
 struct ConverterPanel: View {
     @Binding var selectedRoute: ConversionRoute
     let selectedFileName: String?
     let conversionStatus: ConversionStatus
+    let downloadedFileURL: URL?
+    let isDownloading: Bool
+    let downloadError: String?
     let chooseFile: () -> Void
     let clearFile: () -> Void
     let startConversion: () -> Void
+    let downloadResult: () -> Void
 
     var body: some View {
-        VStack(spacing: 18) {
+        VStack(spacing: 20) {
             FileDropArea(fileName: selectedFileName, chooseFile: chooseFile, clearFile: clearFile)
 
-            HStack(spacing: 12) {
-                FormatStep(number: 1, label: "From", format: selectedRoute.source, color: .orange)
-
-                Image(systemName: "arrow.right")
-                    .font(.headline)
-                    .foregroundStyle(.tertiary)
-                    .accessibilityHidden(true)
-
-                Menu {
-                    ForEach(ConversionRoute.catalog) { route in
-                        Button(route.title) { selectedRoute = route }
-                    }
-                } label: {
-                    FormatStep(number: 2, label: "Convert to", format: selectedRoute.target, color: ConvertixTheme.cobalt)
+            ViewThatFits {
+                HStack(spacing: 12) {
+                    ConversionFormatControls(selectedRoute: $selectedRoute)
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Output format, \(selectedRoute.target)")
+                VStack(spacing: 12) {
+                    ConversionFormatControls(selectedRoute: $selectedRoute, isVertical: true)
+                }
             }
 
             Button(action: startConversion) {
@@ -44,12 +42,13 @@ struct ConverterPanel: View {
             if conversionStatus.isRunning {
                 ProgressView(conversionStatus.message ?? "Converting…")
                     .frame(maxWidth: .infinity, alignment: .leading)
-            } else if case let .completed(downloadURL) = conversionStatus {
-                Link(destination: downloadURL) {
-                    Label("Download converted file", systemImage: "arrow.down.circle.fill")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
+            } else if case .completed = conversionStatus {
+                ConversionResultActions(
+                    downloadedFileURL: downloadedFileURL,
+                    isDownloading: isDownloading,
+                    errorMessage: downloadError,
+                    downloadResult: downloadResult
+                )
             } else if case let .failed(message) = conversionStatus {
                 Label(message, systemImage: "exclamationmark.triangle.fill")
                     .font(.callout)
@@ -57,8 +56,8 @@ struct ConverterPanel: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .padding(20)
-        .convertixGlassPanel(cornerRadius: 26)
+        .padding(22)
+        .convertixGlassPanel(cornerRadius: 24)
     }
 
     private var buttonTitle: String {
@@ -72,6 +71,74 @@ struct ConverterPanel: View {
     }
 }
 
+struct ConversionResultActions: View {
+    let downloadedFileURL: URL?
+    let isDownloading: Bool
+    let errorMessage: String?
+    let downloadResult: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            if let downloadedFileURL {
+                ShareLink(item: downloadedFileURL) {
+                    Label("Save or Share File", systemImage: "square.and.arrow.up")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+
+#if os(macOS)
+                Button("Reveal in Finder", systemImage: "folder") {
+                    NSWorkspace.shared.activateFileViewerSelecting([downloadedFileURL])
+                }
+                .buttonStyle(.bordered)
+#endif
+            } else {
+                Button(action: downloadResult) {
+                    if isDownloading {
+                        ProgressView()
+                            .frame(maxWidth: .infinity)
+                    } else {
+                        Label("Download Converted File", systemImage: "arrow.down.circle.fill")
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(isDownloading)
+            }
+
+            if let errorMessage {
+                Label(errorMessage, systemImage: "exclamationmark.triangle.fill")
+                    .font(.callout)
+                    .foregroundStyle(.red)
+            }
+        }
+    }
+}
+
+struct ConversionFormatControls: View {
+    @Binding var selectedRoute: ConversionRoute
+    var isVertical = false
+
+    var body: some View {
+        FormatStep(number: 1, label: "From", format: selectedRoute.source, color: .orange)
+
+        Image(systemName: isVertical ? "arrow.down" : "arrow.right")
+            .font(.headline)
+            .foregroundStyle(.tertiary)
+            .accessibilityHidden(true)
+
+        Menu {
+            ForEach(ConversionRoute.catalog) { route in
+                Button(route.title) { selectedRoute = route }
+            }
+        } label: {
+            FormatStep(number: 2, label: "Convert to", format: selectedRoute.target, color: ConvertixTheme.cobalt)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Output format, \(selectedRoute.target)")
+    }
+}
+
 struct FileDropArea: View {
     let fileName: String?
     let chooseFile: () -> Void
@@ -82,8 +149,8 @@ struct FileDropArea: View {
             Image(systemName: fileName == nil ? "doc.badge.plus" : "doc.fill")
                 .font(.system(size: 34, weight: .semibold))
                 .foregroundStyle(ConvertixTheme.cobalt)
-                .frame(width: 68, height: 68)
-                .background(ConvertixTheme.cobalt.opacity(0.1), in: RoundedRectangle(cornerRadius: 18))
+                .frame(width: 64, height: 64)
+                .background(ConvertixTheme.cobalt.opacity(0.12), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
 
             Text(fileName ?? "Choose a file to convert")
                 .font(.title3.weight(.semibold))
@@ -108,12 +175,12 @@ struct FileDropArea: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 28)
+        .padding(.vertical, 32)
         .padding(.horizontal)
-        .background(Color.white.opacity(0.52), in: RoundedRectangle(cornerRadius: 20))
+        .background(.background.opacity(0.55), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
         .overlay {
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(ConvertixTheme.cobalt.opacity(0.35), style: StrokeStyle(lineWidth: 1.5, dash: [7]))
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(ConvertixTheme.line.opacity(0.7), lineWidth: 1)
         }
     }
 }
@@ -138,29 +205,31 @@ struct FormatStep: View {
                     .foregroundStyle(.secondary)
                 Text(format)
                     .font(.headline)
-                    .foregroundStyle(ConvertixTheme.ink)
+                    .foregroundStyle(.primary)
             }
 
             Spacer(minLength: 0)
         }
         .padding(14)
         .frame(maxWidth: .infinity)
-        .background(.white.opacity(0.62), in: RoundedRectangle(cornerRadius: 16))
+        .background(.background.opacity(0.6), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
 }
 
 struct ConversionNotes: View {
     var body: some View {
         ViewThatFits {
-            HStack(spacing: 24) { notes }
-            VStack(alignment: .leading, spacing: 10) { notes }
+            HStack(spacing: 24) { ConversionNoteLabels() }
+            VStack(alignment: .leading, spacing: 10) { ConversionNoteLabels() }
         }
         .font(.footnote.weight(.medium))
         .foregroundStyle(.secondary)
     }
 
-    @ViewBuilder
-    private var notes: some View {
+}
+
+struct ConversionNoteLabels: View {
+    var body: some View {
         Label("No account needed", systemImage: "person.crop.circle.badge.checkmark")
         Label("100 MB file limit", systemImage: "externaldrive")
         Label("Uploads only when you start", systemImage: "lock.shield")
@@ -193,7 +262,11 @@ struct PopularConversions: View {
                                 .foregroundStyle(.tertiary)
                         }
                         .padding()
-                        .background(.white.opacity(0.68), in: RoundedRectangle(cornerRadius: 16))
+                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .stroke(ConvertixTheme.line.opacity(0.4), lineWidth: 0.5)
+                        }
                     }
                     .buttonStyle(.plain)
                 }
@@ -202,4 +275,3 @@ struct PopularConversions: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
-

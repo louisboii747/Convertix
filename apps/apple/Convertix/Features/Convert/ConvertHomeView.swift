@@ -2,27 +2,38 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct ConvertHomeView: View {
+    @Environment(AppState.self) private var appState
+    let showAccount: () -> Void
     @State private var selectedRoute = ConversionRoute.catalog[0]
     @State private var isImporting = false
     @State private var selectedFileName: String?
     @State private var selectedFileURL: URL?
-    @State private var conversionStatus: ConversionStatus = .idle
     @State private var searchText = ""
+
+    init(showAccount: @escaping () -> Void = {}) {
+        self.showAccount = showAccount
+    }
 
     var body: some View {
         ZStack {
             ConvertixBackdrop()
 
             ScrollView {
-                VStack(spacing: 28) {
+                VStack(spacing: 32) {
                     HeroHeader()
                     ConverterPanel(
                         selectedRoute: $selectedRoute,
                         selectedFileName: selectedFileName,
-                        conversionStatus: conversionStatus,
+                        conversionStatus: appState.conversionStatus,
+                        downloadedFileURL: appState.downloadedFileURL,
+                        isDownloading: appState.isDownloading,
+                        downloadError: appState.downloadError,
                         chooseFile: { isImporting = true },
                         clearFile: clearFile,
-                        startConversion: startConversion
+                        startConversion: startConversion,
+                        downloadResult: {
+                            Task { await appState.downloadResult() }
+                        }
                     )
                     ConversionNotes()
                     PopularConversions(
@@ -30,9 +41,9 @@ struct ConvertHomeView: View {
                         selectedRoute: $selectedRoute
                     )
                 }
-                .frame(maxWidth: 900)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 28)
+                .frame(maxWidth: 860)
+                .padding(.horizontal, 24)
+                .padding(.vertical, 36)
                 .frame(maxWidth: .infinity)
             }
         }
@@ -46,20 +57,17 @@ struct ConvertHomeView: View {
             guard case let .success(urls) = result, let url = urls.first else { return }
             selectedFileName = url.lastPathComponent
             selectedFileURL = url
-            conversionStatus = .idle
+            appState.resetConversion()
 
             let fileExtension = url.pathExtension.lowercased()
-            if let matchingRoute = ConversionRoute.catalog.first(where: {
-                $0.source.lowercased() == fileExtension
-                    || ($0.source.lowercased() == "jpg" && fileExtension == "jpeg")
-            }) {
+            if let matchingRoute = ConversionRoute.routes(forSourceExtension: fileExtension).first {
                 selectedRoute = matchingRoute
             }
         }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button("Account", systemImage: "person.crop.circle") {}
-                    .accessibilityHint("Account features are coming in a later iteration")
+                Button("Account", systemImage: "person.crop.circle", action: showAccount)
+                    .help("Open Account")
             }
         }
     }
@@ -67,7 +75,7 @@ struct ConvertHomeView: View {
     private func clearFile() {
         selectedFileName = nil
         selectedFileURL = nil
-        conversionStatus = .idle
+        appState.resetConversion()
     }
 
     private func startConversion() {
@@ -81,18 +89,7 @@ struct ConvertHomeView: View {
                 }
             }
 
-            do {
-                let api = try ConversionAPI()
-                _ = try await api.convert(fileURL: selectedFileURL, route: selectedRoute) { status in
-                    conversionStatus = status
-                }
-            } catch is CancellationError {
-                conversionStatus = .idle
-            } catch {
-                conversionStatus = .failed(
-                    (error as? LocalizedError)?.errorDescription ?? "The conversion couldn’t be completed."
-                )
-            }
+            await appState.convert(fileURL: selectedFileURL, route: selectedRoute)
         }
     }
 }
@@ -111,26 +108,22 @@ struct HeroHeader: View {
     ]
 
     var body: some View {
-        VStack(spacing: 12) {
-            VStack(spacing: 0) {
-                Text("Convert files")
-                    .foregroundStyle(ConvertixTheme.ink)
-                Text(displayedPhrase)
-                    .foregroundStyle(ConvertixTheme.cobalt)
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity)
-            }
-            .font(.largeTitle.bold())
+        VStack(spacing: 10) {
+            Text("Convert files \(displayedPhrase)")
+                .font(.largeTitle.bold())
+                .foregroundStyle(.primary)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+                .contentTransition(.numericText())
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Convert files \(completedPhrase)")
 
             Text("Choose a file and Convertix will show the formats it can convert to.")
-                .font(.title3)
+                .font(.body)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 620)
         }
-        .padding(.top, 12)
         .task(id: reduceMotion) {
             guard !reduceMotion else {
                 displayedPhrase = Self.phrases[0]
@@ -173,4 +166,3 @@ struct HeroHeader: View {
         }
     }
 }
-

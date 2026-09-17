@@ -22,11 +22,15 @@
 		</dict>
 	</array>
 	<key>ConvertixAPIBaseURL</key>
-	<string>http://localhost:8000</string>
+	<string>https://qzecb33ili.execute-api.eu-west-2.amazonaws.com</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>SupabasePublishableKey</key>
+	<string>sb_publishable_-BMNwWgrDTktqkbMc2NIYg_OEoS2kOa</string>
+	<key>SupabaseURL</key>
+	<string>https://klwatzzobckewqxmkvoy.supabase.co</string>
 </dict>
 </plist>

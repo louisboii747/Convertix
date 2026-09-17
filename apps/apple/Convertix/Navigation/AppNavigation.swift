@@ -4,6 +4,7 @@ enum AppSection: String, CaseIterable, Identifiable {
     case convert
     case tools
     case activity
+    case account
     case settings
 
     var id: Self { self }
@@ -13,6 +14,7 @@ enum AppSection: String, CaseIterable, Identifiable {
         case .convert: "Convert"
         case .tools: "Tools"
         case .activity: "Activity"
+        case .account: "Account"
         case .settings: "Settings"
         }
     }
@@ -22,6 +24,7 @@ enum AppSection: String, CaseIterable, Identifiable {
         case .convert: "arrow.trianglehead.2.clockwise.rotate.90"
         case .tools: "square.grid.2x2"
         case .activity: "clock.arrow.trianglehead.counterclockwise.rotate.90"
+        case .account: "person.crop.circle"
         case .settings: "gearshape"
         }
     }
@@ -39,7 +42,9 @@ struct ContentView: View {
                 SidebarView(selection: $selection)
             } detail: {
                 NavigationStack {
-                    DestinationView(section: selection ?? .convert)
+                    DestinationView(section: selection ?? .convert) {
+                        selection = .account
+                    }
                 }
             }
             .navigationSplitViewStyle(.balanced)
@@ -49,14 +54,19 @@ struct ContentView: View {
 }
 
 struct CompactRootView: View {
+    @State private var selection = AppSection.convert
+
     var body: some View {
-        TabView {
+        TabView(selection: $selection) {
             NavigationStack {
-                ConvertHomeView()
+                ConvertHomeView {
+                    selection = .account
+                }
             }
             .tabItem {
                 Label("Convert", systemImage: "arrow.trianglehead.2.clockwise.rotate.90")
             }
+            .tag(AppSection.convert)
 
             NavigationStack {
                 ToolsView()
@@ -64,6 +74,7 @@ struct CompactRootView: View {
             .tabItem {
                 Label("Tools", systemImage: "square.grid.2x2")
             }
+            .tag(AppSection.tools)
 
             NavigationStack {
                 ActivityHistoryView()
@@ -71,6 +82,15 @@ struct CompactRootView: View {
             .tabItem {
                 Label("Activity", systemImage: "clock")
             }
+            .tag(AppSection.activity)
+
+            NavigationStack {
+                AccountView()
+            }
+            .tabItem {
+                Label("Account", systemImage: "person.crop.circle")
+            }
+            .tag(AppSection.account)
 
             NavigationStack {
                 SettingsView()
@@ -78,6 +98,7 @@ struct CompactRootView: View {
             .tabItem {
                 Label("Settings", systemImage: "gearshape")
             }
+            .tag(AppSection.settings)
         }
         .tint(ConvertixTheme.cobalt)
     }
@@ -91,6 +112,7 @@ struct SidebarView: View {
             Label(section.title, systemImage: section.systemImage)
                 .tag(section)
         }
+        .listStyle(.sidebar)
         .navigationTitle("Convertix")
         .safeAreaInset(edge: .top) {
             BrandLockup()
@@ -102,15 +124,18 @@ struct SidebarView: View {
 
 struct DestinationView: View {
     let section: AppSection
+    let showAccount: () -> Void
 
     var body: some View {
         switch section {
         case .convert:
-            ConvertHomeView()
+            ConvertHomeView(showAccount: showAccount)
         case .tools:
             ToolsView()
         case .activity:
             ActivityHistoryView()
+        case .account:
+            AccountView()
         case .settings:
             SettingsView()
         }
@@ -120,18 +145,15 @@ struct DestinationView: View {
 struct BrandLockup: View {
     var body: some View {
         HStack(spacing: 10) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(ConvertixTheme.cobalt.gradient)
-                Image(systemName: "arrow.left.arrow.right")
-                    .font(.headline.weight(.bold))
-                    .foregroundStyle(.white)
-            }
-            .frame(width: 34, height: 34)
+            Image("ConvertixLogo")
+                .resizable()
+                .scaledToFit()
+                .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+                .frame(width: 36, height: 36)
 
             Text("Convertix")
                 .font(.title3.weight(.bold))
-                .foregroundStyle(ConvertixTheme.ink)
+                .foregroundStyle(.primary)
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Convertix")
@@ -145,4 +167,3 @@ struct BrandLockup: View {
 #Preview("iPad", traits: .fixedLayout(width: 1180, height: 820)) {
     ContentView()
 }
-

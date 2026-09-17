@@ -7,6 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A1E9B1F305C172400BB7821 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1E9B1E305C172400BB7821 /* AccountView.swift */; };
+		4A1E9B20305C172400BB7821 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1E9B1E305C172400BB7821 /* AccountView.swift */; };
+		4A1E9B26305C2CF100BB7821 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 4A1E9B25305C2CF100BB7821 /* Supabase */; };
+		4A1E9B28305C2D0000BB7821 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 4A1E9B27305C2D0000BB7821 /* Supabase */; };
+		4A1E9B2A305C2D8B00BB7821 /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1E9B29305C2D8B00BB7821 /* AppConfiguration.swift */; };
+		4A1E9B2B305C2D8B00BB7821 /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1E9B29305C2D8B00BB7821 /* AppConfiguration.swift */; };
+		4A1E9B2D305C2D8B00BB7821 /* BackendModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1E9B2C305C2D8B00BB7821 /* BackendModels.swift */; };
+		4A1E9B2E305C2D8B00BB7821 /* BackendModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1E9B2C305C2D8B00BB7821 /* BackendModels.swift */; };
+		4A1E9B30305C2D9F00BB7821 /* SupabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1E9B2F305C2D9F00BB7821 /* SupabaseService.swift */; };
+		4A1E9B31305C2D9F00BB7821 /* SupabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1E9B2F305C2D9F00BB7821 /* SupabaseService.swift */; };
+		4A1E9B33305C2E1000BB7821 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1E9B32305C2E1000BB7821 /* AppState.swift */; };
+		4A1E9B34305C2E1000BB7821 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1E9B32305C2E1000BB7821 /* AppState.swift */; };
+		4A1E9B36305C2E3200BB7821 /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1E9B35305C2E3200BB7821 /* AuthenticationView.swift */; };
+		4A1E9B37305C2E3200BB7821 /* AuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1E9B35305C2E3200BB7821 /* AuthenticationView.swift */; };
 		4A77724C305BF4E800455003 /* ConvertixDesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77724B305BF4E800455003 /* ConvertixDesignSystem.swift */; };
 		4A77724D305BF4E800455003 /* ConvertixDesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77724B305BF4E800455003 /* ConvertixDesignSystem.swift */; };
 		4A777250305BF4E800455003 /* ConversionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77724F305BF4E800455003 /* ConversionModels.swift */; };
@@ -60,6 +74,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4A1E9B1E305C172400BB7821 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
+		4A1E9B29305C2D8B00BB7821 /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
+		4A1E9B2C305C2D8B00BB7821 /* BackendModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendModels.swift; sourceTree = "<group>"; };
+		4A1E9B2F305C2D9F00BB7821 /* SupabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseService.swift; sourceTree = "<group>"; };
+		4A1E9B32305C2E1000BB7821 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		4A1E9B35305C2E3200BB7821 /* AuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationView.swift; sourceTree = "<group>"; };
+		4A1E9B3C305C2F5700BB7821 /* ConvertixTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ConvertixTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A3344E7305BEB32007A8195 /* Convertix-iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Convertix-iOS-Info.plist"; sourceTree = "<group>"; };
 		4A3344E8305BEB32007A8195 /* Convertix-macOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Convertix-macOS-Info.plist"; sourceTree = "<group>"; };
 		4A77724B305BF4E800455003 /* ConvertixDesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvertixDesignSystem.swift; sourceTree = "<group>"; };
@@ -92,10 +113,18 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		4A1E9B3D305C2F5700BB7821 /* ConvertixTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ConvertixTests; sourceTree = "<group>"; };
 		4A77727C305BF6F900455003 /* ConvertixWidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (4A777287305BF6FA00455003 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ConvertixWidget; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4A1E9B39305C2F5700BB7821 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4A777273305BF6F900455003 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -109,6 +138,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A1E9B26305C2CF100BB7821 /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,12 +146,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A1E9B28305C2D0000BB7821 /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4A1E9B1D305C171F00BB7821 /* Account 2 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Account 2";
+			sourceTree = "<group>";
+		};
 		4A77724A305BF4E800455003 /* DesignSystem */ = {
 			isa = PBXGroup;
 			children = (
@@ -134,6 +172,7 @@
 			isa = PBXGroup;
 			children = (
 				4A77724F305BF4E800455003 /* ConversionModels.swift */,
+				4A1E9B2C305C2D8B00BB7821 /* BackendModels.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -142,6 +181,8 @@
 			isa = PBXGroup;
 			children = (
 				4A777253305BF4E800455003 /* ConversionAPI.swift */,
+				4A1E9B29305C2D8B00BB7821 /* AppConfiguration.swift */,
+				4A1E9B2F305C2D9F00BB7821 /* SupabaseService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -169,6 +210,7 @@
 				4A777266305BF4F300455003 /* Tools */,
 				4A77726A305BF4F300455003 /* Activity */,
 				4A77726E305BF4F300455003 /* Settings */,
+				4A1E9B1D305C171F00BB7821 /* Account 2 */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -202,6 +244,8 @@
 			isa = PBXGroup;
 			children = (
 				4A77726F305BF4F300455003 /* SettingsView.swift */,
+				4A1E9B1E305C172400BB7821 /* AccountView.swift */,
+				4A1E9B35305C2E3200BB7821 /* AuthenticationView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -222,6 +266,7 @@
 				4A3344E7305BEB32007A8195 /* Convertix-iOS-Info.plist */,
 				A40000000000000000000002 /* Convertix */,
 				4A77727C305BF6F900455003 /* ConvertixWidget */,
+				4A1E9B3D305C2F5700BB7821 /* ConvertixTests */,
 				4A777277305BF6F900455003 /* Frameworks */,
 				A40000000000000000000005 /* Products */,
 			);
@@ -246,6 +291,7 @@
 			isa = PBXGroup;
 			children = (
 				A20000000000000000000001 /* ConvertixApp.swift */,
+				4A1E9B32305C2E1000BB7821 /* AppState.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -256,6 +302,7 @@
 				A20000000000000000000003 /* Convertix iOS.app */,
 				A20000000000000000000004 /* Convertix macOS.app */,
 				4A777276305BF6F900455003 /* ConvertixWidgetExtension.appex */,
+				4A1E9B3C305C2F5700BB7821 /* ConvertixTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -263,6 +310,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4A1E9B3B305C2F5700BB7821 /* ConvertixTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4A1E9B40305C2F5700BB7821 /* Build configuration list for PBXNativeTarget "ConvertixTests" */;
+			buildPhases = (
+				4A1E9B38305C2F5700BB7821 /* Sources */,
+				4A1E9B39305C2F5700BB7821 /* Frameworks */,
+				4A1E9B3A305C2F5700BB7821 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				4A1E9B3D305C2F5700BB7821 /* ConvertixTests */,
+			);
+			name = ConvertixTests;
+			packageProductDependencies = (
+			);
+			productName = ConvertixTests;
+			productReference = 4A1E9B3C305C2F5700BB7821 /* ConvertixTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		4A777275305BF6F900455003 /* ConvertixWidgetExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4A777288305BF6FA00455003 /* Build configuration list for PBXNativeTarget "ConvertixWidgetExtension" */;
@@ -300,6 +369,9 @@
 				4A777285305BF6FA00455003 /* PBXTargetDependency */,
 			);
 			name = "Convertix iOS";
+			packageProductDependencies = (
+				4A1E9B25305C2CF100BB7821 /* Supabase */,
+			);
 			productName = Convertix;
 			productReference = A20000000000000000000003 /* Convertix iOS.app */;
 			productType = "com.apple.product-type.application";
@@ -317,6 +389,9 @@
 			dependencies = (
 			);
 			name = "Convertix macOS";
+			packageProductDependencies = (
+				4A1E9B27305C2D0000BB7821 /* Supabase */,
+			);
 			productName = Convertix;
 			productReference = A20000000000000000000004 /* Convertix macOS.app */;
 			productType = "com.apple.product-type.application";
@@ -331,6 +406,9 @@
 				LastSwiftUpdateCheck = 2700;
 				LastUpgradeCheck = 2700;
 				TargetAttributes = {
+					4A1E9B3B305C2F5700BB7821 = {
+						CreatedOnToolsVersion = 27.0;
+					};
 					4A777275305BF6F900455003 = {
 						CreatedOnToolsVersion = 27.0;
 					};
@@ -351,6 +429,9 @@
 				Base,
 			);
 			mainGroup = A40000000000000000000001;
+			packageReferences = (
+				4A1E9B24305C2BA700BB7821 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			productRefGroup = A40000000000000000000005 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -358,11 +439,19 @@
 				A50000000000000000000001 /* Convertix iOS */,
 				A50000000000000000000002 /* Convertix macOS */,
 				4A777275305BF6F900455003 /* ConvertixWidgetExtension */,
+				4A1E9B3B305C2F5700BB7821 /* ConvertixTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4A1E9B3A305C2F5700BB7821 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4A777274305BF6F900455003 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -388,6 +477,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4A1E9B38305C2F5700BB7821 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4A777272305BF6F900455003 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -399,14 +495,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A1E9B2D305C2D8B00BB7821 /* BackendModels.swift in Sources */,
+				4A1E9B1F305C172400BB7821 /* AccountView.swift in Sources */,
 				4A777250305BF4E800455003 /* ConversionModels.swift in Sources */,
 				A10000000000000000000001 /* ConvertixApp.swift in Sources */,
+				4A1E9B31305C2D9F00BB7821 /* SupabaseService.swift in Sources */,
+				4A1E9B2A305C2D8B00BB7821 /* AppConfiguration.swift in Sources */,
 				4A777264305BF4F300455003 /* ConverterComponents.swift in Sources */,
 				4A777268305BF4F300455003 /* ToolsView.swift in Sources */,
 				4A77726D305BF4F300455003 /* ActivityHistoryView.swift in Sources */,
 				4A777255305BF4E800455003 /* ConversionAPI.swift in Sources */,
 				4A777261305BF4F300455003 /* ConvertHomeView.swift in Sources */,
+				4A1E9B33305C2E1000BB7821 /* AppState.swift in Sources */,
 				4A77725C305BF4E800455003 /* AppNavigation.swift in Sources */,
+				4A1E9B36305C2E3200BB7821 /* AuthenticationView.swift in Sources */,
 				4A77724D305BF4E800455003 /* ConvertixDesignSystem.swift in Sources */,
 				4A777258305BF4E800455003 /* ConversionActivityAttributes.swift in Sources */,
 				4A777270305BF4F300455003 /* SettingsView.swift in Sources */,
@@ -417,14 +519,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A1E9B2E305C2D8B00BB7821 /* BackendModels.swift in Sources */,
+				4A1E9B20305C172400BB7821 /* AccountView.swift in Sources */,
 				4A777251305BF4E800455003 /* ConversionModels.swift in Sources */,
 				A10000000000000000000003 /* ConvertixApp.swift in Sources */,
+				4A1E9B30305C2D9F00BB7821 /* SupabaseService.swift in Sources */,
+				4A1E9B2B305C2D8B00BB7821 /* AppConfiguration.swift in Sources */,
 				4A777265305BF4F300455003 /* ConverterComponents.swift in Sources */,
 				4A777269305BF4F300455003 /* ToolsView.swift in Sources */,
 				4A77726C305BF4F300455003 /* ActivityHistoryView.swift in Sources */,
 				4A777254305BF4E800455003 /* ConversionAPI.swift in Sources */,
 				4A777262305BF4F300455003 /* ConvertHomeView.swift in Sources */,
+				4A1E9B34305C2E1000BB7821 /* AppState.swift in Sources */,
 				4A77725D305BF4E800455003 /* AppNavigation.swift in Sources */,
+				4A1E9B37305C2E3200BB7821 /* AuthenticationView.swift in Sources */,
 				4A77724C305BF4E800455003 /* ConvertixDesignSystem.swift in Sources */,
 				4A777259305BF4E800455003 /* ConversionActivityAttributes.swift in Sources */,
 				4A777271305BF4F300455003 /* SettingsView.swift in Sources */,
@@ -442,6 +550,86 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		4A1E9B41305C2F5700BB7821 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.ConvertixTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Convertix iOS.app/Convertix iOS";
+			};
+			name = Debug;
+		};
+		4A1E9B42305C2F5700BB7821 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.ConvertixTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Convertix iOS.app/Convertix iOS";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		4A777289305BF6FA00455003 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -458,6 +646,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5Z7PGQ8D6K;
 				ENABLE_APP_SANDBOX = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -518,6 +707,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5Z7PGQ8D6K;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -650,6 +840,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5Z7PGQ8D6K;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Convertix-iOS-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Convertix;
@@ -671,6 +862,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5Z7PGQ8D6K;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Convertix-iOS-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Convertix;
@@ -693,6 +885,9 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Convertix-macOS-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Convertix;
@@ -716,6 +911,9 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Convertix-macOS-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Convertix;
@@ -736,6 +934,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4A1E9B40305C2F5700BB7821 /* Build configuration list for PBXNativeTarget "ConvertixTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4A1E9B41305C2F5700BB7821 /* Debug */,
+				4A1E9B42305C2F5700BB7821 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		4A777288305BF6FA00455003 /* Build configuration list for PBXNativeTarget "ConvertixWidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -773,6 +980,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4A1E9B24305C2BA700BB7821 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.5;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4A1E9B25305C2CF100BB7821 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4A1E9B24305C2BA700BB7821 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+		4A1E9B27305C2D0000BB7821 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4A1E9B24305C2BA700BB7821 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A80000000000000000000001 /* Project object */;
 }
