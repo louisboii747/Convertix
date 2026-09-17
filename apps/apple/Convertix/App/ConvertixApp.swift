@@ -345,14 +345,32 @@ struct ConvertHomeView: View {
 }
 
 struct HeroHeader: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var displayedPhrase = "without the fuss."
+    @State private var completedPhrase = "without the fuss."
+
+    private static let phrases = [
+        "without the fuss.",
+        "without the wait.",
+        "in just a few taps.",
+        "quick, safe, simple.",
+        "without the fuss."
+    ]
+
     var body: some View {
         VStack(spacing: 12) {
-            Text("Convert files")
-                .font(.largeTitle.bold())
-                .foregroundStyle(ConvertixTheme.ink)
-            Text("without the fuss.")
-                .font(.largeTitle.bold())
-                .foregroundStyle(ConvertixTheme.cobalt)
+            VStack(spacing: 0) {
+                Text("Convert files")
+                    .foregroundStyle(ConvertixTheme.ink)
+                Text(displayedPhrase)
+                    .foregroundStyle(ConvertixTheme.cobalt)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
+            }
+            .font(.largeTitle.bold())
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Convert files \(completedPhrase)")
+
             Text("Choose a file and Convertix will show the formats it can convert to.")
                 .font(.title3)
                 .foregroundStyle(.secondary)
@@ -360,6 +378,46 @@ struct HeroHeader: View {
                 .frame(maxWidth: 620)
         }
         .padding(.top, 12)
+        .task(id: reduceMotion) {
+            guard !reduceMotion else {
+                displayedPhrase = Self.phrases[0]
+                completedPhrase = Self.phrases[0]
+                return
+            }
+
+            await animatePhrases()
+        }
+    }
+
+    @MainActor
+    private func animatePhrases() async {
+        displayedPhrase = Self.phrases[0]
+        completedPhrase = Self.phrases[0]
+
+        for phrase in Self.phrases.dropFirst() {
+            guard await pause(for: 1_400_000_000) else { return }
+
+            while !displayedPhrase.isEmpty {
+                displayedPhrase.removeLast()
+                guard await pause(for: 35_000_000) else { return }
+            }
+
+            for character in phrase {
+                displayedPhrase.append(character)
+                guard await pause(for: 55_000_000) else { return }
+            }
+
+            completedPhrase = phrase
+        }
+    }
+
+    private func pause(for nanoseconds: UInt64) async -> Bool {
+        do {
+            try await Task.sleep(nanoseconds: nanoseconds)
+            return true
+        } catch {
+            return false
+        }
     }
 }
 
