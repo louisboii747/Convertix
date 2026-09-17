@@ -122,41 +122,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		4A777245305BF4C100455003 /* DesignSystem 2 */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "DesignSystem 2";
-			sourceTree = "<group>";
-		};
-		4A777246305BF4C100455003 /* Models 2 */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "Models 2";
-			sourceTree = "<group>";
-		};
-		4A777247305BF4C100455003 /* Services 2 */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "Services 2";
-			sourceTree = "<group>";
-		};
-		4A777248305BF4C100455003 /* Integrations 2 */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "Integrations 2";
-			sourceTree = "<group>";
-		};
-		4A777249305BF4C100455003 /* Navigation 2 */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "Navigation 2";
-			sourceTree = "<group>";
-		};
 		4A77724A305BF4E800455003 /* DesignSystem */ = {
 			isa = PBXGroup;
 			children = (
@@ -266,12 +231,6 @@
 			isa = PBXGroup;
 			children = (
 				A40000000000000000000003 /* App */,
-				A40000000000000000000004 /* Shared */,
-				4A777245305BF4C100455003 /* DesignSystem 2 */,
-				4A777246305BF4C100455003 /* Models 2 */,
-				4A777247305BF4C100455003 /* Services 2 */,
-				4A777248305BF4C100455003 /* Integrations 2 */,
-				4A777249305BF4C100455003 /* Navigation 2 */,
 				4A77724A305BF4E800455003 /* DesignSystem */,
 				4A77724E305BF4E800455003 /* Models */,
 				4A777252305BF4E800455003 /* Services */,
@@ -289,13 +248,6 @@
 				A20000000000000000000001 /* ConvertixApp.swift */,
 			);
 			path = App;
-			sourceTree = "<group>";
-		};
-		A40000000000000000000004 /* Shared */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Shared;
 			sourceTree = "<group>";
 		};
 		A40000000000000000000005 /* Products */ = {
