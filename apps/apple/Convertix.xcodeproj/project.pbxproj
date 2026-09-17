@@ -3,23 +3,108 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A77724C305BF4E800455003 /* ConvertixDesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77724B305BF4E800455003 /* ConvertixDesignSystem.swift */; };
+		4A77724D305BF4E800455003 /* ConvertixDesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77724B305BF4E800455003 /* ConvertixDesignSystem.swift */; };
+		4A777250305BF4E800455003 /* ConversionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77724F305BF4E800455003 /* ConversionModels.swift */; };
+		4A777251305BF4E800455003 /* ConversionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77724F305BF4E800455003 /* ConversionModels.swift */; };
+		4A777254305BF4E800455003 /* ConversionAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A777253305BF4E800455003 /* ConversionAPI.swift */; };
+		4A777255305BF4E800455003 /* ConversionAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A777253305BF4E800455003 /* ConversionAPI.swift */; };
+		4A777258305BF4E800455003 /* ConversionActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A777257305BF4E800455003 /* ConversionActivityAttributes.swift */; };
+		4A777259305BF4E800455003 /* ConversionActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A777257305BF4E800455003 /* ConversionActivityAttributes.swift */; };
+		4A77725C305BF4E800455003 /* AppNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77725B305BF4E800455003 /* AppNavigation.swift */; };
+		4A77725D305BF4E800455003 /* AppNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77725B305BF4E800455003 /* AppNavigation.swift */; };
+		4A777261305BF4F300455003 /* ConvertHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A777260305BF4F300455003 /* ConvertHomeView.swift */; };
+		4A777262305BF4F300455003 /* ConvertHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A777260305BF4F300455003 /* ConvertHomeView.swift */; };
+		4A777264305BF4F300455003 /* ConverterComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A777263305BF4F300455003 /* ConverterComponents.swift */; };
+		4A777265305BF4F300455003 /* ConverterComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A777263305BF4F300455003 /* ConverterComponents.swift */; };
+		4A777268305BF4F300455003 /* ToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A777267305BF4F300455003 /* ToolsView.swift */; };
+		4A777269305BF4F300455003 /* ToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A777267305BF4F300455003 /* ToolsView.swift */; };
+		4A77726C305BF4F300455003 /* ActivityHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77726B305BF4F300455003 /* ActivityHistoryView.swift */; };
+		4A77726D305BF4F300455003 /* ActivityHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77726B305BF4F300455003 /* ActivityHistoryView.swift */; };
+		4A777270305BF4F300455003 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77726F305BF4F300455003 /* SettingsView.swift */; };
+		4A777271305BF4F300455003 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77726F305BF4F300455003 /* SettingsView.swift */; };
+		4A777279305BF6F900455003 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A777278305BF6F900455003 /* WidgetKit.framework */; };
+		4A77727B305BF6F900455003 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A77727A305BF6F900455003 /* SwiftUI.framework */; };
+		4A777286305BF6FA00455003 /* ConvertixWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4A777276305BF6F900455003 /* ConvertixWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4A77728F305BF77500455003 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A77728E305BF77500455003 /* Assets.xcassets */; };
 		A10000000000000000000001 /* ConvertixApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* ConvertixApp.swift */; };
 		A10000000000000000000003 /* ConvertixApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* ConvertixApp.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		4A777284305BF6FA00455003 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A80000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4A777275305BF6F900455003;
+			remoteInfo = ConvertixWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4A77728B305BF6FA00455003 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				4A777286305BF6FA00455003 /* ConvertixWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		4A3344E7305BEB32007A8195 /* Convertix-iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Convertix-iOS-Info.plist"; sourceTree = "<group>"; };
 		4A3344E8305BEB32007A8195 /* Convertix-macOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Convertix-macOS-Info.plist"; sourceTree = "<group>"; };
+		4A77724B305BF4E800455003 /* ConvertixDesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvertixDesignSystem.swift; sourceTree = "<group>"; };
+		4A77724F305BF4E800455003 /* ConversionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionModels.swift; sourceTree = "<group>"; };
+		4A777253305BF4E800455003 /* ConversionAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionAPI.swift; sourceTree = "<group>"; };
+		4A777257305BF4E800455003 /* ConversionActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionActivityAttributes.swift; sourceTree = "<group>"; };
+		4A77725B305BF4E800455003 /* AppNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNavigation.swift; sourceTree = "<group>"; };
+		4A777260305BF4F300455003 /* ConvertHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvertHomeView.swift; sourceTree = "<group>"; };
+		4A777263305BF4F300455003 /* ConverterComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConverterComponents.swift; sourceTree = "<group>"; };
+		4A777267305BF4F300455003 /* ToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolsView.swift; sourceTree = "<group>"; };
+		4A77726B305BF4F300455003 /* ActivityHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityHistoryView.swift; sourceTree = "<group>"; };
+		4A77726F305BF4F300455003 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		4A777276305BF6F900455003 /* ConvertixWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ConvertixWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		4A777278305BF6F900455003 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = /System/Library/Frameworks/WidgetKit.framework; sourceTree = "<absolute>"; };
+		4A77727A305BF6F900455003 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = /System/Library/Frameworks/SwiftUI.framework; sourceTree = "<absolute>"; };
+		4A77728E305BF77500455003 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A20000000000000000000001 /* ConvertixApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvertixApp.swift; sourceTree = "<group>"; };
 		A20000000000000000000003 /* Convertix iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Convertix iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A20000000000000000000004 /* Convertix macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Convertix macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		4A777287305BF6FA00455003 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4A777275305BF6F900455003 /* ConvertixWidgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		4A77727C305BF6F900455003 /* ConvertixWidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (4A777287305BF6FA00455003 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ConvertixWidget; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
+		4A777273305BF6F900455003 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4A77727B305BF6F900455003 /* SwiftUI.framework in Frameworks */,
+				4A777279305BF6F900455003 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A30000000000000000000001 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -37,12 +122,142 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4A777245305BF4C100455003 /* DesignSystem 2 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "DesignSystem 2";
+			sourceTree = "<group>";
+		};
+		4A777246305BF4C100455003 /* Models 2 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Models 2";
+			sourceTree = "<group>";
+		};
+		4A777247305BF4C100455003 /* Services 2 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Services 2";
+			sourceTree = "<group>";
+		};
+		4A777248305BF4C100455003 /* Integrations 2 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Integrations 2";
+			sourceTree = "<group>";
+		};
+		4A777249305BF4C100455003 /* Navigation 2 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Navigation 2";
+			sourceTree = "<group>";
+		};
+		4A77724A305BF4E800455003 /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				4A77724B305BF4E800455003 /* ConvertixDesignSystem.swift */,
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		4A77724E305BF4E800455003 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				4A77724F305BF4E800455003 /* ConversionModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4A777252305BF4E800455003 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				4A777253305BF4E800455003 /* ConversionAPI.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		4A777256305BF4E800455003 /* Integrations */ = {
+			isa = PBXGroup;
+			children = (
+				4A777257305BF4E800455003 /* ConversionActivityAttributes.swift */,
+			);
+			path = Integrations;
+			sourceTree = "<group>";
+		};
+		4A77725A305BF4E800455003 /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				4A77725B305BF4E800455003 /* AppNavigation.swift */,
+			);
+			path = Navigation;
+			sourceTree = "<group>";
+		};
+		4A77725E305BF4EB00455003 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				4A77725F305BF4F300455003 /* Convert */,
+				4A777266305BF4F300455003 /* Tools */,
+				4A77726A305BF4F300455003 /* Activity */,
+				4A77726E305BF4F300455003 /* Settings */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		4A77725F305BF4F300455003 /* Convert */ = {
+			isa = PBXGroup;
+			children = (
+				4A777260305BF4F300455003 /* ConvertHomeView.swift */,
+				4A777263305BF4F300455003 /* ConverterComponents.swift */,
+			);
+			path = Convert;
+			sourceTree = "<group>";
+		};
+		4A777266305BF4F300455003 /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				4A777267305BF4F300455003 /* ToolsView.swift */,
+			);
+			path = Tools;
+			sourceTree = "<group>";
+		};
+		4A77726A305BF4F300455003 /* Activity */ = {
+			isa = PBXGroup;
+			children = (
+				4A77726B305BF4F300455003 /* ActivityHistoryView.swift */,
+			);
+			path = Activity;
+			sourceTree = "<group>";
+		};
+		4A77726E305BF4F300455003 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				4A77726F305BF4F300455003 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		4A777277305BF6F900455003 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4A777278305BF6F900455003 /* WidgetKit.framework */,
+				4A77727A305BF6F900455003 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		A40000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
 				4A3344E8305BEB32007A8195 /* Convertix-macOS-Info.plist */,
 				4A3344E7305BEB32007A8195 /* Convertix-iOS-Info.plist */,
 				A40000000000000000000002 /* Convertix */,
+				4A77727C305BF6F900455003 /* ConvertixWidget */,
+				4A777277305BF6F900455003 /* Frameworks */,
 				A40000000000000000000005 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -52,6 +267,18 @@
 			children = (
 				A40000000000000000000003 /* App */,
 				A40000000000000000000004 /* Shared */,
+				4A777245305BF4C100455003 /* DesignSystem 2 */,
+				4A777246305BF4C100455003 /* Models 2 */,
+				4A777247305BF4C100455003 /* Services 2 */,
+				4A777248305BF4C100455003 /* Integrations 2 */,
+				4A777249305BF4C100455003 /* Navigation 2 */,
+				4A77724A305BF4E800455003 /* DesignSystem */,
+				4A77724E305BF4E800455003 /* Models */,
+				4A777252305BF4E800455003 /* Services */,
+				4A777256305BF4E800455003 /* Integrations */,
+				4A77725A305BF4E800455003 /* Navigation */,
+				4A77725E305BF4EB00455003 /* Features */,
+				4A77728E305BF77500455003 /* Assets.xcassets */,
 			);
 			path = Convertix;
 			sourceTree = "<group>";
@@ -76,6 +303,7 @@
 			children = (
 				A20000000000000000000003 /* Convertix iOS.app */,
 				A20000000000000000000004 /* Convertix macOS.app */,
+				4A777276305BF6F900455003 /* ConvertixWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -83,6 +311,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4A777275305BF6F900455003 /* ConvertixWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4A777288305BF6FA00455003 /* Build configuration list for PBXNativeTarget "ConvertixWidgetExtension" */;
+			buildPhases = (
+				4A777272305BF6F900455003 /* Sources */,
+				4A777273305BF6F900455003 /* Frameworks */,
+				4A777274305BF6F900455003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				4A77727C305BF6F900455003 /* ConvertixWidget */,
+			);
+			name = ConvertixWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = ConvertixWidgetExtension;
+			productReference = 4A777276305BF6F900455003 /* ConvertixWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		A50000000000000000000001 /* Convertix iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A90000000000000000000002 /* Build configuration list for PBXNativeTarget "Convertix iOS" */;
@@ -90,10 +340,12 @@
 				A60000000000000000000001 /* Sources */,
 				A30000000000000000000001 /* Frameworks */,
 				A70000000000000000000001 /* Resources */,
+				4A77728B305BF6FA00455003 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				4A777285305BF6FA00455003 /* PBXTargetDependency */,
 			);
 			name = "Convertix iOS";
 			productName = Convertix;
@@ -124,9 +376,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1600;
+				LastSwiftUpdateCheck = 2700;
 				LastUpgradeCheck = 2700;
 				TargetAttributes = {
+					4A777275305BF6F900455003 = {
+						CreatedOnToolsVersion = 27.0;
+					};
 					A50000000000000000000001 = {
 						CreatedOnToolsVersion = 16.0;
 					};
@@ -150,11 +405,20 @@
 			targets = (
 				A50000000000000000000001 /* Convertix iOS */,
 				A50000000000000000000002 /* Convertix macOS */,
+				4A777275305BF6F900455003 /* ConvertixWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4A777274305BF6F900455003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4A77728F305BF77500455003 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A70000000000000000000001 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -172,11 +436,28 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4A777272305BF6F900455003 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A60000000000000000000001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A777250305BF4E800455003 /* ConversionModels.swift in Sources */,
 				A10000000000000000000001 /* ConvertixApp.swift in Sources */,
+				4A777264305BF4F300455003 /* ConverterComponents.swift in Sources */,
+				4A777268305BF4F300455003 /* ToolsView.swift in Sources */,
+				4A77726D305BF4F300455003 /* ActivityHistoryView.swift in Sources */,
+				4A777255305BF4E800455003 /* ConversionAPI.swift in Sources */,
+				4A777261305BF4F300455003 /* ConvertHomeView.swift in Sources */,
+				4A77725C305BF4E800455003 /* AppNavigation.swift in Sources */,
+				4A77724D305BF4E800455003 /* ConvertixDesignSystem.swift in Sources */,
+				4A777258305BF4E800455003 /* ConversionActivityAttributes.swift in Sources */,
+				4A777270305BF4F300455003 /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -184,13 +465,146 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A777251305BF4E800455003 /* ConversionModels.swift in Sources */,
 				A10000000000000000000003 /* ConvertixApp.swift in Sources */,
+				4A777265305BF4F300455003 /* ConverterComponents.swift in Sources */,
+				4A777269305BF4F300455003 /* ToolsView.swift in Sources */,
+				4A77726C305BF4F300455003 /* ActivityHistoryView.swift in Sources */,
+				4A777254305BF4E800455003 /* ConversionAPI.swift in Sources */,
+				4A777262305BF4F300455003 /* ConvertHomeView.swift in Sources */,
+				4A77725D305BF4E800455003 /* AppNavigation.swift in Sources */,
+				4A77724C305BF4E800455003 /* ConvertixDesignSystem.swift in Sources */,
+				4A777259305BF4E800455003 /* ConversionActivityAttributes.swift in Sources */,
+				4A777271305BF4F300455003 /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		4A777285305BF6FA00455003 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4A777275305BF6F900455003 /* ConvertixWidgetExtension */;
+			targetProxy = 4A777284305BF6FA00455003 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		4A777289305BF6FA00455003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ConvertixWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ConvertixWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.convertix.app.widgetextension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				XROS_DEPLOYMENT_TARGET = 27.0;
+			};
+			name = Debug;
+		};
+		4A77728A305BF6FA00455003 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ConvertixWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ConvertixWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.convertix.app.widgetextension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				XROS_DEPLOYMENT_TARGET = 27.0;
+			};
+			name = Release;
+		};
 		B10000000000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -287,6 +701,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Convertix-iOS-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Convertix;
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = uk.convertix.app;
@@ -307,6 +722,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Convertix-iOS-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Convertix;
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = uk.convertix.app;
@@ -368,6 +784,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4A777288305BF6FA00455003 /* Build configuration list for PBXNativeTarget "ConvertixWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4A777289305BF6FA00455003 /* Debug */,
+				4A77728A305BF6FA00455003 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A90000000000000000000001 /* Build configuration list for PBXProject "Convertix" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

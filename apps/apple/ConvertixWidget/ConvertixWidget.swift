@@ -1,86 +1,73 @@
-//
-//  ConvertixWidget.swift
-//  ConvertixWidget
-//
-//  Created by Louis Hinchliffe on 17/09/2026.
-//
-
-import WidgetKit
 import SwiftUI
+import WidgetKit
 
-struct Provider: TimelineProvider {
-    func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), emoji: "😀")
-    }
-
-    func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(date: Date(), emoji: "😀")
-        completion(entry)
-    }
-
-    func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        var entries: [SimpleEntry] = []
-
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, emoji: "😀")
-            entries.append(entry)
-        }
-
-        let timeline = Timeline(entries: entries, policy: .atEnd)
-        completion(timeline)
-    }
-
-//    func relevances() async -> WidgetRelevances<Void> {
-//        // Generate a list containing the contexts this widget is relevant in.
-//    }
-}
-
-struct SimpleEntry: TimelineEntry {
+struct ConvertixWidgetEntry: TimelineEntry {
     let date: Date
-    let emoji: String
 }
 
-struct ConvertixWidgetEntryView : View {
-    var entry: Provider.Entry
+struct ConvertixWidgetProvider: TimelineProvider {
+    func placeholder(in context: Context) -> ConvertixWidgetEntry {
+        ConvertixWidgetEntry(date: .now)
+    }
+
+    func getSnapshot(
+        in context: Context,
+        completion: @escaping (ConvertixWidgetEntry) -> Void
+    ) {
+        completion(ConvertixWidgetEntry(date: .now))
+    }
+
+    func getTimeline(
+        in context: Context,
+        completion: @escaping (Timeline<ConvertixWidgetEntry>) -> Void
+    ) {
+        completion(Timeline(entries: [ConvertixWidgetEntry(date: .now)], policy: .never))
+    }
+}
+
+struct ConvertixWidgetView: View {
+    let entry: ConvertixWidgetEntry
 
     var body: some View {
-        VStack {
-            HStack {
-                Text("Time:")
-                Text(entry.date, style: .time)
-            }
+        VStack(alignment: .leading, spacing: 10) {
+            Label("Convertix", systemImage: "arrow.left.arrow.right")
+                .font(.headline)
+                .foregroundStyle(.blue)
 
-            Text("Emoji:")
-            Text(entry.emoji)
+            Text("Quick conversions")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            Text("HEIC → JPG")
+                .font(.title3.bold())
+            Text("PNG → JPG")
+                .font(.subheadline.weight(.semibold))
+
+            Spacer(minLength: 0)
+
+            Text("Open Convertix to choose a file")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
         }
+        .containerBackground(.fill.tertiary, for: .widget)
     }
 }
 
 struct ConvertixWidget: Widget {
-    let kind: String = "ConvertixWidget"
+    let kind = "uk.convertix.widget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: Provider()) { entry in
-            if #available(macOS 14.0, iOS 17.0, *) {
-                ConvertixWidgetEntryView(entry: entry)
-                    .containerBackground(.fill.tertiary, for: .widget)
-            } else {
-                ConvertixWidgetEntryView(entry: entry)
-                    .padding()
-                    .background()
-            }
+        StaticConfiguration(kind: kind, provider: ConvertixWidgetProvider()) { entry in
+            ConvertixWidgetView(entry: entry)
         }
-        .configurationDisplayName("My Widget")
-        .description("This is an example widget.")
+        .configurationDisplayName("Quick conversions")
+        .description("Open Convertix and get started with common file conversions.")
+        .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
 
 #Preview(as: .systemSmall) {
     ConvertixWidget()
 } timeline: {
-    SimpleEntry(date: .now, emoji: "😀")
-    SimpleEntry(date: .now, emoji: "🤩")
+    ConvertixWidgetEntry(date: .now)
 }
