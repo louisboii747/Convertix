@@ -8,6 +8,7 @@ struct ConvertHomeView: View {
     @State private var isImporting = false
     @State private var selectedFileName: String?
     @State private var selectedFileURL: URL?
+    @State private var fileSelectionError: String?
     @State private var searchText = ""
 
     init(showAccount: @escaping () -> Void = {}) {
@@ -23,7 +24,9 @@ struct ConvertHomeView: View {
                     HeroHeader()
                     ConverterPanel(
                         selectedRoute: $selectedRoute,
+                        availableRoutes: availableRoutes,
                         selectedFileName: selectedFileName,
+                        fileSelectionError: fileSelectionError,
                         conversionStatus: appState.conversionStatus,
                         downloadedFileURL: appState.downloadedFileURL,
                         isDownloading: appState.isDownloading,
@@ -36,10 +39,12 @@ struct ConvertHomeView: View {
                         }
                     )
                     ConversionNotes()
-                    PopularConversions(
-                        routes: ConversionRoute.catalog.filter(\.isPopular),
-                        selectedRoute: $selectedRoute
-                    )
+                    if selectedFileURL == nil {
+                        PopularConversions(
+                            routes: ConversionRoute.catalog.filter(\.isPopular),
+                            selectedRoute: $selectedRoute
+                        )
+                    }
                 }
                 .frame(maxWidth: 860)
                 .padding(.horizontal, 24)
@@ -59,9 +64,15 @@ struct ConvertHomeView: View {
             selectedFileURL = url
             appState.resetConversion()
 
-            let fileExtension = url.pathExtension.lowercased()
-            if let matchingRoute = ConversionRoute.routes(forSourceExtension: fileExtension).first {
+            let routes = ConversionRoute.routes(forSourceExtension: url.pathExtension)
+            if let matchingRoute = routes.first {
                 selectedRoute = matchingRoute
+                fileSelectionError = nil
+            } else {
+                let fileExtension = url.pathExtension.uppercased()
+                fileSelectionError = fileExtension.isEmpty
+                    ? "Convertix couldn’t identify this file type."
+                    : "Convertix doesn’t currently support \(fileExtension) files."
             }
         }
         .toolbar {
@@ -75,7 +86,13 @@ struct ConvertHomeView: View {
     private func clearFile() {
         selectedFileName = nil
         selectedFileURL = nil
+        fileSelectionError = nil
         appState.resetConversion()
+    }
+
+    private var availableRoutes: [ConversionRoute] {
+        guard let selectedFileURL else { return ConversionRoute.catalog }
+        return ConversionRoute.routes(forSourceExtension: selectedFileURL.pathExtension)
     }
 
     private func startConversion() {

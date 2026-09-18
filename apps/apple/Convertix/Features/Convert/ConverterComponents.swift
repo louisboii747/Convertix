@@ -6,7 +6,9 @@ import AppKit
 
 struct ConverterPanel: View {
     @Binding var selectedRoute: ConversionRoute
+    let availableRoutes: [ConversionRoute]
     let selectedFileName: String?
+    let fileSelectionError: String?
     let conversionStatus: ConversionStatus
     let downloadedFileURL: URL?
     let isDownloading: Bool
@@ -22,10 +24,17 @@ struct ConverterPanel: View {
 
             ViewThatFits {
                 HStack(spacing: 12) {
-                    ConversionFormatControls(selectedRoute: $selectedRoute)
+                    ConversionFormatControls(
+                        selectedRoute: $selectedRoute,
+                        availableRoutes: availableRoutes
+                    )
                 }
                 VStack(spacing: 12) {
-                    ConversionFormatControls(selectedRoute: $selectedRoute, isVertical: true)
+                    ConversionFormatControls(
+                        selectedRoute: $selectedRoute,
+                        availableRoutes: availableRoutes,
+                        isVertical: true
+                    )
                 }
             }
 
@@ -37,9 +46,18 @@ struct ConverterPanel: View {
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
             .tint(ConvertixTheme.cobalt)
-            .disabled(selectedFileName == nil || conversionStatus.isRunning)
+            .disabled(
+                selectedFileName == nil
+                    || availableRoutes.isEmpty
+                    || conversionStatus.isRunning
+            )
 
-            if conversionStatus.isRunning {
+            if let fileSelectionError {
+                Label(fileSelectionError, systemImage: "exclamationmark.triangle.fill")
+                    .font(.callout)
+                    .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            } else if conversionStatus.isRunning {
                 ProgressView(conversionStatus.message ?? "Converting…")
                     .frame(maxWidth: .infinity, alignment: .leading)
             } else if case .completed = conversionStatus {
@@ -117,6 +135,7 @@ struct ConversionResultActions: View {
 
 struct ConversionFormatControls: View {
     @Binding var selectedRoute: ConversionRoute
+    let availableRoutes: [ConversionRoute]
     var isVertical = false
 
     var body: some View {
@@ -128,13 +147,14 @@ struct ConversionFormatControls: View {
             .accessibilityHidden(true)
 
         Menu {
-            ForEach(ConversionRoute.catalog) { route in
-                Button(route.title) { selectedRoute = route }
+            ForEach(availableRoutes) { route in
+                Button(route.target) { selectedRoute = route }
             }
         } label: {
             FormatStep(number: 2, label: "Convert to", format: selectedRoute.target, color: ConvertixTheme.cobalt)
         }
         .buttonStyle(.plain)
+        .disabled(availableRoutes.isEmpty)
         .accessibilityLabel("Output format, \(selectedRoute.target)")
     }
 }

@@ -69,6 +69,7 @@ struct ConvertixTests {
     func supportedRoutes() {
         #expect(ConversionRoute.routes(forSourceExtension: "docx").map(\.target) == ["PDF"])
         #expect(Set(ConversionRoute.routes(forSourceExtension: "heic").map(\.target)) == Set(["JPG", "PNG", "WEBP"]))
+        #expect(Set(ConversionRoute.routes(forSourceExtension: "jpeg").map(\.target)) == Set(["PNG", "WEBP", "PDF"]))
         #expect(ConversionRoute.routes(forSourceExtension: "exe").isEmpty)
     }
 

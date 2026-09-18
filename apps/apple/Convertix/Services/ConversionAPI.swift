@@ -80,17 +80,20 @@ struct ConversionAPI: Sendable {
     private let baseURL: URL
     private let pollInterval: Duration
     private let timeout: TimeInterval
+    private let maximumConsecutivePollingFailures: Int
 
     init(
         session: URLSession = .shared,
         configuration: AppConfiguration,
         pollInterval: Duration = .seconds(3),
-        timeout: TimeInterval = 15 * 60
+        timeout: TimeInterval = 15 * 60,
+        maximumConsecutivePollingFailures: Int = 5
     ) {
         self.session = session
         baseURL = configuration.apiBaseURL
         self.pollInterval = pollInterval
         self.timeout = timeout
+        self.maximumConsecutivePollingFailures = maximumConsecutivePollingFailures
     }
 
     init(session: URLSession = .shared, bundle: Bundle = .main) throws {
@@ -150,6 +153,7 @@ struct ConversionAPI: Sendable {
         }
 
         let deadline = Date().addingTimeInterval(timeout)
+        var consecutivePollingFailures = 0
         while Date() < deadline {
             try await Task.sleep(for: pollInterval)
             let status: StatusResponse
@@ -157,12 +161,16 @@ struct ConversionAPI: Sendable {
             do {
                 status = try await get(endpoint("conversions/\(queued.conversionID.uuidString)"))
             } catch let error as ConversionAPIError where error.isRetryable {
-                continue
-            } catch is URLError {
+                consecutivePollingFailures += 1
+                guard consecutivePollingFailures < maximumConsecutivePollingFailures else {
+                    throw error
+                }
                 continue
             }
 
-            switch status.status {
+            consecutivePollingFailures = 0
+
+            switch status.status.lowercased() {
             case "processing":
                 await onStatus(.processing)
             case "completed":
