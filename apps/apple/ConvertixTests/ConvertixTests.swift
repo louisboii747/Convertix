@@ -132,6 +132,8 @@ struct ConvertixTests {
         #expect(result.outputKey == "outputs/result.pdf")
         #expect(result.suggestedFilename == "convertix-test-converted.pdf")
         #expect(recorder.methods == ["POST", "PUT", "POST", "GET"])
+        #expect(recorder.statusPollUsedLowercaseID)
+        #expect(recorder.statusPollBypassedCaches)
         #expect(statuses.contains(.uploading))
         #expect(statuses.contains(.queued))
         #expect(statuses.contains(.completed(URL(string: "https://downloads.convertix.test/result.pdf")!)))
@@ -141,7 +143,10 @@ struct ConvertixTests {
 private final class RequestRecorder: @unchecked Sendable {
     private let lock = NSLock()
     private(set) var methods: [String] = []
+    private(set) var statusPollUsedLowercaseID = false
+    private(set) var statusPollBypassedCaches = false
     private let conversionID: UUID
+    private var lowercaseConversionID: String { conversionID.uuidString.lowercased() }
 
     init(conversionID: UUID) {
         self.conversionID = conversionID
@@ -175,18 +180,22 @@ private final class RequestRecorder: @unchecked Sendable {
             statusCode = 202
             body = """
             {
-              "conversion_id": "\(conversionID.uuidString)",
+              "conversion_id": "\(lowercaseConversionID)",
               "source_format": "txt",
               "target_format": "pdf",
               "input_key": "uploads/input.txt",
               "status": "queued"
             }
             """
-        case ("GET", let value) where value.contains(conversionID.uuidString):
+        case ("GET", let value) where value.contains(lowercaseConversionID):
+            lock.lock()
+            statusPollUsedLowercaseID = value.contains(lowercaseConversionID)
+            statusPollBypassedCaches = request.url?.query?.contains("poll=") == true
+            lock.unlock()
             statusCode = 200
             body = """
             {
-              "conversion_id": "\(conversionID.uuidString)",
+              "conversion_id": "\(lowercaseConversionID)",
               "status": "completed",
               "output_key": "outputs/result.pdf",
               "content_type": "application/pdf",

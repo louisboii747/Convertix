@@ -38,14 +38,9 @@ struct ConverterPanel: View {
                 }
             }
 
-            Button(action: startConversion) {
-                Label(buttonTitle, systemImage: conversionStatus.isRunning ? "hourglass" : "sparkles")
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 6)
-            }
-            .buttonStyle(.borderedProminent)
+            Button(buttonTitle, action: startConversion)
+            .buttonStyle(ConvertixFlowButtonStyle())
             .controlSize(.large)
-            .tint(ConvertixTheme.cobalt)
             .disabled(
                 selectedFileName == nil
                     || availableRoutes.isEmpty
@@ -58,8 +53,17 @@ struct ConverterPanel: View {
                     .foregroundStyle(.red)
                     .frame(maxWidth: .infinity, alignment: .leading)
             } else if conversionStatus.isRunning {
-                ProgressView(conversionStatus.message ?? "Converting…")
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                VStack(spacing: 12) {
+                    ProgressView()
+                        .controlSize(.large)
+
+                    Text(conversionStatus.message ?? "Converting…")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(conversionStatus.message ?? "Converting…")
             } else if case .completed = conversionStatus {
                 ConversionResultActions(
                     downloadedFileURL: downloadedFileURL,
@@ -86,6 +90,66 @@ struct ConverterPanel: View {
             return conversionStatus.message ?? "Converting…"
         }
         return "Start conversion"
+    }
+}
+
+private struct ConvertixFlowButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        FlowButtonBody(configuration: configuration)
+    }
+
+    private struct FlowButtonBody: View {
+        @Environment(\.isEnabled) private var isEnabled
+        @Environment(\.accessibilityReduceMotion) private var reduceMotion
+        @State private var isHovering = false
+
+        let configuration: Configuration
+
+        private var isActive: Bool {
+            isEnabled && (isHovering || configuration.isPressed)
+        }
+
+        var body: some View {
+            ZStack {
+                Circle()
+                    .fill(Color(red: 0.05, green: 0.11, blue: 0.20))
+                    .frame(width: 20, height: 20)
+                    .scaleEffect(isActive ? 60 : 1)
+                    .opacity(isActive ? 1 : 0)
+
+                HStack(spacing: 8) {
+                    Image(systemName: "arrow.right")
+                        .offset(x: isActive ? 0 : -70)
+                        .opacity(isActive ? 1 : 0)
+
+                    configuration.label
+                        .fontWeight(.semibold)
+                        .offset(x: isActive ? 12 : -12)
+
+                    Image(systemName: "arrow.right")
+                        .offset(x: isActive ? 70 : 0)
+                        .opacity(isActive ? 0 : 1)
+                }
+                .foregroundStyle(.white)
+                .padding(.horizontal, 22)
+                .padding(.vertical, 13)
+            }
+            .frame(maxWidth: .infinity)
+            .background(isEnabled ? ConvertixTheme.cobalt : Color.secondary.opacity(0.18))
+            .foregroundStyle(isEnabled ? Color.white : Color.secondary)
+            .clipShape(.rect(cornerRadius: isActive ? 12 : 22))
+            .contentShape(.rect)
+            .scaleEffect(configuration.isPressed && isEnabled ? 0.97 : 1)
+            .animation(
+                reduceMotion ? nil : .spring(response: 0.8, dampingFraction: 0.78),
+                value: isActive
+            )
+            .animation(
+                reduceMotion ? nil : .easeOut(duration: 0.16),
+                value: configuration.isPressed
+            )
+            .onHover { isHovering = $0 }
+        }
     }
 }
 

@@ -41,7 +41,7 @@ struct ConversionAPI: Sendable {
     }
 
     private struct QueueResponse: Decodable {
-        let conversionID: UUID
+        let conversionID: String
         let status: String
 
         enum CodingKeys: String, CodingKey {
@@ -152,6 +152,10 @@ struct ConversionAPI: Sendable {
             throw ConversionAPIError.invalidResponse
         }
 
+        guard UUID(uuidString: queued.conversionID) != nil else {
+            throw ConversionAPIError.invalidResponse
+        }
+
         let deadline = Date().addingTimeInterval(timeout)
         var consecutivePollingFailures = 0
         while Date() < deadline {
@@ -159,7 +163,18 @@ struct ConversionAPI: Sendable {
             let status: StatusResponse
 
             do {
-                status = try await get(endpoint("conversions/\(queued.conversionID.uuidString)"))
+                // Preserve the server's casing. The conversion ID is also part of a
+                // case-sensitive object-storage prefix used to detect completion.
+                let statusURL = endpoint("conversions/\(queued.conversionID)")
+                    .appending(
+                        queryItems: [
+                            URLQueryItem(
+                                name: "poll",
+                                value: String(Date().timeIntervalSince1970)
+                            )
+                        ]
+                    )
+                status = try await get(statusURL)
             } catch let error as ConversionAPIError where error.isRetryable {
                 consecutivePollingFailures += 1
                 guard consecutivePollingFailures < maximumConsecutivePollingFailures else {
