@@ -73,6 +73,24 @@ struct ConversionHistoryWrite: Encodable, Sendable {
     }
 }
 
+struct ConversionJob: Identifiable, Equatable, Sendable {
+    let id: UUID
+    let sourceURL: URL
+    let route: ConversionRoute
+    var status: ConversionStatus
+    var result: ConversionResult?
+    var downloadedFileURL: URL?
+
+    var fileName: String { sourceURL.lastPathComponent }
+
+    init(sourceURL: URL, route: ConversionRoute) {
+        id = UUID()
+        self.sourceURL = sourceURL
+        self.route = route
+        status = .queued
+    }
+}
+
 struct ConversionResult: Equatable, Sendable {
     let conversionID: UUID
     let downloadURL: URL

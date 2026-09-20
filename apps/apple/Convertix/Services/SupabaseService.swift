@@ -126,6 +126,15 @@ struct SupabaseService: Sendable {
             .upsert(record, onConflict: "conversion_id")
             .execute()
     }
+
+    func deleteHistoryEntry(id: UUID, userID: UUID) async throws {
+        try await client
+            .from("conversion_history")
+            .delete()
+            .eq("id", value: id)
+            .eq("user_id", value: userID)
+            .execute()
+    }
 }
 
 private struct ProfileWrite: Encodable, Sendable {

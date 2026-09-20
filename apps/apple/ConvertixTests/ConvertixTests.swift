@@ -138,6 +138,33 @@ struct ConvertixTests {
         #expect(statuses.contains(.queued))
         #expect(statuses.contains(.completed(URL(string: "https://downloads.convertix.test/result.pdf")!)))
     }
+    @Test("Queued conversions start with stable identity and waiting status")
+    func conversionJobDefaults() {
+        let route = ConversionRoute.catalog[0]
+        let url = URL(fileURLWithPath: "/tmp/report.docx")
+        let job = ConversionJob(sourceURL: url, route: route)
+
+        #expect(job.fileName == "report.docx")
+        #expect(job.route == route)
+        #expect(job.status == .queued)
+        #expect(job.result == nil)
+    }
+
+    @Test("SVG optimizer removes comments and inter-tag whitespace")
+    func svgOptimization() throws {
+        let input = FileManager.default.temporaryDirectory
+            .appending(path: "convertix-test-(UUID().uuidString).svg")
+        try "<svg> <!-- remove --> <path d=\"M0 0\"/> </svg>"
+            .write(to: input, atomically: true, encoding: .utf8)
+        defer { try? FileManager.default.removeItem(at: input) }
+
+        let output = try OnDeviceToolProcessor.optimizeSVG(input)
+        defer { try? FileManager.default.removeItem(at: output) }
+        let optimized = try String(contentsOf: output, encoding: .utf8)
+
+        #expect(!optimized.contains("remove"))
+        #expect(optimized == "<svg><path d=\"M0 0\"/></svg>")
+    }
 }
 
 private final class RequestRecorder: @unchecked Sendable {

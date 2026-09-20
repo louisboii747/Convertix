@@ -38,14 +38,19 @@ struct ConvertixWidgetView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
-            Text("HEIC → JPG")
-                .font(.title3.bold())
-            Text("PNG → JPG")
-                .font(.subheadline.weight(.semibold))
+            Link(destination: URL(string: "convertix://convert/heic-jpg")!) {
+                Label("HEIC → JPG", systemImage: "photo")
+                    .font(.title3.bold())
+            }
+
+            Link(destination: URL(string: "convertix://convert/png-jpg")!) {
+                Label("PNG → JPG", systemImage: "photo")
+                    .font(.subheadline.weight(.semibold))
+            }
 
             Spacer(minLength: 0)
 
-            Text("Open Convertix to choose a file")
+            Text("Tap a shortcut to choose a file")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
         }

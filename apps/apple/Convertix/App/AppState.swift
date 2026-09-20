@@ -20,11 +20,13 @@ final class AppState {
     var isLoadingHistory = false
     var historyError: String?
     var conversionStatus: ConversionStatus = .idle
+    var conversionJobs: [ConversionJob] = []
     var conversionResult: ConversionResult?
     var downloadedFileURL: URL?
     var isDownloading = false
     var downloadError: String?
     var configurationError: String?
+    var pendingConversionRouteID: String?
 
     @ObservationIgnored private let supabaseService: SupabaseService?
     @ObservationIgnored private let conversionAPI: ConversionAPI?
@@ -156,8 +158,16 @@ final class AppState {
     }
 
     func handleOpenURL(_ url: URL) async {
-        guard url.scheme == "convertix", let supabaseService else { return }
+        guard url.scheme == "convertix" else { return }
 
+        if url.host == "convert",
+           let routeID = url.pathComponents.dropFirst().first,
+           ConversionRoute.catalog.contains(where: { $0.id == routeID }) {
+            pendingConversionRouteID = routeID
+            return
+        }
+
+        guard let supabaseService else { return }
         isAuthenticating = true
         authenticationError = nil
         defer { isAuthenticating = false }
@@ -203,6 +213,111 @@ final class AppState {
             history = try await supabaseService.loadHistory(userID: user.id)
         } catch {
             historyError = "We couldn’t load your conversion history. Pull to refresh and try again."
+        }
+    }
+
+    func enqueueConversions(_ fileURLs: [URL]) async {
+        let newJobs = fileURLs.compactMap { url -> ConversionJob? in
+            guard let route = ConversionRoute.routes(
+                forSourceExtension: url.pathExtension
+            ).first else {
+                return nil
+            }
+            return ConversionJob(sourceURL: url, route: route)
+        }
+        conversionJobs.append(contentsOf: newJobs)
+
+        for job in newJobs {
+            guard !Task.isCancelled else { return }
+            await runConversionJob(id: job.id)
+        }
+    }
+
+    func removeConversionJob(id: UUID) {
+        conversionJobs.removeAll { $0.id == id }
+    }
+
+    func clearFinishedConversionJobs() {
+        conversionJobs.removeAll { !$0.status.isRunning }
+    }
+
+    func downloadConversionJob(id: UUID) async {
+        guard let conversionAPI,
+              let index = conversionJobs.firstIndex(where: { $0.id == id }),
+              let result = conversionJobs[index].result else { return }
+
+        do {
+            conversionJobs[index].downloadedFileURL = try await conversionAPI.download(result)
+        } catch {
+            conversionJobs[index].status = .failed(
+                (error as? LocalizedError)?.errorDescription
+                    ?? "The converted file couldn’t be downloaded."
+            )
+        }
+    }
+
+    private func runConversionJob(id: UUID) async {
+        guard let conversionAPI,
+              let index = conversionJobs.firstIndex(where: { $0.id == id }) else { return }
+
+        let job = conversionJobs[index]
+        let canAccess = job.sourceURL.startAccessingSecurityScopedResource()
+        defer {
+            if canAccess {
+                job.sourceURL.stopAccessingSecurityScopedResource()
+            }
+        }
+
+        do {
+            let inputSize = try job.sourceURL
+                .resourceValues(forKeys: [.fileSizeKey])
+                .fileSize
+                .map(Int64.init)
+            let result = try await conversionAPI.convert(
+                fileURL: job.sourceURL,
+                route: job.route
+            ) { [weak self] status in
+                guard let self,
+                      let currentIndex = self.conversionJobs.firstIndex(
+                        where: { $0.id == id }
+                      ) else { return }
+                self.conversionJobs[currentIndex].status = status
+            }
+
+            guard let currentIndex = conversionJobs.firstIndex(where: { $0.id == id }) else {
+                return
+            }
+            conversionJobs[currentIndex].result = result
+            await saveHistory(
+                result: result,
+                originalFilename: job.fileName,
+                sourceFormat: job.route.source.lowercased(),
+                targetFormat: job.route.target.lowercased(),
+                inputSize: inputSize
+            )
+        } catch is CancellationError {
+            if let currentIndex = conversionJobs.firstIndex(where: { $0.id == id }) {
+                conversionJobs[currentIndex].status = .idle
+            }
+        } catch {
+            if let currentIndex = conversionJobs.firstIndex(where: { $0.id == id }) {
+                conversionJobs[currentIndex].status = .failed(
+                    (error as? LocalizedError)?.errorDescription
+                        ?? "The conversion couldn’t be completed."
+                )
+            }
+        }
+    }
+
+    func deleteHistoryEntry(_ entry: ConversionHistoryEntry) async {
+        guard case let .signedIn(user) = sessionState,
+              let supabaseService else { return }
+
+        do {
+            try await supabaseService.deleteHistoryEntry(id: entry.id, userID: user.id)
+            history.removeAll { $0.id == entry.id }
+        } catch {
+            historyError = "We couldn’t delete that history entry. Try again."
         }
     }
 

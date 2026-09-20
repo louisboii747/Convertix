@@ -17,6 +17,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A50000000000000000000001"
                BuildableName = "Convertix iOS.app"
+               BlueprintName = "Convertix iOS"
                ReferencedContainer = "container:Convertix.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -24,8 +25,8 @@
    </BuildAction>
    <TestAction
       buildConfiguration = "Debug"
-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      selectedDebuggerIdentifier = ""
+      selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
       shouldUseLaunchSchemeArgsEnv = "YES"
       shouldAutocreateTestPlan = "YES">
    </TestAction>
@@ -46,6 +47,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A50000000000000000000001"
             BuildableName = "Convertix iOS.app"
+            BlueprintName = "Convertix iOS"
             ReferencedContainer = "container:Convertix.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -62,6 +64,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A50000000000000000000001"
             BuildableName = "Convertix iOS.app"
+            BlueprintName = "Convertix iOS"
             ReferencedContainer = "container:Convertix.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

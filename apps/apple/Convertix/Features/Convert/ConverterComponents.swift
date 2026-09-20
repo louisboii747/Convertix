@@ -320,42 +320,186 @@ struct ConversionNoteLabels: View {
     }
 }
 
-struct PopularConversions: View {
-    let routes: [ConversionRoute]
-    @Binding var selectedRoute: ConversionRoute
+struct ConversionQueuePanel: View {
+    let jobs: [ConversionJob]
+    let download: (UUID) -> Void
+    let remove: (UUID) -> Void
+    let clearFinished: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Common conversions")
+            HStack {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Conversion Queue")
+                        .font(.title2.bold())
+                    Text(jobs.count == 1 ? "1 file" : "\(jobs.count) files")
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                Button("Clear Finished", action: clearFinished)
+                    .disabled(!jobs.contains { !$0.status.isRunning })
+            }
+
+            ForEach(jobs) { job in
+                ConversionQueueRow(
+                    job: job,
+                    download: { download(job.id) },
+                    remove: { remove(job.id) }
+                )
+            }
+        }
+        .padding(20)
+        .convertixGlassPanel(cornerRadius: 20)
+    }
+}
+
+private struct ConversionQueueRow: View {
+    let job: ConversionJob
+    let download: () -> Void
+    let remove: () -> Void
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: symbol)
+                .font(.title3)
+                .foregroundStyle(tint)
+                .frame(width: 28)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(job.fileName)
+                    .font(.headline)
+                    .lineLimit(1)
+                Text("\(job.route.source) → \(job.route.target) · \(statusText)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            if job.status.isRunning {
+                ProgressView()
+                    .controlSize(.small)
+            } else if job.result != nil, job.downloadedFileURL == nil {
+                Button("Download", systemImage: "arrow.down.circle", action: download)
+                    .labelStyle(.iconOnly)
+            } else if let url = job.downloadedFileURL {
+                ShareLink(item: url) {
+                    Image(systemName: "square.and.arrow.up")
+                }
+            }
+
+            Button("Remove", systemImage: "xmark", action: remove)
+                .labelStyle(.iconOnly)
+                .buttonStyle(.plain)
+        }
+        .padding(12)
+        .background(.background.opacity(0.55), in: RoundedRectangle(cornerRadius: 12))
+    }
+
+    private var statusText: String {
+        job.status.message ?? "Waiting"
+    }
+
+    private var symbol: String {
+        switch job.status {
+        case .completed: "checkmark.circle.fill"
+        case .failed: "exclamationmark.circle.fill"
+        case .idle: "pause.circle"
+        default: "arrow.trianglehead.2.clockwise.rotate.90"
+        }
+    }
+
+    private var tint: Color {
+        switch job.status {
+        case .completed: .green
+        case .failed: .red
+        default: ConvertixTheme.cobalt
+        }
+    }
+}
+
+struct PopularConversions: View {
+    let routes: [ConversionRoute]
+    @Binding var selectedRoute: ConversionRoute
+    @AppStorage("favoriteConversionRouteIDs") private var storedFavoriteIDs = ""
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Conversion shortcuts")
                 .font(.title2.bold())
-            Text("Start with one of the most-used format pairs.")
+            Text("Choose a format pair or keep favourites at the front.")
                 .foregroundStyle(.secondary)
 
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 210), spacing: 12)], spacing: 12) {
-                ForEach(routes) { route in
-                    Button {
-                        selectedRoute = route
-                    } label: {
-                        HStack {
-                            Image(systemName: route.family.systemImage)
-                                .foregroundStyle(ConvertixTheme.cobalt)
-                            Text(route.title)
-                                .fontWeight(.semibold)
-                            Spacer()
-                            Image(systemName: "arrow.up.right")
-                                .foregroundStyle(.tertiary)
+                ForEach(sortedRoutes) { route in
+                    HStack(spacing: 0) {
+                        Button {
+                            selectedRoute = route
+                        } label: {
+                            HStack {
+                                Image(systemName: route.family.systemImage)
+                                    .foregroundStyle(ConvertixTheme.cobalt)
+                                Text(route.title)
+                                    .fontWeight(.semibold)
+                                Spacer()
+                                Image(systemName: "arrow.up.right")
+                                    .foregroundStyle(.tertiary)
+                            }
+                            .contentShape(.rect)
                         }
-                        .padding()
-                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                .stroke(ConvertixTheme.line.opacity(0.4), lineWidth: 0.5)
+                        .buttonStyle(.plain)
+
+                        Button {
+                            toggleFavorite(route.id)
+                        } label: {
+                            Image(systemName: favoriteIDs.contains(route.id) ? "star.fill" : "star")
+                                .foregroundStyle(
+                                    favoriteIDs.contains(route.id) ? Color.yellow : Color.secondary
+                                )
+                                .padding(8)
                         }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel(
+                            favoriteIDs.contains(route.id)
+                                ? "Remove (route.title) from favourites"
+                                : "Add (route.title) to favourites"
+                        )
                     }
-                    .buttonStyle(.plain)
+                    .padding()
+                    .background(
+                        .regularMaterial,
+                        in: RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    )
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .stroke(ConvertixTheme.line.opacity(0.4), lineWidth: 0.5)
+                    }
                 }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var favoriteIDs: Set<String> {
+        Set(storedFavoriteIDs.split(separator: ",").map(String.init))
+    }
+
+    private var sortedRoutes: [ConversionRoute] {
+        routes.sorted { left, right in
+            let leftIsFavorite = favoriteIDs.contains(left.id)
+            let rightIsFavorite = favoriteIDs.contains(right.id)
+            if leftIsFavorite != rightIsFavorite {
+                return leftIsFavorite
+            }
+            return left.title < right.title
+        }
+    }
+
+    private func toggleFavorite(_ id: String) {
+        var ids = favoriteIDs
+        if !ids.insert(id).inserted {
+            ids.remove(id)
+        }
+        storedFavoriteIDs = ids.sorted().joined(separator: ",")
     }
 }

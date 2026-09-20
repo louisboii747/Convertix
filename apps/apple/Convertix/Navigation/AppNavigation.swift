@@ -4,7 +4,6 @@ enum AppSection: String, CaseIterable, Identifiable {
     case convert
     case tools
     case activity
-    case account
     case settings
 
     var id: Self { self }
@@ -14,7 +13,6 @@ enum AppSection: String, CaseIterable, Identifiable {
         case .convert: "Convert"
         case .tools: "Tools"
         case .activity: "Activity"
-        case .account: "Account"
         case .settings: "Settings"
         }
     }
@@ -24,7 +22,6 @@ enum AppSection: String, CaseIterable, Identifiable {
         case .convert: "arrow.trianglehead.2.clockwise.rotate.90"
         case .tools: "square.grid.2x2"
         case .activity: "clock.arrow.trianglehead.counterclockwise.rotate.90"
-        case .account: "person.crop.circle"
         case .settings: "gearshape"
         }
     }
@@ -32,23 +29,37 @@ enum AppSection: String, CaseIterable, Identifiable {
 
 struct ContentView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @State private var selection: AppSection? = .convert
 
     var body: some View {
-        if horizontalSizeClass == .compact {
-            CompactRootView()
-        } else {
-            NavigationSplitView {
-                SidebarView(selection: $selection)
-            } detail: {
-                NavigationStack {
-                    DestinationView(section: selection ?? .convert) {
-                        selection = .account
+        Group {
+            if horizontalSizeClass == .compact {
+                CompactRootView()
+            } else {
+                NavigationSplitView {
+                    SidebarView(selection: $selection)
+                } detail: {
+                    NavigationStack {
+                        DestinationView(section: selection ?? .convert) {
+                            selection = .settings
+                        }
                     }
                 }
+                .navigationSplitViewStyle(.balanced)
+                .tint(ConvertixTheme.cobalt)
             }
-            .navigationSplitViewStyle(.balanced)
-            .tint(ConvertixTheme.cobalt)
+        }
+        .sheet(
+            isPresented: Binding(
+                get: { !hasCompletedOnboarding },
+                set: { if !$0 { hasCompletedOnboarding = true } }
+            )
+        ) {
+            OnboardingView {
+                hasCompletedOnboarding = true
+            }
+            .interactiveDismissDisabled()
         }
     }
 }
@@ -60,7 +71,7 @@ struct CompactRootView: View {
         TabView(selection: $selection) {
             NavigationStack {
                 ConvertHomeView {
-                    selection = .account
+                    selection = .settings
                 }
             }
             .tabItem {
@@ -84,13 +95,6 @@ struct CompactRootView: View {
             }
             .tag(AppSection.activity)
 
-            NavigationStack {
-                AccountView()
-            }
-            .tabItem {
-                Label("Account", systemImage: "person.crop.circle")
-            }
-            .tag(AppSection.account)
 
             NavigationStack {
                 SettingsView()
@@ -108,6 +112,22 @@ struct SidebarView: View {
     @Binding var selection: AppSection?
 
     var body: some View {
+#if os(macOS)
+        List(AppSection.allCases, selection: $selection) { section in
+            Label(section.title, systemImage: section.systemImage)
+                .tag(section)
+                .padding(.vertical, 2)
+        }
+        .listStyle(.sidebar)
+        .navigationSplitViewColumnWidth(min: 180, ideal: 200, max: 230)
+        .navigationTitle("Convertix")
+        .safeAreaInset(edge: .top) {
+            BrandLockup(compact: true)
+                .padding(.leading, -4)
+                .padding(.trailing, 12)
+                .padding(.vertical, 6)
+        }
+#else
         List(AppSection.allCases, selection: $selection) { section in
             Label(section.title, systemImage: section.systemImage)
                 .tag(section)
@@ -119,6 +139,7 @@ struct SidebarView: View {
                 .padding(.horizontal)
                 .padding(.vertical, 8)
         }
+#endif
     }
 }
 
@@ -134,8 +155,6 @@ struct DestinationView: View {
             ToolsView()
         case .activity:
             ActivityHistoryView()
-        case .account:
-            AccountView()
         case .settings:
             SettingsView()
         }
@@ -143,13 +162,15 @@ struct DestinationView: View {
 }
 
 struct BrandLockup: View {
+    var compact = false
+
     var body: some View {
         HStack(spacing: 10) {
             Image("ConvertixLogo")
                 .resizable()
                 .scaledToFit()
                 .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
-                .frame(width: 36, height: 36)
+                .frame(width: compact ? 28 : 36, height: compact ? 28 : 36)
 
             Text("Convertix")
                 .font(.title3.weight(.bold))
@@ -162,8 +183,10 @@ struct BrandLockup: View {
 
 #Preview("iPhone") {
     ContentView()
+        .environment(AppState())
 }
 
 #Preview("iPad", traits: .fixedLayout(width: 1180, height: 820)) {
     ContentView()
+        .environment(AppState())
 }

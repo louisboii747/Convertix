@@ -1,0 +1,34 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ → %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ → %2$@"
+          }
+        }
+      }
+    },
+    "Convertix" : {
+
+    },
+    "HEIC → JPG" : {
+
+    },
+    "Open Convertix and get started with common file conversions." : {
+
+    },
+    "PNG → JPG" : {
+
+    },
+    "Quick conversions" : {
+
+    },
+    "Tap a shortcut to choose a file" : {
+
+    }
+  },
+  "version" : "1.0"
+}
