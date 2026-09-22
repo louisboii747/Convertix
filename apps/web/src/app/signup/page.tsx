@@ -25,8 +25,8 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
           <div className="auth-intro">
             <h1>Create a Convertix account</h1>
             <p>
-              Keep your profile and recent conversions together. You can still
-              convert files without signing in.
+              Convert files and keep your recent conversion history together
+              across the web and Convertix for Apple platforms.
             </p>
           </div>
 

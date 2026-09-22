@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { PdfCompressor } from "@/components/pdf-compressor";
+import { requireAccount } from "@/lib/account-server";
 
 export const metadata: Metadata = {
   title: "Compress PDF Online",
@@ -24,7 +25,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function CompressPdfPage() {
+export default async function CompressPdfPage() {
+  await requireAccount();
   return (
     <>
       <main id="main-content">

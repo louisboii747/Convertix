@@ -32,10 +32,10 @@ export default async function AccountLayout({
           </div>
           <AccountNavigation />
           <div className={styles.sidebarFooter}>
-            <span>Convert without an account</span>
+            <span>Your conversions, everywhere</span>
             <p>
-              Log in to keep your conversion history. You can also convert files
-              without signing in.
+              The same account keeps conversion history from Convertix on the web
+              and Apple platforms together.
             </p>
             <ConfirmLogoutButton />
           </div>

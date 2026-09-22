@@ -28,7 +28,7 @@ export function AccountHistory({ initial }: { initial: HistoryResult }) {
   const formRef = useRef<HTMLFormElement>(null);
   const totalPages = Math.max(1, Math.ceil(result.count / HISTORY_PAGE_SIZE));
   const hasFilters = Boolean(
-    filters.search || filters.source || filters.target || filters.status,
+    filters.search || filters.source || filters.target || filters.status || filters.period,
   );
 
   function search(next: HistoryFilters) {
@@ -57,15 +57,17 @@ export function AccountHistory({ initial }: { initial: HistoryResult }) {
       source: String(data.get("source") ?? ""),
       target: String(data.get("target") ?? ""),
       status: String(data.get("status") ?? ""),
+      period: String(data.get("period") ?? ""),
       page: 1,
     };
     // Never send the search text or a filename to analytics.
     if (next.search.trim()) captureEvent("account_history_searched");
-    if (next.source || next.target || next.status)
+    if (next.source || next.target || next.status || next.period)
       captureEvent("account_history_filtered", {
         source_filter: Boolean(next.source),
         target_filter: Boolean(next.target),
         status_filter: Boolean(next.status),
+        period_filter: Boolean(next.period),
       });
     search(next);
   }
@@ -144,6 +146,16 @@ export function AccountHistory({ initial }: { initial: HistoryResult }) {
                   {format.label}
                 </option>
               ))}
+            </select>
+          </div>
+          <div className={styles.field}>
+            <label htmlFor="history-period">When</label>
+            <select id="history-period" name="period">
+              <option value="">All time</option>
+              <option value="today">Today</option>
+              <option value="7d">Last 7 days</option>
+              <option value="30d">Last 30 days</option>
+              <option value="year">Last year</option>
             </select>
           </div>
           <div className={styles.field}>

@@ -11,22 +11,49 @@
         }
       }
     },
+    "Actions open the matching lightweight workflow." : {
+
+    },
+    "Choose a photo" : {
+
+    },
+    "Compress PDF" : {
+
+    },
+    "Convert" : {
+
+    },
+    "Convert a file" : {
+
+    },
+    "Convert a file with Convertix" : {
+
+    },
+    "Convert HEIC to JPEG" : {
+
+    },
     "Convertix" : {
 
     },
-    "HEIC → JPG" : {
+    "HEIC" : {
 
     },
-    "Open Convertix and get started with common file conversions." : {
+    "HEIC → JPEG" : {
 
     },
-    "PNG → JPG" : {
+    "JPEG" : {
 
     },
-    "Quick conversions" : {
+    "Open Convertix" : {
 
     },
-    "Tap a shortcut to choose a file" : {
+    "Optimise SVG" : {
+
+    },
+    "Quick Convert" : {
+
+    },
+    "Start common conversions from your Home Screen or Lock Screen." : {
 
     }
   },

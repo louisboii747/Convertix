@@ -11,17 +11,35 @@ struct ConvertHomeView: View {
     @State private var selectedFileSize: Int64?
     @State private var fileSelectionError: String?
     @State private var searchText = ""
+    @AppStorage("defaultOutputDestination") private var defaultOutputDestination =
+        ConversionDestination.askEveryTime.rawValue
+    @AppStorage("preferLocalConversions") private var preferLocalConversions = true
+    @AppStorage("allowLargeCellularUploads") private var allowLargeCellularUploads = false
+    @State private var isConfirmingCellularUpload = false
 
     init(showAccount: @escaping () -> Void = {}) {
         self.showAccount = showAccount
     }
 
     var body: some View {
+        Group {
 #if os(macOS)
-        macOSContent
+            macOSContent
 #else
-        mobileContent
+            mobileContent
 #endif
+        }
+        .alert(
+            "Use Mobile Data?",
+            isPresented: $isConfirmingCellularUpload
+        ) {
+            Button("Cancel", role: .cancel) {}
+            Button("Continue Upload") {
+                enqueueSelectedConversion()
+            }
+        } message: {
+            Text("This is a large cloud conversion and the current connection may use mobile data.")
+        }
     }
 
 #if os(macOS)
@@ -41,27 +59,31 @@ struct ConvertHomeView: View {
                         selectedFileURL: selectedFileURL,
                         selectedFileSize: selectedFileSize,
                         fileSelectionError: fileSelectionError,
-                        conversionStatus: appState.conversionStatus,
-                        downloadedFileURL: appState.downloadedFileURL,
-                        isDownloading: appState.isDownloading,
-                        downloadError: appState.downloadError,
-                        chooseFile: { isImporting = true },
+                        conversionStatus: selectedConversionStatus,
+                        downloadedFileURL: selectedConversion?.outputURL,
+                        isDownloading: false,
+                        downloadError: nil,
+                        chooseFile: requestFileImport,
                         acceptDroppedFile: selectFile,
                         clearFile: clearFile,
                         startConversion: startConversion,
-                        downloadResult: {
-                            Task { await appState.downloadResult() }
-                        }
+                        downloadResult: {}
                     )
 
-                    if !appState.conversionJobs.isEmpty {
-                        ConversionQueuePanel(
-                            jobs: appState.conversionJobs,
-                            download: { id in
-                                Task { await appState.downloadConversionJob(id: id) }
-                            },
-                            remove: appState.removeConversionJob,
-                            clearFinished: appState.clearFinishedConversionJobs
+                    if isSignedIn, !appState.conversionCoordinator.conversions.isEmpty {
+                        NativeConversionQueuePanel(
+                            conversions: appState.conversionCoordinator.conversions,
+                            retry: appState.conversionCoordinator.retry,
+                            cancel: appState.conversionCoordinator.cancel,
+                            remove: appState.conversionCoordinator.remove,
+                            clearFinished: appState.conversionCoordinator.removeFinished
+                        )
+                    }
+
+                    if isSignedIn {
+                        ConversionDashboardSummary(
+                            recentConversions: appState.conversionCoordinator.recentConversions,
+                            statistics: appState.conversionCoordinator.statistics
                         )
                     }
 
@@ -88,6 +110,12 @@ struct ConvertHomeView: View {
             onCompletion: handleFileImport
         )
         .toolbar {
+            ToolbarItem {
+                Button("Convert Clipboard", systemImage: "doc.on.clipboard") {
+                    importFromClipboard()
+                }
+                .help("Convert an image or file from the clipboard")
+            }
             ToolbarItem(placement: .primaryAction) {
                 Button("Account", systemImage: "person.crop.circle", action: showAccount)
                     .help("Open Account")
@@ -95,6 +123,9 @@ struct ConvertHomeView: View {
         }
         .onChange(of: appState.pendingConversionRouteID, initial: true) {
             applyPendingRoute()
+        }
+        .onChange(of: appState.fileImportRequest) {
+            requestFileImport()
         }
     }
 #else
@@ -110,25 +141,28 @@ struct ConvertHomeView: View {
                         availableRoutes: availableRoutes,
                         selectedFileName: selectedFileName,
                         fileSelectionError: fileSelectionError,
-                        conversionStatus: appState.conversionStatus,
-                        downloadedFileURL: appState.downloadedFileURL,
-                        isDownloading: appState.isDownloading,
-                        downloadError: appState.downloadError,
-                        chooseFile: { isImporting = true },
+                        conversionStatus: selectedConversionStatus,
+                        downloadedFileURL: selectedConversion?.outputURL,
+                        isDownloading: false,
+                        downloadError: nil,
+                        chooseFile: requestFileImport,
                         clearFile: clearFile,
                         startConversion: startConversion,
-                        downloadResult: {
-                            Task { await appState.downloadResult() }
-                        }
+                        downloadResult: {}
                     )
-                    if !appState.conversionJobs.isEmpty {
-                        ConversionQueuePanel(
-                            jobs: appState.conversionJobs,
-                            download: { id in
-                                Task { await appState.downloadConversionJob(id: id) }
-                            },
-                            remove: appState.removeConversionJob,
-                            clearFinished: appState.clearFinishedConversionJobs
+                    if isSignedIn, !appState.conversionCoordinator.conversions.isEmpty {
+                        NativeConversionQueuePanel(
+                            conversions: appState.conversionCoordinator.conversions,
+                            retry: appState.conversionCoordinator.retry,
+                            cancel: appState.conversionCoordinator.cancel,
+                            remove: appState.conversionCoordinator.remove,
+                            clearFinished: appState.conversionCoordinator.removeFinished
+                        )
+                    }
+                    if isSignedIn {
+                        ConversionDashboardSummary(
+                            recentConversions: appState.conversionCoordinator.recentConversions,
+                            statistics: appState.conversionCoordinator.statistics
                         )
                     }
                     ConversionNotes()
@@ -154,6 +188,12 @@ struct ConvertHomeView: View {
             onCompletion: handleFileImport
         )
         .toolbar {
+            ToolbarItem {
+                Button("Convert Clipboard", systemImage: "doc.on.clipboard") {
+                    importFromClipboard()
+                }
+                .help("Convert an image or file from the clipboard")
+            }
             ToolbarItem(placement: .primaryAction) {
                 Button("Account", systemImage: "person.crop.circle", action: showAccount)
                     .help("Open Account")
@@ -166,6 +206,10 @@ struct ConvertHomeView: View {
 #endif
 
     private func handleFileImport(_ result: Result<[URL], Error>) {
+        guard isSignedIn else {
+            showAccount()
+            return
+        }
         guard case let .success(urls) = result, let firstURL = urls.first else { return }
         if urls.count > 1 {
             clearFile()
@@ -193,6 +237,34 @@ struct ConvertHomeView: View {
             fileSelectionError = fileExtension.isEmpty
                 ? "Convertix couldn’t identify this file type."
                 : "Convertix doesn’t currently support \(fileExtension) files."
+        }
+    }
+
+    private var isSignedIn: Bool {
+        if case .signedIn = appState.sessionState {
+            return true
+        }
+        return false
+    }
+
+    private func requestFileImport() {
+        guard isSignedIn else {
+            showAccount()
+            return
+        }
+        isImporting = true
+    }
+
+    @MainActor
+    private func importFromClipboard() {
+        guard isSignedIn else {
+            showAccount()
+            return
+        }
+        do {
+            selectFile(try ClipboardImportService.materializeCompatibleFile())
+        } catch {
+            fileSelectionError = error.localizedDescription
         }
     }
 
@@ -231,19 +303,67 @@ struct ConvertHomeView: View {
         appState.pendingConversionRouteID = nil
     }
 
+    private var selectedConversion: ClientConversion? {
+        guard let selectedFileURL else { return nil }
+        return appState.conversionCoordinator.conversions.first {
+            $0.inputURL == selectedFileURL
+                && $0.outputFormat.caseInsensitiveCompare(selectedRoute.target) == .orderedSame
+        }
+    }
+
+    private var selectedConversionStatus: ConversionStatus {
+        guard let selectedConversion else { return .idle }
+        switch selectedConversion.phase {
+        case .queued:
+            return .queued
+        case .preparing, .uploading:
+            return .uploading
+        case .converting, .downloading, .saving:
+            return .processing
+        case .completed:
+            return .completed(selectedConversion.outputURL ?? selectedFileURL ?? URL(filePath: "/"))
+        case .failed:
+            return .failed(selectedConversion.errorDescription ?? "The conversion couldn’t be completed.")
+        case .cancelled:
+            return .idle
+        }
+    }
+
     private func startConversion() {
+        guard isSignedIn else {
+            showAccount()
+            return
+        }
         guard let selectedFileURL else { return }
 
-        Task {
-            let canAccess = selectedFileURL.startAccessingSecurityScopedResource()
-            defer {
-                if canAccess {
-                    selectedFileURL.stopAccessingSecurityScopedResource()
-                }
-            }
+        let canRunLocally = preferLocalConversions && LocalConversionEngine().canConvert(
+            inputFormat: selectedFileURL.pathExtension,
+            outputFormat: selectedRoute.target
+        )
+        let isLargeRemoteUpload = !canRunLocally
+            && (selectedFileSize ?? 0) >= 50 * 1_024 * 1_024
+            && appState.networkMonitor.isExpensive
+            && !allowLargeCellularUploads
 
-            await appState.convert(fileURL: selectedFileURL, route: selectedRoute)
+        if isLargeRemoteUpload {
+            isConfirmingCellularUpload = true
+        } else {
+            enqueueSelectedConversion()
         }
+    }
+
+    private func enqueueSelectedConversion() {
+        guard let selectedFileURL else { return }
+        appState.conversionCoordinator.enqueue(
+            ConversionRequest(
+                inputURLs: [selectedFileURL],
+                outputFormat: selectedRoute.target,
+                destination: ConversionDestination(rawValue: defaultOutputDestination)
+                    ?? .askEveryTime,
+                executionPreference: preferLocalConversions ? .automatic : .cloud,
+                source: .app
+            )
+        )
     }
 }
 

@@ -8,13 +8,13 @@
 
 https://convertix.uk
 
-**Convertix** is a cloud-backed file conversion platform focused on making file conversion fast, simple, and reliable without exposing users to the infrastructure doing the work.
+**Convertix** is a cross-platform file conversion product for the web and Apple platforms. A Convertix account is required to convert files, and the same Supabase identity keeps conversion history together across supported clients.
 
 The core experience is straightforward: upload a file, choose a supported target format, submit the conversion, and download the result when processing finishes.
 
 ## Current state
 
-Convertix now has a working end-to-end conversion pipeline running on AWS in `eu-west-2`.
+Convertix has a working end-to-end conversion pipeline running on AWS in `eu-west-2`, a production Next.js application, and a native SwiftUI app for iOS, iPadOS, and macOS.
 
 The production path now supports document, image, audio, and video conversions through the web application. Recent image support includes **HEIC / HEIF → JPG, PNG, or WebP**, with content-based HEIF detection so iPhone photos are handled by their actual image format rather than only their filename. Files are uploaded directly to Amazon S3 using short-lived presigned URLs, conversion jobs are submitted through the API, queued in Amazon SQS, processed by an autoscaling ECS/Fargate worker, and returned through a temporary presigned download URL.
 
@@ -29,14 +29,16 @@ The full flow has been tested end to end:
 7. The completed file is exposed through a temporary S3 download URL.
 8. The worker can scale back down when the queue is empty.
 
-Convertix is no longer only a frontend scaffold or local proof of concept: the first real cloud conversion workflow is operational.
+Signed-in conversions from the web and Apple app write to the same user-scoped `conversion_history` source in Supabase. History is account-only and supports filename, format, status, and time filtering. Conversion files continue to use the existing AWS pipeline; Supabase stores account and conversion metadata, not a replacement copy of the conversion backend.
 
 ## Architecture
 
 Convertix is structured as a multi-service project so the frontend, API, worker, and infrastructure can evolve independently.
 
 ```text
-Browser / Next.js
+Next.js / SwiftUI clients
+       |
+       +----> Supabase Auth + user-scoped conversion history
        |
        v
 AWS HTTP API
@@ -67,7 +69,33 @@ The interface includes a typed API client and explicit conversion state handling
 - Completed
 - Failed
 
-The frontend deliberately does not fake successful conversions. Routes are only enabled when the required API configuration and backend support exist.
+Conversion requires an authenticated Convertix account. Completed cloud conversions are recorded against that account so they also appear in the native Apple app. The frontend deliberately does not fake successful conversions; routes are only enabled when the required API configuration and backend support exist.
+
+### Apple application
+
+`apps/apple` contains the native Swift/SwiftUI application for iOS, iPadOS, and macOS. It shares the existing conversion API and Supabase account with the web app while providing native capabilities including:
+
+- A shared Swift Concurrency conversion coordinator and persistent conversion queue
+- Safe on-device image conversions where Apple frameworks support them, with cloud fallback for other supported routes
+- Account-only cross-platform conversion history with search and filters
+- App Intents and Shortcuts actions, typed deep links, widgets, and Live Activities
+- Native file import, drag and drop, clipboard entry points, notifications, and network awareness
+- A macOS menu bar experience, keyboard commands, native sharing, and Finder reveal actions
+
+Client metadata is cleared on sign-out, and history requests are always scoped to the authenticated Supabase user. Local and cloud execution are labelled separately so the UI does not imply that uploaded files remained on-device.
+
+### Accounts and history
+
+Supabase provides a single account identity across Convertix clients. The web and Apple apps use the existing `conversion_history` schema and associate writes with the authenticated user. History is unavailable while signed out and currently supports:
+
+- Filename search
+- Source and target format filters
+- Status filters
+- Time filters
+- Pagination on the web
+- User-scoped deletion
+
+The account and history contracts are platform-neutral so a future Android client can authenticate with the same Supabase project and consume the same user-owned records without introducing an Android-specific data model.
 
 ### API
 
@@ -114,6 +142,9 @@ Convertix currently uses:
 - **Docker** — worker packaging and local development
 - **Terraform** — AWS infrastructure management
 - **Vercel** — frontend deployment
+- **Swift / SwiftUI** — iOS, iPadOS, and macOS application
+- **App Intents, WidgetKit, ActivityKit** — Apple system integrations
+- **Supabase Auth and Postgres** — cross-platform accounts, profiles, and user-scoped conversion history
 
 The repository still contains room for supporting services such as PostgreSQL and Redis as the product grows, but the live conversion path currently relies primarily on AWS-native storage, queueing, compute, and serverless services.
 
@@ -153,6 +184,7 @@ Keeping the UI aware of backend capabilities means unsupported routes can remain
 ```text
 apps/
   web/             Next.js frontend
+  apple/           SwiftUI app for iOS, iPadOS, and macOS
 
 services/
   worker/          Python conversion worker
@@ -194,13 +226,11 @@ Planned work includes:
 - Richer progress reporting
 - Improved failure states and retry handling
 - Larger-file workflows
-- User accounts and authentication
-- Conversion history
+- Android client using the shared account and history contracts
 - Usage limits and rate limiting
 - Free and paid usage tiers
 - Subscription and payment support
 - API access for developers
-- Desktop and mobile clients
 - Additional monitoring and operational tooling
 - Continued infrastructure optimisation as usage grows
 

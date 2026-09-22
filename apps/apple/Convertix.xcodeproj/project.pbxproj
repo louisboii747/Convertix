@@ -28,6 +28,34 @@
 		4A21B81330600BB8001EF05B /* MacConverterComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A21B81130600BB8001EF05B /* MacConverterComponents.swift */; };
 		4A21B81630601167001EF05B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A77728E305BF77500455003 /* Assets.xcassets */; };
 		4A21B817306012B5001EF05B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A77728E305BF77500455003 /* Assets.xcassets */; };
+		4A446B57306306CC006FF8FF /* ConversionDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B56306306CC006FF8FF /* ConversionDomain.swift */; };
+		4A446B58306306CC006FF8FF /* ConversionDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B56306306CC006FF8FF /* ConversionDomain.swift */; };
+		4A446B5A306306EB006FF8FF /* ConversionPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B59306306EB006FF8FF /* ConversionPersistence.swift */; };
+		4A446B5B306306EB006FF8FF /* ConversionPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B59306306EB006FF8FF /* ConversionPersistence.swift */; };
+		4A446B5D3063070B006FF8FF /* LocalConversionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B5C3063070B006FF8FF /* LocalConversionEngine.swift */; };
+		4A446B5E3063070B006FF8FF /* LocalConversionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B5C3063070B006FF8FF /* LocalConversionEngine.swift */; };
+		4A446B603063078C006FF8FF /* ConversionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B5F3063078C006FF8FF /* ConversionCoordinator.swift */; };
+		4A446B613063078C006FF8FF /* ConversionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B5F3063078C006FF8FF /* ConversionCoordinator.swift */; };
+		4A446B6330630839006FF8FF /* ConversionQueueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B6230630839006FF8FF /* ConversionQueueView.swift */; };
+		4A446B6430630839006FF8FF /* ConversionQueueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B6230630839006FF8FF /* ConversionQueueView.swift */; };
+		4A446B66306308F5006FF8FF /* ConvertixAppIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B65306308F5006FF8FF /* ConvertixAppIntents.swift */; };
+		4A446B67306308F5006FF8FF /* ConvertixAppIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B65306308F5006FF8FF /* ConvertixAppIntents.swift */; };
+		4A446B693063098C006FF8FF /* ConvertFileIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B683063098C006FF8FF /* ConvertFileIntents.swift */; };
+		4A446B6A3063098C006FF8FF /* ConvertFileIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B683063098C006FF8FF /* ConvertFileIntents.swift */; };
+		4A446B6C306309BC006FF8FF /* AppDeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B6B306309BC006FF8FF /* AppDeepLink.swift */; };
+		4A446B6D306309BC006FF8FF /* AppDeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B6B306309BC006FF8FF /* AppDeepLink.swift */; };
+		4A446B6F30630A18006FF8FF /* ConvertixMenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B6E30630A18006FF8FF /* ConvertixMenuBarView.swift */; };
+		4A446B7030630A18006FF8FF /* ConvertixMenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B6E30630A18006FF8FF /* ConvertixMenuBarView.swift */; };
+		4A446B7230630A8F006FF8FF /* ConversionNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B7130630A8F006FF8FF /* ConversionNotificationManager.swift */; };
+		4A446B7330630A8F006FF8FF /* ConversionNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B7130630A8F006FF8FF /* ConversionNotificationManager.swift */; };
+		4A446B7530630AB6006FF8FF /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B7430630AB6006FF8FF /* NetworkMonitor.swift */; };
+		4A446B7630630AB6006FF8FF /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B7430630AB6006FF8FF /* NetworkMonitor.swift */; };
+		4A446B7830630B07006FF8FF /* RecentConversionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B7730630B07006FF8FF /* RecentConversionsView.swift */; };
+		4A446B7930630B07006FF8FF /* RecentConversionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B7730630B07006FF8FF /* RecentConversionsView.swift */; };
+		4A446B7D30630BE9006FF8FF /* ConvertixCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B7C30630BE9006FF8FF /* ConvertixCommands.swift */; };
+		4A446B7E30630BE9006FF8FF /* ConvertixCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B7C30630BE9006FF8FF /* ConvertixCommands.swift */; };
+		4A446B8030630C06006FF8FF /* ClipboardImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B7F30630C06006FF8FF /* ClipboardImportService.swift */; };
+		4A446B8130630C06006FF8FF /* ClipboardImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A446B7F30630C06006FF8FF /* ClipboardImportService.swift */; };
 		4A77724C305BF4E800455003 /* ConvertixDesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77724B305BF4E800455003 /* ConvertixDesignSystem.swift */; };
 		4A77724D305BF4E800455003 /* ConvertixDesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77724B305BF4E800455003 /* ConvertixDesignSystem.swift */; };
 		4A777250305BF4E800455003 /* ConversionModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A77724F305BF4E800455003 /* ConversionModels.swift */; };
@@ -107,6 +135,20 @@
 		4A21B81130600BB8001EF05B /* MacConverterComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacConverterComponents.swift; sourceTree = "<group>"; };
 		4A3344E7305BEB32007A8195 /* Convertix-iOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Convertix-iOS-Info.plist"; sourceTree = "<group>"; };
 		4A3344E8305BEB32007A8195 /* Convertix-macOS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Convertix-macOS-Info.plist"; sourceTree = "<group>"; };
+		4A446B56306306CC006FF8FF /* ConversionDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionDomain.swift; sourceTree = "<group>"; };
+		4A446B59306306EB006FF8FF /* ConversionPersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionPersistence.swift; sourceTree = "<group>"; };
+		4A446B5C3063070B006FF8FF /* LocalConversionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalConversionEngine.swift; sourceTree = "<group>"; };
+		4A446B5F3063078C006FF8FF /* ConversionCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionCoordinator.swift; sourceTree = "<group>"; };
+		4A446B6230630839006FF8FF /* ConversionQueueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionQueueView.swift; sourceTree = "<group>"; };
+		4A446B65306308F5006FF8FF /* ConvertixAppIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvertixAppIntents.swift; sourceTree = "<group>"; };
+		4A446B683063098C006FF8FF /* ConvertFileIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvertFileIntents.swift; sourceTree = "<group>"; };
+		4A446B6B306309BC006FF8FF /* AppDeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDeepLink.swift; sourceTree = "<group>"; };
+		4A446B6E30630A18006FF8FF /* ConvertixMenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvertixMenuBarView.swift; sourceTree = "<group>"; };
+		4A446B7130630A8F006FF8FF /* ConversionNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionNotificationManager.swift; sourceTree = "<group>"; };
+		4A446B7430630AB6006FF8FF /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		4A446B7730630B07006FF8FF /* RecentConversionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentConversionsView.swift; sourceTree = "<group>"; };
+		4A446B7C30630BE9006FF8FF /* ConvertixCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvertixCommands.swift; sourceTree = "<group>"; };
+		4A446B7F30630C06006FF8FF /* ClipboardImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardImportService.swift; sourceTree = "<group>"; };
 		4A77724B305BF4E800455003 /* ConvertixDesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConvertixDesignSystem.swift; sourceTree = "<group>"; };
 		4A77724F305BF4E800455003 /* ConversionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionModels.swift; sourceTree = "<group>"; };
 		4A777253305BF4E800455003 /* ConversionAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversionAPI.swift; sourceTree = "<group>"; };
@@ -197,6 +239,7 @@
 			children = (
 				4A77724F305BF4E800455003 /* ConversionModels.swift */,
 				4A1E9B2C305C2D8B00BB7821 /* BackendModels.swift */,
+				4A446B56306306CC006FF8FF /* ConversionDomain.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -207,6 +250,12 @@
 				4A777253305BF4E800455003 /* ConversionAPI.swift */,
 				4A1E9B29305C2D8B00BB7821 /* AppConfiguration.swift */,
 				4A1E9B2F305C2D9F00BB7821 /* SupabaseService.swift */,
+				4A446B59306306EB006FF8FF /* ConversionPersistence.swift */,
+				4A446B5C3063070B006FF8FF /* LocalConversionEngine.swift */,
+				4A446B5F3063078C006FF8FF /* ConversionCoordinator.swift */,
+				4A446B7130630A8F006FF8FF /* ConversionNotificationManager.swift */,
+				4A446B7430630AB6006FF8FF /* NetworkMonitor.swift */,
+				4A446B7F30630C06006FF8FF /* ClipboardImportService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -215,6 +264,9 @@
 			isa = PBXGroup;
 			children = (
 				4A777257305BF4E800455003 /* ConversionActivityAttributes.swift */,
+				4A446B65306308F5006FF8FF /* ConvertixAppIntents.swift */,
+				4A446B683063098C006FF8FF /* ConvertFileIntents.swift */,
+				4A446B7C30630BE9006FF8FF /* ConvertixCommands.swift */,
 			);
 			path = Integrations;
 			sourceTree = "<group>";
@@ -223,6 +275,7 @@
 			isa = PBXGroup;
 			children = (
 				4A77725B305BF4E800455003 /* AppNavigation.swift */,
+				4A446B6B306309BC006FF8FF /* AppDeepLink.swift */,
 			);
 			path = Navigation;
 			sourceTree = "<group>";
@@ -246,6 +299,8 @@
 				4A777260305BF4F300455003 /* ConvertHomeView.swift */,
 				4A777263305BF4F300455003 /* ConverterComponents.swift */,
 				4A21B81130600BB8001EF05B /* MacConverterComponents.swift */,
+				4A446B6230630839006FF8FF /* ConversionQueueView.swift */,
+				4A446B6E30630A18006FF8FF /* ConvertixMenuBarView.swift */,
 			);
 			path = Convert;
 			sourceTree = "<group>";
@@ -262,6 +317,7 @@
 			isa = PBXGroup;
 			children = (
 				4A77726B305BF4F300455003 /* ActivityHistoryView.swift */,
+				4A446B7730630B07006FF8FF /* RecentConversionsView.swift */,
 			);
 			path = Activity;
 			sourceTree = "<group>";
@@ -527,23 +583,37 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A446B7030630A18006FF8FF /* ConvertixMenuBarView.swift in Sources */,
 				4A1E9B2D305C2D8B00BB7821 /* BackendModels.swift in Sources */,
 				4A1E9B1F305C172400BB7821 /* AccountView.swift in Sources */,
+				4A446B7930630B07006FF8FF /* RecentConversionsView.swift in Sources */,
 				4A777250305BF4E800455003 /* ConversionModels.swift in Sources */,
+				4A446B7330630A8F006FF8FF /* ConversionNotificationManager.swift in Sources */,
+				4A446B7D30630BE9006FF8FF /* ConvertixCommands.swift in Sources */,
 				4A21B80E30600959001EF05B /* OnboardingView.swift in Sources */,
+				4A446B6C306309BC006FF8FF /* AppDeepLink.swift in Sources */,
+				4A446B7630630AB6006FF8FF /* NetworkMonitor.swift in Sources */,
 				A10000000000000000000001 /* ConvertixApp.swift in Sources */,
+				4A446B6A3063098C006FF8FF /* ConvertFileIntents.swift in Sources */,
 				4A1E9B31305C2D9F00BB7821 /* SupabaseService.swift in Sources */,
+				4A446B67306308F5006FF8FF /* ConvertixAppIntents.swift in Sources */,
 				4A1E9B2A305C2D8B00BB7821 /* AppConfiguration.swift in Sources */,
 				4A777264305BF4F300455003 /* ConverterComponents.swift in Sources */,
 				4A777268305BF4F300455003 /* ToolsView.swift in Sources */,
+				4A446B8030630C06006FF8FF /* ClipboardImportService.swift in Sources */,
 				4A77726D305BF4F300455003 /* ActivityHistoryView.swift in Sources */,
+				4A446B6330630839006FF8FF /* ConversionQueueView.swift in Sources */,
 				4A777255305BF4E800455003 /* ConversionAPI.swift in Sources */,
+				4A446B58306306CC006FF8FF /* ConversionDomain.swift in Sources */,
+				4A446B5B306306EB006FF8FF /* ConversionPersistence.swift in Sources */,
 				4A777261305BF4F300455003 /* ConvertHomeView.swift in Sources */,
 				4A1E9B33305C2E1000BB7821 /* AppState.swift in Sources */,
+				4A446B613063078C006FF8FF /* ConversionCoordinator.swift in Sources */,
 				4A77725C305BF4E800455003 /* AppNavigation.swift in Sources */,
 				4A1E9B36305C2E3200BB7821 /* AuthenticationView.swift in Sources */,
 				4A77724D305BF4E800455003 /* ConvertixDesignSystem.swift in Sources */,
 				4A21B81330600BB8001EF05B /* MacConverterComponents.swift in Sources */,
+				4A446B5E3063070B006FF8FF /* LocalConversionEngine.swift in Sources */,
 				4A777258305BF4E800455003 /* ConversionActivityAttributes.swift in Sources */,
 				4A777270305BF4F300455003 /* SettingsView.swift in Sources */,
 			);
@@ -553,23 +623,37 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A446B6F30630A18006FF8FF /* ConvertixMenuBarView.swift in Sources */,
 				4A1E9B2E305C2D8B00BB7821 /* BackendModels.swift in Sources */,
 				4A1E9B20305C172400BB7821 /* AccountView.swift in Sources */,
+				4A446B7830630B07006FF8FF /* RecentConversionsView.swift in Sources */,
 				4A777251305BF4E800455003 /* ConversionModels.swift in Sources */,
+				4A446B7230630A8F006FF8FF /* ConversionNotificationManager.swift in Sources */,
+				4A446B7E30630BE9006FF8FF /* ConvertixCommands.swift in Sources */,
 				4A21B80D30600959001EF05B /* OnboardingView.swift in Sources */,
+				4A446B6D306309BC006FF8FF /* AppDeepLink.swift in Sources */,
+				4A446B7530630AB6006FF8FF /* NetworkMonitor.swift in Sources */,
 				A10000000000000000000003 /* ConvertixApp.swift in Sources */,
+				4A446B693063098C006FF8FF /* ConvertFileIntents.swift in Sources */,
 				4A1E9B30305C2D9F00BB7821 /* SupabaseService.swift in Sources */,
+				4A446B66306308F5006FF8FF /* ConvertixAppIntents.swift in Sources */,
 				4A1E9B2B305C2D8B00BB7821 /* AppConfiguration.swift in Sources */,
 				4A777265305BF4F300455003 /* ConverterComponents.swift in Sources */,
 				4A777269305BF4F300455003 /* ToolsView.swift in Sources */,
+				4A446B8130630C06006FF8FF /* ClipboardImportService.swift in Sources */,
 				4A77726C305BF4F300455003 /* ActivityHistoryView.swift in Sources */,
+				4A446B6430630839006FF8FF /* ConversionQueueView.swift in Sources */,
 				4A777254305BF4E800455003 /* ConversionAPI.swift in Sources */,
+				4A446B57306306CC006FF8FF /* ConversionDomain.swift in Sources */,
+				4A446B5A306306EB006FF8FF /* ConversionPersistence.swift in Sources */,
 				4A777262305BF4F300455003 /* ConvertHomeView.swift in Sources */,
 				4A1E9B34305C2E1000BB7821 /* AppState.swift in Sources */,
+				4A446B603063078C006FF8FF /* ConversionCoordinator.swift in Sources */,
 				4A77725D305BF4E800455003 /* AppNavigation.swift in Sources */,
 				4A1E9B37305C2E3200BB7821 /* AuthenticationView.swift in Sources */,
 				4A77724C305BF4E800455003 /* ConvertixDesignSystem.swift in Sources */,
 				4A21B81230600BB8001EF05B /* MacConverterComponents.swift in Sources */,
+				4A446B5D3063070B006FF8FF /* LocalConversionEngine.swift in Sources */,
 				4A777259305BF4E800455003 /* ConversionActivityAttributes.swift in Sources */,
 				4A777271305BF4F300455003 /* SettingsView.swift in Sources */,
 			);

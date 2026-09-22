@@ -239,6 +239,9 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
   } | null>(null);
   const conversionTimingRef = useRef<ConversionTimingState | null>(null);
   const [targetMenuOpen, setTargetMenuOpen] = useState(false);
+  const [accountState, setAccountState] = useState<
+    "checking" | "authenticated" | "signedOut"
+  >("checking");
   const [unsupportedRequest, setUnsupportedRequest] =
     useState<UnsupportedConversionRequest | null>(null);
   const [state, dispatch] = useReducer(
@@ -247,6 +250,26 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
   );
 
   useEffect(() => () => activeRequestRef.current?.controller.abort(), []);
+
+  useEffect(() => {
+    let active = true;
+    void fetch("/api/auth/header", { credentials: "same-origin" })
+      .then(async (response) => {
+        if (!active) return;
+        if (!response.ok) {
+          setAccountState("signedOut");
+          return;
+        }
+        const result = (await response.json()) as { authenticated?: boolean };
+        setAccountState(result.authenticated ? "authenticated" : "signedOut");
+      })
+      .catch(() => {
+        if (active) setAccountState("signedOut");
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!state.file) return;
@@ -285,6 +308,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
     pair &&
     pairEnabled &&
     readiness.ready &&
+    accountState === "authenticated" &&
     !isBusy &&
     state.status !== "completed",
   );
@@ -696,8 +720,9 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
         <div className="converter-prompt" role="status">
           <RouteIcon />
           <span>
-            Your file stays on this device until you select Convert file. No
-            account is required. Maximum size: {FREE_FILE_LIMIT_MB} MB.
+            Your file stays on this device until you select Convert file. Sign
+            in is required so your history stays with your account. Maximum
+            size: {FREE_FILE_LIMIT_MB} MB.
           </span>
         </div>
       ) : null}
@@ -792,6 +817,12 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
             </div>
           </div>
 
+          {accountState === "signedOut" ? (
+            <p className="converter-prompt" role="status">
+              <Link href="/login">Log in</Link> or <Link href="/signup">create an account</Link> to convert files and keep your history across Convertix apps.
+            </p>
+          ) : null}
+
           {state.status === "completed" && state.downloadUrl ? (
             <FlowButton
               className="w-full"
@@ -819,7 +850,11 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
               shape="rounded"
               size="lg"
               text={
-                !pairEnabled
+                accountState === "checking"
+                  ? "Checking your account"
+                  : accountState === "signedOut"
+                    ? "Log in to convert"
+                    : !pairEnabled
                   ? "Conversion unavailable"
                   : !readiness.ready
                     ? "Conversion service unavailable"

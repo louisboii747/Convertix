@@ -14,8 +14,8 @@ export async function POST(request: Request) {
     data: { user },
     error: userError,
   } = await supabase.auth.getUser();
-  // History is best-effort. Anonymous/basic conversion has no account requirement.
-  if (userError || !user || user.is_anonymous) return respond({ saved: false });
+  if (userError || !user || user.is_anonymous)
+    return respond({ error: "authentication_required" }, 401);
 
   let record: ReturnType<typeof parseHistoryWrite>;
   try {

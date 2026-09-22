@@ -28,6 +28,7 @@ enum AppSection: String, CaseIterable, Identifiable {
 }
 
 struct ContentView: View {
+    @Environment(AppState.self) private var appState
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @State private var selection: AppSection? = .convert
@@ -50,6 +51,10 @@ struct ContentView: View {
                 .tint(ConvertixTheme.cobalt)
             }
         }
+        .onChange(of: appState.pendingDeepLink) {
+            guard let deepLink = appState.pendingDeepLink else { return }
+            selection = deepLink.section
+        }
         .sheet(
             isPresented: Binding(
                 get: { !hasCompletedOnboarding },
@@ -65,6 +70,7 @@ struct ContentView: View {
 }
 
 struct CompactRootView: View {
+    @Environment(AppState.self) private var appState
     @State private var selection = AppSection.convert
 
     var body: some View {
@@ -105,6 +111,10 @@ struct CompactRootView: View {
             .tag(AppSection.settings)
         }
         .tint(ConvertixTheme.cobalt)
+        .onChange(of: appState.pendingDeepLink) {
+            guard let deepLink = appState.pendingDeepLink else { return }
+            selection = deepLink.section
+        }
     }
 }
 

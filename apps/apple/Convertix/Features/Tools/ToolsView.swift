@@ -4,12 +4,14 @@ import PDFKit
 import ImageIO
 
 struct ToolsView: View {
+    @Environment(AppState.self) private var appState
     @State private var selectedTool: ConvertixTool?
 
     var body: some View {
         ZStack {
             ConvertixBackdrop()
-            ScrollView {
+            if case .signedIn = appState.sessionState {
+                ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     Text("Tools")
                         .font(.largeTitle.bold())
@@ -30,12 +32,30 @@ struct ToolsView: View {
                 }
                 .frame(maxWidth: 860, alignment: .leading)
                 .padding(28)
-                .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity)
+                }
+            } else {
+                ContentUnavailableView {
+                    Label("Account Required", systemImage: "person.crop.circle.badge.exclamationmark")
+                } description: {
+                    Text("Sign in to use Convertix tools and keep conversion history available across your devices.")
+                } actions: {
+                    NavigationLink("Sign In") {
+                        AccountView()
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
             }
         }
         .navigationTitle("Tools")
         .sheet(item: $selectedTool) { tool in
             ToolWorkspace(tool: tool)
+        }
+        .onChange(of: appState.pendingDeepLink, initial: true) {
+            guard case .signedIn = appState.sessionState,
+                  case let .tool(tool) = appState.pendingDeepLink else { return }
+            selectedTool = tool
+            appState.pendingDeepLink = nil
         }
     }
 }
@@ -134,6 +154,7 @@ struct ToolCard: View {
 
 struct ToolWorkspace: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(AppState.self) private var appState
     let tool: ConvertixTool
 
     @State private var isImporting = false
@@ -251,7 +272,7 @@ struct ToolWorkspace: View {
         let selectedTool = tool
 
         do {
-            outputURLs = try await Task.detached {
+            let results = try await Task.detached {
                 switch selectedTool {
                 case .compressImages:
                     try OnDeviceToolProcessor.compressImages(inputURLs, quality: compressionQuality)
@@ -263,6 +284,20 @@ struct ToolWorkspace: View {
                     [try OnDeviceToolProcessor.optimizeSVG(inputURLs[0])]
                 }
             }.value
+            outputURLs = results
+
+            if selectedTool == .mergePDFs, let input = inputURLs.first, let output = results.first {
+                await appState.recordLocalConversion(
+                    inputURL: input,
+                    outputURL: output,
+                    sourceFormat: "pdf",
+                    targetFormat: "pdf"
+                )
+            } else {
+                for (input, output) in zip(inputURLs, results) {
+                    await appState.recordLocalConversion(inputURL: input, outputURL: output)
+                }
+            }
         } catch {
             errorMessage = error.localizedDescription
         }

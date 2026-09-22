@@ -3,6 +3,8 @@ import SwiftUI
 struct ActivityHistoryView: View {
     @Environment(AppState.self) private var appState
     @State private var filter = HistoryFilter.all
+    @State private var dateRange = HistoryDateRange.allTime
+    @State private var searchText = ""
 
     var body: some View {
         ZStack {
@@ -32,14 +34,24 @@ struct ActivityHistoryView: View {
             }
         }
         .navigationTitle("Activity")
+        .searchable(text: $searchText, prompt: "Search conversions")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Picker("Filter", selection: $filter) {
-                    ForEach(HistoryFilter.allCases) { filter in
-                        Label(filter.title, systemImage: filter.symbol).tag(filter)
+                HStack {
+                    Picker("Time", selection: $dateRange) {
+                        ForEach(HistoryDateRange.allCases) { range in
+                            Text(range.title).tag(range)
+                        }
                     }
+                    .pickerStyle(.menu)
+
+                    Picker("File type and status", selection: $filter) {
+                        ForEach(HistoryFilter.allCases) { filter in
+                            Label(filter.title, systemImage: filter.symbol).tag(filter)
+                        }
+                    }
+                    .pickerStyle(.menu)
                 }
-                .pickerStyle(.menu)
             }
         }
         .task {
@@ -50,21 +62,70 @@ struct ActivityHistoryView: View {
     }
 
     private var filteredEntries: [ConversionHistoryEntry] {
+        let formatFiltered: [ConversionHistoryEntry]
         switch filter {
         case .all:
-            appState.history
+            formatFiltered = appState.history
         case .completed:
-            appState.history.filter { $0.status == "completed" }
+            formatFiltered = appState.history.filter { $0.status == "completed" }
         case .failed:
-            appState.history.filter { $0.status == "failed" }
+            formatFiltered = appState.history.filter { $0.status == "failed" }
         case .images:
-            appState.history.filter {
+            formatFiltered = appState.history.filter {
                 ["jpg", "jpeg", "png", "webp", "heic", "heif", "svg"].contains($0.sourceFormat)
             }
         case .documents:
-            appState.history.filter {
+            formatFiltered = appState.history.filter {
                 ["pdf", "docx", "txt", "xlsx"].contains($0.sourceFormat)
             }
+        case .pdf:
+            formatFiltered = appState.history.filter {
+                $0.sourceFormat == "pdf" || $0.targetFormat == "pdf"
+            }
+        case .video:
+            formatFiltered = appState.history.filter {
+                ["mp4", "webm"].contains($0.sourceFormat)
+            }
+        }
+
+        let dated = formatFiltered.filter { dateRange.includes($0.createdAt) }
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return dated }
+        return dated.filter {
+            $0.originalFilename.localizedCaseInsensitiveContains(query)
+                || $0.sourceFormat.localizedCaseInsensitiveContains(query)
+                || $0.targetFormat.localizedCaseInsensitiveContains(query)
+        }
+    }
+}
+
+enum HistoryDateRange: String, CaseIterable, Identifiable {
+    case allTime
+    case today
+    case last7Days
+    case last30Days
+
+    var id: Self { self }
+
+    var title: LocalizedStringResource {
+        switch self {
+        case .allTime: "All Time"
+        case .today: "Today"
+        case .last7Days: "Last 7 Days"
+        case .last30Days: "Last 30 Days"
+        }
+    }
+
+    func includes(_ date: Date, now: Date = .now, calendar: Calendar = .current) -> Bool {
+        switch self {
+        case .allTime:
+            true
+        case .today:
+            calendar.isDate(date, inSameDayAs: now)
+        case .last7Days:
+            date >= calendar.date(byAdding: .day, value: -7, to: now) ?? .distantPast
+        case .last30Days:
+            date >= calendar.date(byAdding: .day, value: -30, to: now) ?? .distantPast
         }
     }
 }
@@ -75,6 +136,8 @@ enum HistoryFilter: String, CaseIterable, Identifiable {
     case failed
     case images
     case documents
+    case pdf
+    case video
 
     var id: Self { self }
 
@@ -85,6 +148,8 @@ enum HistoryFilter: String, CaseIterable, Identifiable {
         case .failed: "Failed"
         case .images: "Images"
         case .documents: "Documents"
+        case .pdf: "PDF"
+        case .video: "Video"
         }
     }
 
@@ -95,6 +160,8 @@ enum HistoryFilter: String, CaseIterable, Identifiable {
         case .failed: "exclamationmark.circle"
         case .images: "photo"
         case .documents: "doc"
+        case .pdf: "doc.richtext"
+        case .video: "film"
         }
     }
 }

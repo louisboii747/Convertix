@@ -39,6 +39,11 @@ export async function queryOwnHistory(
   if (filters.source) query = query.eq("source_format", filters.source);
   if (filters.target) query = query.eq("target_format", filters.target);
   if (filters.status) query = query.eq("status", filters.status);
+  if (filters.period) {
+    const days = filters.period === "today" ? 1 : filters.period === "7d" ? 7 : filters.period === "30d" ? 30 : 365;
+    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+    query = query.gte("created_at", since);
+  }
   const offset = (filters.page - 1) * HISTORY_PAGE_SIZE;
   const { data, count, error } = await query
     .order("created_at", { ascending: false })

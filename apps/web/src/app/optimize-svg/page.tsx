@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SvgOptimizer } from "@/components/svg-optimizer";
+import { requireAccount } from "@/lib/account-server";
 import { FlowButton } from "@/components/ui/flow-button";
 
 export const metadata: Metadata = {
@@ -24,7 +25,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function OptimizeSvgPage() {
+export default async function OptimizeSvgPage() {
+  await requireAccount();
   return (
     <>
       <main id="main-content">

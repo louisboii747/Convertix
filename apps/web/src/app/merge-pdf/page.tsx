@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { PdfMerger } from "@/components/pdf-merger";
+import { requireAccount } from "@/lib/account-server";
 
 export const metadata: Metadata = {
   title: "Merge PDF Online",
@@ -24,7 +25,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function MergePdfPage() {
+export default async function MergePdfPage() {
+  await requireAccount();
   return (
     <>
       <main id="main-content">

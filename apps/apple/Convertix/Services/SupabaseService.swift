@@ -2,12 +2,6 @@ import AuthenticationServices
 import Foundation
 import Supabase
 
-#if os(iOS)
-import UIKit
-#elseif os(macOS)
-import AppKit
-#endif
-
 struct SupabaseService: Sendable {
     private let client: SupabaseClient
 
@@ -37,17 +31,21 @@ struct SupabaseService: Sendable {
 
     @MainActor
     func signInWithGoogle() async throws -> AccountUser {
-        let presentationProvider = OAuthPresentationContextProvider()
         let session = try await client.auth.signInWithOAuth(
             provider: .google,
             redirectTo: URL(string: "convertix://auth/callback")
-        ) { webAuthenticationSession in
-            webAuthenticationSession.presentationContextProvider = presentationProvider
-        }
+        )
         return AccountUser(
             id: session.user.id,
             email: session.user.email ?? ""
         )
+    }
+
+    static func isUserCancelledOAuth(_ error: Error) -> Bool {
+        guard let error = error as? ASWebAuthenticationSessionError else {
+            return false
+        }
+        return error.code == .canceledLogin
     }
 
     func signUp(email: String, password: String, displayName: String) async throws -> Bool {
@@ -146,27 +144,6 @@ private struct ProfileWrite: Encodable, Sendable {
         case id
         case displayName = "display_name"
         case updatedAt = "updated_at"
-    }
-}
-
-@MainActor
-private final class OAuthPresentationContextProvider: NSObject,
-    ASWebAuthenticationPresentationContextProviding,
-    @unchecked Sendable {
-    func presentationAnchor(for _: ASWebAuthenticationSession) -> ASPresentationAnchor {
-#if os(iOS)
-        let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
-        return scenes
-            .flatMap(\.windows)
-            .first(where: \.isKeyWindow)
-            ?? scenes.flatMap(\.windows).first
-            ?? ASPresentationAnchor()
-#elseif os(macOS)
-        return NSApp.keyWindow
-            ?? NSApp.mainWindow
-            ?? NSApp.windows.first
-            ?? ASPresentationAnchor()
-#endif
     }
 }
 

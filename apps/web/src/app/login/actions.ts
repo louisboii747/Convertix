@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { captureServerEvent } from "@/lib/posthog-server";
 import { validateDisplayName } from "@/lib/account";
+import { authSiteUrl } from "@/lib/account-server";
 
 export async function login(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
@@ -43,8 +44,7 @@ export async function login(formData: FormData) {
 export async function loginWithGoogle() {
   const supabase = await createClient();
 
-  const siteUrl =
-    process.env.NEXT_PUBLIC_CONVERTIX_SITE_URL ?? "http://localhost:3000";
+  const siteUrl = authSiteUrl();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
@@ -82,8 +82,7 @@ export async function signup(formData: FormData) {
 
   const supabase = await createClient();
 
-  const siteUrl =
-    process.env.NEXT_PUBLIC_CONVERTIX_SITE_URL ?? "http://localhost:3000";
+  const siteUrl = authSiteUrl();
 
   const { data, error } = await supabase.auth.signUp({
     email,

@@ -13,6 +13,7 @@ export type HistoryFilters = {
   source: string;
   target: string;
   status: string;
+  period: string;
   page: number;
 };
 export const EMPTY_HISTORY_FILTERS: HistoryFilters = {
@@ -20,6 +21,7 @@ export const EMPTY_HISTORY_FILTERS: HistoryFilters = {
   source: "",
   target: "",
   status: "",
+  period: "",
   page: 1,
 };
 export type HistoryEntry = {
@@ -63,6 +65,7 @@ export function parseHistoryFilters(value: unknown): HistoryFilters {
   const input = value as Record<string, unknown>;
   const search = input.search ?? "";
   const status = input.status ?? "";
+  const period = input.period ?? "";
   const page = input.page ?? 1;
   if (
     typeof search !== "string" ||
@@ -70,6 +73,12 @@ export function parseHistoryFilters(value: unknown): HistoryFilters {
     /[\u0000-\u001f]/.test(search)
   ) {
     throw new AccountError("Search must be 120 characters or fewer.");
+  }
+  if (
+    typeof period !== "string" ||
+    (period !== "" && !["today", "7d", "30d", "year"].includes(period))
+  ) {
+    throw new AccountError("Choose a valid time period.");
   }
   if (search.includes("*"))
     throw new AccountError(
@@ -94,6 +103,7 @@ export function parseHistoryFilters(value: unknown): HistoryFilters {
     source: formatFilter(input.source),
     target: formatFilter(input.target),
     status,
+    period,
     page,
   };
 }

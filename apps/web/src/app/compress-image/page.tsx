@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { ImageCompressor } from "@/components/image-compressor";
+import { requireAccount } from "@/lib/account-server";
 
 export const metadata: Metadata = {
   title: "Batch Image Compressor | Compress JPG, PNG & WebP",
@@ -24,7 +25,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function CompressImagePage() {
+export default async function CompressImagePage() {
+  await requireAccount();
   return (
     <>
       <main id="main-content">

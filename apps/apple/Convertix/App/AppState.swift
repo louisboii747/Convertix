@@ -27,27 +27,53 @@ final class AppState {
     var downloadError: String?
     var configurationError: String?
     var pendingConversionRouteID: String?
+    var pendingDeepLink: AppDeepLink?
+    var fileImportRequest = 0
+
+    let conversionCoordinator: ConversionCoordinator
+    let networkMonitor = NetworkMonitor()
 
     @ObservationIgnored private let supabaseService: SupabaseService?
     @ObservationIgnored private let conversionAPI: ConversionAPI?
     @ObservationIgnored private var hasStarted = false
 
     init(bundle: Bundle = .main) {
+        let configuredSupabaseService: SupabaseService?
+        let configuredConversionAPI: ConversionAPI?
+
         do {
             let configuration = try AppConfiguration(bundle: bundle)
-            supabaseService = SupabaseService(configuration: configuration)
-            conversionAPI = ConversionAPI(configuration: configuration)
+            configuredSupabaseService = SupabaseService(configuration: configuration)
+            configuredConversionAPI = ConversionAPI(configuration: configuration)
         } catch {
-            supabaseService = nil
-            conversionAPI = nil
+            configuredSupabaseService = nil
+            configuredConversionAPI = nil
             configurationError = error.localizedDescription
             sessionState = .signedOut
         }
+
+        supabaseService = configuredSupabaseService
+        conversionAPI = configuredConversionAPI
+        conversionCoordinator = ConversionCoordinator(remoteService: configuredConversionAPI)
+        conversionCoordinator.configureAccountAccess(
+            authorizationCheck: { [weak self] in
+                guard let self else { return false }
+                if case .signedIn = self.sessionState {
+                    return true
+                }
+                return false
+            },
+            completionHandler: { [weak self] conversion in
+                await self?.saveClientConversionHistory(conversion)
+            }
+        )
     }
 
     func start() async {
         guard !hasStarted else { return }
         hasStarted = true
+        networkMonitor.start()
+        await conversionCoordinator.restore()
         guard let supabaseService else { return }
 
         for await (_, session) in supabaseService.authStateChanges {
@@ -65,6 +91,7 @@ final class AppState {
                 sessionState = .signedOut
                 profile = nil
                 history = []
+                await conversionCoordinator.clearAccountData()
             }
         }
     }
@@ -105,9 +132,8 @@ final class AppState {
             let user = try await supabaseService.signInWithGoogle()
             await completeAuthentication(with: user)
         } catch {
-            if (error as NSError).code != 1 {
-                authenticationError = authenticationMessage(for: error)
-            }
+            guard !SupabaseService.isUserCancelledOAuth(error) else { return }
+            authenticationError = authenticationMessage(for: error)
         }
     }
 
@@ -160,10 +186,12 @@ final class AppState {
     func handleOpenURL(_ url: URL) async {
         guard url.scheme == "convertix" else { return }
 
-        if url.host == "convert",
-           let routeID = url.pathComponents.dropFirst().first,
-           ConversionRoute.catalog.contains(where: { $0.id == routeID }) {
-            pendingConversionRouteID = routeID
+        if let deepLink = AppDeepLink(url: url) {
+            pendingDeepLink = deepLink
+            if case let .convert(routeID?) = deepLink,
+               ConversionRoute.catalog.contains(where: { $0.id == routeID }) {
+                pendingConversionRouteID = routeID
+            }
             return
         }
 
@@ -216,21 +244,50 @@ final class AppState {
         }
     }
 
-    func enqueueConversions(_ fileURLs: [URL]) async {
-        let newJobs = fileURLs.compactMap { url -> ConversionJob? in
-            guard let route = ConversionRoute.routes(
-                forSourceExtension: url.pathExtension
-            ).first else {
-                return nil
-            }
-            return ConversionJob(sourceURL: url, route: route)
-        }
-        conversionJobs.append(contentsOf: newJobs)
+    func recordLocalConversion(
+        inputURL: URL,
+        outputURL: URL,
+        sourceFormat: String? = nil,
+        targetFormat: String? = nil
+    ) async {
+        guard case let .signedIn(user) = sessionState,
+              let supabaseService else { return }
 
-        for job in newJobs {
-            guard !Task.isCancelled else { return }
-            await runConversionJob(id: job.id)
+        let inputSize = try? inputURL.resourceValues(forKeys: [.fileSizeKey]).fileSize.map(Int64.init)
+        let outputSize = try? outputURL.resourceValues(forKeys: [.fileSizeKey]).fileSize.map(Int64.init)
+        let record = ConversionHistoryWrite(
+            userID: user.id,
+            conversionID: UUID(),
+            originalFilename: inputURL.lastPathComponent,
+            sourceFormat: sourceFormat ?? inputURL.pathExtension.lowercased(),
+            targetFormat: targetFormat ?? outputURL.pathExtension.lowercased(),
+            status: "completed",
+            inputSize: inputSize ?? nil,
+            outputSize: outputSize ?? nil,
+            outputKey: nil,
+            completedAt: .now
+        )
+        do {
+            try await supabaseService.saveHistory(record)
+            await loadHistory()
+        } catch {
+            historyError = "The conversion completed, but its account history entry couldn’t be saved."
         }
+    }
+
+    func enqueueConversions(_ fileURLs: [URL]) async {
+        let defaults = UserDefaults.standard
+        let destination = ConversionDestination(
+            rawValue: defaults.string(forKey: "defaultOutputDestination") ?? ""
+        ) ?? .askEveryTime
+        let execution: ConversionExecution = defaults.object(
+            forKey: "preferLocalConversions"
+        ) as? Bool == false ? .cloud : .automatic
+        conversionCoordinator.enqueueDetected(
+            fileURLs,
+            destination: destination,
+            executionPreference: execution
+        )
     }
 
     func removeConversionJob(id: UUID) {
@@ -418,6 +475,32 @@ final class AppState {
         } catch {
             history = []
             historyError = "We couldn’t load your conversion history."
+        }
+    }
+
+    private func saveClientConversionHistory(_ conversion: ClientConversion) async {
+        guard case let .signedIn(user) = sessionState,
+              let supabaseService,
+              conversion.phase == .completed else { return }
+
+        let record = ConversionHistoryWrite(
+            userID: user.id,
+            conversionID: conversion.backendConversionID ?? conversion.id,
+            originalFilename: conversion.inputFilename,
+            sourceFormat: conversion.inputFormat,
+            targetFormat: conversion.outputFormat,
+            status: "completed",
+            inputSize: conversion.originalSize,
+            outputSize: conversion.outputSize,
+            outputKey: nil,
+            completedAt: conversion.completionDate ?? .now
+        )
+
+        do {
+            try await supabaseService.saveHistory(record)
+            await loadHistory()
+        } catch {
+            historyError = "The conversion completed, but its account history entry couldn’t be saved."
         }
     }
 
