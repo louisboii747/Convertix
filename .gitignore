@@ -51,3 +51,4 @@ build/
 # Swift Package Manager local state
 .swiftpm/
 .build/
+brag-output/
