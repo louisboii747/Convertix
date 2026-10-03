@@ -9,6 +9,48 @@ export interface FormatContent {
 }
 
 export const FORMAT_CONTENT: Partial<Record<FormatId, FormatContent>> = {
+  avif: {
+    summary:
+      "AVIF stores images using AV1 compression, with support for transparency and efficient photographic storage.",
+    description:
+      "AVIF can reduce image sizes for modern websites and apps. Convertix creates a still AVIF image from your JPG file.",
+    useCases: [
+      "Website photographs",
+      "Modern image delivery",
+      "Efficient photo storage",
+    ],
+    strengths: [
+      "Efficient compression",
+      "Transparency support",
+      "Modern browser support",
+    ],
+    considerations: [
+      "Older software may require JPG or PNG",
+      "Encoding can take longer",
+      "Lossy conversion cannot restore details lost in the original JPG",
+    ],
+  },
+  gif: {
+    summary:
+      "GIF is a widely supported image format with a palette of up to 256 colours per frame.",
+    description:
+      "GIF is useful for simple graphics and animations. Converting a JPG creates a single still frame; it does not add animation.",
+    useCases: [
+      "Simple web graphics",
+      "Software requiring GIF files",
+      "Still images with a limited palette",
+    ],
+    strengths: [
+      "Broad compatibility",
+      "Compact for simple graphics",
+      "Supports animations when multiple frames are supplied",
+    ],
+    considerations: [
+      "JPG conversion produces a still image",
+      "Photographs lose colour detail in a 256-colour palette",
+      "JPG, WebP or AVIF often suit photographs better",
+    ],
+  },
   pdf: {
     summary: "PDF is a document format designed to preserve page layout across devices, browsers and operating systems.",
     description: "PDF is commonly used for finished documents such as CVs, invoices, reports and forms because the visual layout is intended to stay consistent when the file is shared or printed.",

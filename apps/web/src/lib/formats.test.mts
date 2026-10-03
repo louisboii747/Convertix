@@ -71,3 +71,17 @@ test("HEIC and HEIF expose the supported raster targets", () => {
   assert.deepEqual(getEnabledTargets("heic"), ["jpg", "png", "webp"]);
   assert.deepEqual(getEnabledTargets("heif"), ["jpg", "png", "webp"]);
 });
+
+test("JPG and JPEG offer AVIF, still GIF and HEIC outputs", () => {
+  assert.equal(getFormatFromFileName("photo.JPEG"), "jpg");
+  assert.deepEqual(getEnabledTargets("jpg"), [
+    "png",
+    "webp",
+    "pdf",
+    "avif",
+    "gif",
+    "heic",
+  ]);
+  // New output formats must not advertise an unsupported upload route.
+  assert.doesNotMatch(ACCEPTED_FILE_EXTENSIONS, /\.(avif|gif)/);
+});

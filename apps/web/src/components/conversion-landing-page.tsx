@@ -5,7 +5,6 @@ import { ImageToPdfConverter } from "@/components/image-to-pdf-converter";
 import { ArrowIcon, RouteIcon } from "@/components/icons";
 import { SupportedFormats } from "@/components/supported-formats";
 import { FlowButton } from "@/components/ui/flow-button";
-import { TypingAnimation } from "@/components/ui/typing-animation";
 import { GUIDES } from "@/lib/guides";
 import { getConversionContent } from "@/lib/conversion-content";
 import {
@@ -148,35 +147,16 @@ export function ConversionLandingPage({ pair }: ConversionLandingPageProps) {
       <main id="main-content">
         <section className="hero-section" aria-labelledby="page-title">
           <div className="hero-copy hero-copy-benefit">
-            {pair ? (
-              <h1 id="page-title">{pageTitle}</h1>
-            ) : (
-              <h1 id="page-title">
-                <span className="sr-only">
-                  Convert files online without the fuss.
-                </span>
-                <span aria-hidden="true" className="grid">
-                  <TypingAnimation
-                    words={[
-                      "Convert files online",
-                      "Compress PDFs online",
-                      "Optimize images online",
-                      "Convert files online",
-                    ]}
-                    typeSpeed={45}
-                    deleteSpeed={25}
-                    pauseDelay={1100}
-                    loop={false}
-                    startOnView={false}
-                    showCursor={true}
-                    blinkCursor={true}
-                    cursorStyle="line"
-                    reducedMotionText="Convert files online"
-                  />
-                  <span>without the fuss.</span>
-                </span>
-              </h1>
-            )}
+            <h1 id="page-title">
+              {pair ? (
+                pageTitle
+              ) : (
+                <>
+                  <span className="block">Convert files online</span>
+                  <span className="block">without the fuss.</span>
+                </>
+              )}
+            </h1>
             <p>{pageDescription}</p>
           </div>
           {isImagePdfPair && pair ? (

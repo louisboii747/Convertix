@@ -175,6 +175,32 @@ def test_existing_png_to_jpeg_conversion_still_works(monkeypatch):
 
 
 @pytest.mark.parametrize(
+    ("target_format", "pillow_format", "content_type"),
+    [
+        ("avif", "AVIF", "image/avif"),
+        ("gif", "GIF", "image/gif"),
+        ("heic", "HEIF", "image/heic"),
+    ],
+)
+def test_jpeg_new_outputs_decode_with_correct_orientation_and_mime(
+    monkeypatch, target_format, pillow_format, content_type
+):
+    output_key, s3 = convert_bytes(
+        monkeypatch, make_oriented_jpeg_bytes(), "jpg", target_format
+    )
+    with Image.open(BytesIO(s3.uploaded_bytes)) as output:
+        output.load()
+        assert output.format == pillow_format
+        assert output.size == (3, 2)
+        assert output.getexif().get(274, 1) == 1
+        if target_format == "gif":
+            assert output.n_frames == 1
+            assert len(output.getcolors()) <= 256
+    assert output_key.endswith(f"output.{target_format}")
+    assert s3.upload_args["extra_args"]["ContentType"] == content_type
+
+
+@pytest.mark.parametrize(
     ("source_format", "image_format", "mode"),
     [
         ("jpg", "JPEG", "RGB"),

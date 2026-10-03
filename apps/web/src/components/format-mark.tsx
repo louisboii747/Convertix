@@ -8,6 +8,8 @@ const formatGlyphs: Record<FormatId, string> = {
   jpg: "JPG",
   png: "PNG",
   webp: "WEBP",
+  avif: "AVIF",
+  gif: "GIF",
   heic: "HEIC",
   heif: "HEIF",
   svg: "SVG",

@@ -12,6 +12,7 @@
     "test": "npm run lint && npm run typecheck && npm run test:auth && npm run test:formats && npm run test:account && npm run test:security",
     "test:security": "node --test src/lib/security.test.mts",
     "test:site:browser": "node --env-file=.env.local --test src/lib/site-browser.test.mts",
+    "test:guest:browser": "node --test src/lib/guest-browser.test.mts",
     "test:account": "node --test src/lib/account.test.mts",
     "test:account:db": "node --env-file=.env.local --test src/lib/account-integration.test.mts",
     "test:account:browser": "node --env-file=.env.local --test src/lib/account-browser.test.mts",

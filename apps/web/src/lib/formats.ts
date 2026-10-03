@@ -63,6 +63,22 @@ export const FORMATS = {
     extensions: ["heic"],
     accent: "violet",
   },
+  avif: {
+    id: "avif",
+    label: "AVIF",
+    name: "AVIF image",
+    family: "images",
+    extensions: ["avif"],
+    accent: "violet",
+  },
+  gif: {
+    id: "gif",
+    label: "GIF",
+    name: "GIF image",
+    family: "images",
+    extensions: ["gif"],
+    accent: "violet",
+  },
   heif: {
     id: "heif",
     label: "HEIF",
@@ -168,6 +184,9 @@ export const CONVERSION_PAIRS: readonly ConversionPair[] = [
   { slug: "jpg-to-png", source: "jpg", target: "png", popular: true },
   { slug: "jpg-to-webp", source: "jpg", target: "webp", popular: false },
   { slug: "jpg-to-pdf", source: "jpg", target: "pdf", popular: true },
+  { slug: "jpg-to-avif", source: "jpg", target: "avif", popular: false },
+  { slug: "jpg-to-gif", source: "jpg", target: "gif", popular: false },
+  { slug: "jpg-to-heic", source: "jpg", target: "heic", popular: false },
   { slug: "webp-to-png", source: "webp", target: "png", popular: true },
   { slug: "webp-to-jpg", source: "webp", target: "jpg", popular: false },
   { slug: "heic-to-jpg", source: "heic", target: "jpg", popular: true },
@@ -198,7 +217,7 @@ export const FORMAT_FAMILIES: readonly {
   {
     id: "images",
     label: "Images",
-    formats: ["jpg", "png", "webp", "heic", "heif", "svg"],
+    formats: ["jpg", "png", "webp", "avif", "gif", "heic", "heif", "svg"],
   },
   { id: "audio", label: "Audio", formats: ["mp3", "wav"] },
   {
@@ -252,11 +271,7 @@ function readAscii(bytes: Uint8Array, offset: number, length: number): string {
 export function getHeifFormatFromBytes(
   bytes: Uint8Array,
 ): "heic" | "heif" | null {
-  const view = new DataView(
-    bytes.buffer,
-    bytes.byteOffset,
-    bytes.byteLength,
-  );
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   let boxOffset = 0;
 
   while (boxOffset + 12 <= bytes.byteLength) {
