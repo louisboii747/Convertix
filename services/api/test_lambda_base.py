@@ -92,6 +92,26 @@ def test_heif_conversions_are_accepted(
     assert queued["target_format"] == target_format
 
 
+@pytest.mark.parametrize("source_format", ["jpg", "jpeg"])
+@pytest.mark.parametrize("target_format", ["avif", "gif", "heic"])
+def test_guest_jpeg_new_outputs_can_be_queued_repeatedly(
+    monkeypatch, source_format, target_format
+):
+    sqs = Mock()
+    monkeypatch.setattr(lambda_base, "sqs", sqs)
+    monkeypatch.setattr(lambda_base, "QUEUE_URL", "https://sqs.example.test/queue")
+    event = make_event("POST", "/conversions", {
+        "source_format": source_format,
+        "target_format": target_format,
+        "input_key": f"uploads/12345678-1234-4234-8234-123456789abc/input.{source_format}",
+    })
+    first = lambda_base.lambda_handler(event, None)
+    second = lambda_base.lambda_handler(event, None)
+    assert first["statusCode"] == second["statusCode"] == 202
+    assert response_body(first)["conversion_id"] != response_body(second)["conversion_id"]
+    assert sqs.send_message.call_count == 2
+
+
 def test_existing_image_conversion_remains_accepted(monkeypatch):
     sqs = Mock()
     sqs.send_message.return_value = {"MessageId": "message-2"}

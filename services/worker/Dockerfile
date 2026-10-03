@@ -16,6 +16,7 @@ RUN apt-get update \
 COPY requirements.txt .
 RUN pip install --no-cache-dir --only-binary=pillow-heif -r requirements.txt
 RUN python -c "from pillow_heif import libheif_info; assert libheif_info()['decoders'].get('libde265')"
+RUN python -c "from PIL import features; from pillow_heif import libheif_info; assert features.check('avif'); assert libheif_info()['encoders'].get('x265')"
 
 COPY worker.py .
 COPY svg_worker.py .

@@ -35,6 +35,8 @@ sqs = boto3.client(
 
 # Formats Convertix knows about
 SUPPORTED_FORMATS = {
+    "avif",
+    "gif",
     "pdf",
     "docx",
     "txt",
@@ -55,6 +57,12 @@ SUPPORTED_FORMATS = {
 
 # Conversion routes that are actually implemented
 SUPPORTED_CONVERSIONS = {
+    ("jpg", "avif"),
+    ("jpg", "gif"),
+    ("jpg", "heic"),
+    ("jpeg", "avif"),
+    ("jpeg", "gif"),
+    ("jpeg", "heic"),
     ("docx", "pdf"),
     ("xlsx", "pdf"),
     ("txt", "pdf"),

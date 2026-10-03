@@ -261,7 +261,9 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
           return;
         }
         const result = (await response.json()) as { authenticated?: boolean };
-        setAccountState(result.authenticated ? "authenticated" : "signedOut");
+        setAccountState(
+          result.authenticated === true ? "authenticated" : "signedOut",
+        );
       })
       .catch(() => {
         if (active) setAccountState("signedOut");
@@ -308,7 +310,6 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
     pair &&
     pairEnabled &&
     readiness.ready &&
-    accountState === "authenticated" &&
     !isBusy &&
     state.status !== "completed",
   );
@@ -367,7 +368,12 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
       conversion_duration_ms: Math.round(now - timing.startedAt),
     };
 
-    for (const status of ["uploading", "queued", "starting", "converting"] as const) {
+    for (const status of [
+      "uploading",
+      "queued",
+      "starting",
+      "converting",
+    ] as const) {
       const duration = timing.durations[status];
       if (duration !== undefined) {
         properties[`${status}_duration_ms`] = Math.round(duration);
@@ -554,26 +560,29 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
         format_family: FORMATS[state.source].family,
         ...timingProperties,
       });
-      try {
-        const historyResponse = await fetch("/api/conversion-history", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            conversion_id: response.conversion_id,
-            original_filename: file.name,
-            source_format: state.source,
-            target_format: state.target,
-            input_size: file.size,
-            output_size: response.size,
-            output_key: response.output_key,
-          }),
-        });
-        if (!historyResponse.ok)
-          console.error("Failed to save conversion history.");
-      } catch (historyError) {
-        console.error("Failed to save conversion history:", historyError);
-      }
+      // Saving account history must never delay a completed download.
       dispatch({ type: "accepted", response });
+      if (accountState === "authenticated") {
+        try {
+          const historyResponse = await fetch("/api/conversion-history", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              conversion_id: response.conversion_id,
+              original_filename: file.name,
+              source_format: state.source,
+              target_format: state.target,
+              input_size: file.size,
+              output_size: response.size,
+              output_key: response.output_key,
+            }),
+          });
+          if (!historyResponse.ok)
+            console.error("Failed to save conversion history.");
+        } catch (historyError) {
+          console.error("Failed to save conversion history:", historyError);
+        }
+      }
     } catch (error) {
       if (
         requestSequenceRef.current !== requestId ||
@@ -720,9 +729,8 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
         <div className="converter-prompt" role="status">
           <RouteIcon />
           <span>
-            Your file stays on this device until you select Convert file. Sign
-            in is required so your history stays with your account. Maximum
-            size: {FREE_FILE_LIMIT_MB} MB.
+            Your file uploads only when you select Convert file. Maximum size:{" "}
+            {FREE_FILE_LIMIT_MB} MB.
           </span>
         </div>
       ) : null}
@@ -817,9 +825,9 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
             </div>
           </div>
 
-          {accountState === "signedOut" ? (
-            <p className="converter-prompt" role="status">
-              <Link href="/login">Log in</Link> or <Link href="/signup">create an account</Link> to convert files and keep your history across Convertix apps.
+          {state.target === "gif" && state.status === "ready" ? (
+            <p className="converter-prompt">
+              This creates a still GIF with up to 256 colours.
             </p>
           ) : null}
 
@@ -850,11 +858,7 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
               shape="rounded"
               size="lg"
               text={
-                accountState === "checking"
-                  ? "Checking your account"
-                  : accountState === "signedOut"
-                    ? "Log in to convert"
-                    : !pairEnabled
+                !pairEnabled
                   ? "Conversion unavailable"
                   : !readiness.ready
                     ? "Conversion service unavailable"
@@ -870,6 +874,14 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
               }
             />
           )}
+
+          {state.status === "completed" && accountState === "signedOut" ? (
+            <p className="converter-prompt">
+              Want to save future conversions to your history?{" "}
+              <Link href="/login">Log in</Link> or{" "}
+              <Link href="/signup">create an account</Link>.
+            </p>
+          ) : null}
 
           {state.status === "completed" && state.downloadUrl && state.target ? (
             <div
@@ -1010,12 +1022,12 @@ export function Converter({ initialSource, initialTarget }: ConverterProps) {
         <div className="unsupported-conversion-request" aria-live="polite">
           <div className="unsupported-request-copy">
             <strong>
-              {unsupportedRequest.sourceLabel} isn&apos;t supported yet. What did
-              you want to convert it to?
+              {unsupportedRequest.sourceLabel} isn&apos;t supported yet. What
+              did you want to convert it to?
             </strong>
             <span>
-              This format request helps decide which conversions Convertix should
-              add next.
+              This format request helps decide which conversions Convertix
+              should add next.
             </span>
           </div>
 

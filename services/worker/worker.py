@@ -477,7 +477,7 @@ def convert_txt_document(
 
 
 IMAGE_INPUT_FORMATS = {"jpg", "jpeg", "png", "webp", "heic", "heif"}
-IMAGE_TARGET_FORMATS = {"jpg", "jpeg", "png", "webp"}
+IMAGE_TARGET_FORMATS = {"jpg", "jpeg", "png", "webp", "avif", "gif", "heic"}
 IMAGE_DECODERS = ("JPEG", "PNG", "WEBP", "HEIF")
 
 PDF_PAGE_SHORT_EDGE = 1240
@@ -496,9 +496,12 @@ def normalize_decoded_image_format(image_format: str | None) -> str | None:
 
 
 def image_save_metadata(image: Image.Image, target_format: str) -> dict:
+    # GIF does not support EXIF or ICC profiles.
+    if target_format == "gif":
+        return {}
     metadata_keys = ["exif", "icc_profile"]
 
-    if target_format == "webp":
+    if target_format in {"webp", "avif", "heic"}:
         metadata_keys.append("xmp")
 
     return {
@@ -658,6 +661,9 @@ def convert_image(
         "jpeg": "JPEG",
         "png": "PNG",
         "webp": "WEBP",
+        "avif": "AVIF",
+        "gif": "GIF",
+        "heic": "HEIF",
     }
 
     content_types = {
@@ -665,6 +671,9 @@ def convert_image(
         "jpeg": "image/jpeg",
         "png": "image/png",
         "webp": "image/webp",
+        "avif": "image/avif",
+        "gif": "image/gif",
+        "heic": "image/heic",
     }
 
     output_extensions = {
@@ -672,6 +681,9 @@ def convert_image(
         "jpeg": "jpg",
         "png": "png",
         "webp": "webp",
+        "avif": "avif",
+        "gif": "gif",
+        "heic": "heic",
     }
 
     if source_format not in IMAGE_INPUT_FORMATS:
@@ -755,10 +767,20 @@ def convert_image(
                     image.close()
                     image = converted_image
 
-            elif target_format == "webp" and image.mode not in {"RGB", "RGBA"}:
+            elif (
+                target_format in {"webp", "avif", "heic"}
+                and image.mode not in {"RGB", "RGBA"}
+            ):
                 converted_image = image.convert(
                     "RGBA" if image_has_alpha(image) else "RGB"
                 )
+                image.close()
+                image = converted_image
+
+            elif target_format == "gif":
+                # JPEG is a still image; quantize its colours without claiming animation.
+                with image.convert("RGB") as rgb_image:
+                    converted_image = rgb_image.quantize(colors=256)
                 image.close()
                 image = converted_image
 

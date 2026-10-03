@@ -16,6 +16,8 @@ const formatCardVariants: Partial<Record<FormatId, FormatFileProps>> = {
   jpg: "jpg",
   png: "png",
   webp: "img",
+  avif: "img",
+  gif: "img",
   heic: "img",
   heif: "img",
   svg: "img",
